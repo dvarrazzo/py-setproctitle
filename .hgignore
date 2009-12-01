@@ -1,3 +1,4 @@
 \.o$
 \.sw[op]$
 tools/pttest
+tools/ps_status\.c
