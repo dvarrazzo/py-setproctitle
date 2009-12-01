@@ -14,7 +14,7 @@ all: pttest sptdemo
 pttest: $(PTTEST_OBJS)
 
 sptdemo: $(SPTDEMO_OBJS)
-
+	$(CC) $(LDFLAGS) $^ -o $@ 
 
 pgsources: ps_status.c ps_status.h
 
