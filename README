@@ -1,0 +1,19 @@
+A ``setproctitle`` implementation for Python
+============================================
+
+The library allows a process to change its title (as display by system tools
+such as ``ps`` and ``top``).
+
+The procedure is hardly portable between different system.
+A `good implementation`__ is provided by PostgreSQL__. 
+
+
+.. good implementation: http://doxygen.postgresql.org/ps__status_8c-source.html
+.. PostgreSQL: http://www.postgresql.org
+
+
+
+
+..
+    vim: set filetype=rst:
+
