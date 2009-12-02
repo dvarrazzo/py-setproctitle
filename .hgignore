@@ -1,5 +1,6 @@
 \.o$
 \.sw[op]$
+\.orig$
 tools/pttest
 tools/sptdemo
 tools/ps_status\.[ch]
