@@ -6,7 +6,7 @@ A ``setproctitle`` implementation for Python
 The library allows a process to change its title (as displayed by system tools
 such as ``ps`` and ``top``).
 
-The procedure is hardly portable between different system.
+The procedure is hardly portable across different systems.
 A `good implementation`_ is provided by PostgreSQL_. This module is a wrapper
 around it.
 
