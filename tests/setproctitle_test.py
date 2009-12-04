@@ -45,6 +45,33 @@ class GetProcTitleTestCase(unittest.TestCase):
             """)
         self.assertEqual(rv, "Hello, world!\n")
 
+    def test_environ(self):
+        """Check that clobbering environ didn't break env."""
+        rv = self.run_script(r"""
+            import setproctitle
+            setproctitle.setproctitle('Hello, world! ' + 'X' * 1024)
+
+            # set a new env variable, update another one
+            import os
+            os.environ['TEST_SETENV'] = "setenv-value"
+            os.environ['PATH'] = os.environ.get('PATH', '') \
+                    + os.pathsep + "fakepath"
+
+            # read the environment from a spawned process hineriting the
+            # updated env
+            newenv = dict(r.split("=",1)
+                    for r in os.popen("env").read().splitlines())
+
+            print setproctitle.getproctitle()
+            print newenv['TEST_SETENV']
+            print newenv['PATH']
+            """)
+
+        title, test, path = rv.splitlines()
+        self.assert_(title.startswith("Hello, world! XXXXX"), title)
+        self.assertEqual(test, 'setenv-value')
+        self.assert_(path.endswith('fakepath'), path)
+
     def run_script(self, script, args=None):
         """run a script in a separate process.
 
@@ -66,7 +93,6 @@ class GetProcTitleTestCase(unittest.TestCase):
             self.fail("test script failed")
 
         return out
-
 
     def _clean_whitespaces(self, script):
         """clean up a script in a string
