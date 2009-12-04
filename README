@@ -1,17 +1,38 @@
 A ``setproctitle`` implementation for Python
 ============================================
 
-The library allows a process to change its title (as display by system tools
+:author: Daniele Varrazzo
+
+The library allows a process to change its title (as displayed by system tools
 such as ``ps`` and ``top``).
 
 The procedure is hardly portable between different system.
-A `good implementation`_ is provided by PostgreSQL_. 
+A `good implementation`_ is provided by PostgreSQL_. This module is a wrapper
+around it.
+
+.. _good implementation: http://doxygen.postgresql.org/ps__status_8c-source.html
+.. _PostgreSQL: http://www.postgresql.org
 
 
-.. good implementation: http://doxygen.postgresql.org/ps__status_8c-source.html
-.. PostgreSQL: http://www.postgresql.org
+Module content
+--------------
+
+``setproctitle.setproctitle(title)``
+
+    Set *title* as the title for the current process.
 
 
+``setproctitle.getproctitle()``
+
+    Return the current process title.
+
+
+Module status
+-------------
+
+Albeit the core part of the code has been tested on a wild variety of
+platforms, the compiling procedure for the Python module has currently been 
+tested on GNU/Linux only.
 
 
 ..
