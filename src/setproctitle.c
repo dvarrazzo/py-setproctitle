@@ -66,6 +66,38 @@ static struct PyMethodDef spt_methods[] = {
 };
 
 
+/* return a concatenated version of a strings vector
+ *
+ * Return newly allocated heap space: clean it up with free()
+ */
+static char *
+join_argv(int argc, char **argv)
+{
+    /* Calculate the final string length */
+    int i;
+    size_t len = 0;
+    for (i = 0; i < argc; i++) {
+        len += strlen(argv[i]) + 1;
+    }
+
+    char *buf = (char *)malloc(len);
+
+    /* Copy the strings in the buffer joining with spaces */
+    char *dest = buf;
+    char *src;
+    for (i = 0; i < argc; i++) {
+        src = argv[i];
+        while (*src) {
+            *dest++ = *src++;
+        }
+        *dest++ = ' ';
+    }
+    *--dest = '\x00';
+
+    return buf;
+}
+
+
 /* Initialization function for the module (*must* be called initsetproctitle) */
 
 static char setproctitle_module_documentation[] =
@@ -88,10 +120,10 @@ initsetproctitle()
     Py_GetArgcArgv(&argc, &argv);
     save_ps_display_args(argc, argv);
 
-    /* TODO: there is no call to `init_ps_display()`
-     * without it the first call to getproctitle returns a bad value
-     * (the concatenation of argv and environ)
-     */
+    /* Set up the first title to fully initialize the code */
+    char *init_title = join_argv(argc, argv);
+    init_ps_display(init_title);
+    free(init_title);
 
     /* Check for errors */
     if (PyErr_Occurred())
