@@ -24,6 +24,27 @@ class GetProcTitleTestCase(unittest.TestCase):
             args="-u")
         self.assertEqual(rv, sys.executable + " -u\n")
 
+    def test_setproctitle(self):
+        """setproctitle() can set the process title, duh."""
+        rv = self.run_script(r"""
+            import setproctitle
+            setproctitle.setproctitle('Hello, world!')
+
+            # TODO: probably to be fixed on other systems
+            import os
+            print open('/proc/%d/cmdline' % os.getpid()).read().rstrip('\0')
+            """)
+        self.assertEqual(rv, "Hello, world!\n")
+
+    def test_getproctitle(self):
+        """getproctitle() can read the process title back."""
+        rv = self.run_script(r"""
+            import setproctitle
+            setproctitle.setproctitle('Hello, world!')
+            print setproctitle.getproctitle()
+            """)
+        self.assertEqual(rv, "Hello, world!\n")
+
     def run_script(self, script, args=None):
         """run a script in a separate process.
 
@@ -40,7 +61,10 @@ class GetProcTitleTestCase(unittest.TestCase):
                 shell=True, close_fds=True)
 
         out = proc.communicate(script)[0]
-        self.assertEqual(0, proc.returncode)
+        if 0 != proc.returncode:
+            print out
+            self.fail("test script failed")
+
         return out
 
 
