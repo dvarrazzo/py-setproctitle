@@ -1,3 +1,16 @@
+/*-------------------------------------------------------------------------
+ *
+ * setproctitle.c
+ *    Python extension module to update and read the process title.
+ *
+ * Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+ *
+ * The module allows Python code to access the functions get_ps_display()
+ * and set_ps_display().  The process title initialization (functions
+ * save_ps_display_args() and init_ps_display()) are called at module
+ * initialization.
+ *-------------------------------------------------------------------------
+ */
 
 #include "Python.h"
 #include "spt_status.h"

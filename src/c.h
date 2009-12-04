@@ -1,10 +1,10 @@
-
-/*
- * bool
- *		Boolean value, either true or false.
+/*-------------------------------------------------------------------------
  *
- * XXX for C++ compilers, we assume the compiler has a compatible
- * built-in definition of bool.
+ * c.h
+ *    A few fundamental C definitions.
+ *
+ * Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+ *-------------------------------------------------------------------------
  */
 
 #ifndef C_H
