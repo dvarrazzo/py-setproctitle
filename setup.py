@@ -36,7 +36,7 @@ setup(
     version = VERSION,
     author = 'Daniele Varrazzo',
     author_email = 'daniele.varrazzo@gmail.com',
-    url = 'http://piro.develer.com/py-setproctitle',
+    url = 'http://code.google.com/p/py-setproctitle/',
     license = 'BSD',
     platforms = ['POSIX', 'Windows'],
     classifiers = filter(None, map(str.strip, """
