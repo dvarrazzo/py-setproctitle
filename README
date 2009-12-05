@@ -7,7 +7,7 @@ The library allows a process to change its title (as displayed by system tools
 such as ``ps`` and ``top``).
 
 The procedure is hardly portable across different systems.
-A `good implementation`_ is provided by PostgreSQL_. This module is a wrapper
+A `good implementation`_ is provided by PostgreSQL_: this module is a wrapper
 around it.
 
 .. _good implementation: http://doxygen.postgresql.org/ps__status_8c-source.html
@@ -33,6 +33,18 @@ Module status
 Albeit the core part of the code has been tested on a wild variety of
 platforms, the compiling procedure for the Python module has currently been 
 tested on GNU/Linux only.
+
+
+Other known implementations and discussions
+-------------------------------------------
+
+- `procname`_: a module with the same function, but less portable and not well
+  packaged.
+- `Issue 5672`_: where the introduction of such functionality into the stdlib
+  is being discussed.
+
+.. _procname: http://code.google.com/p/procname/
+.. _Issue 5672: http://bugs.python.org/issue5672
 
 
 ..
