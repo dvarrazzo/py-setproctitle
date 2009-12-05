@@ -8,7 +8,7 @@ Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 import sys
 from distutils.core import setup, Extension
 
-VERSION = '0.1a0'
+VERSION = '0.1'
 
 mod_spt = Extension('setproctitle',
     define_macros=[('SPT_VERSION', '"%s"' % VERSION),],
