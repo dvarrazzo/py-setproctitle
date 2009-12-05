@@ -17,12 +17,12 @@ around it.
 Module content
 --------------
 
-``setproctitle.setproctitle(title)``
+``setproctitle(title)``
 
     Set *title* as the title for the current process.
 
 
-``setproctitle.getproctitle()``
+``getproctitle()``
 
     Return the current process title.
 
