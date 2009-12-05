@@ -23,7 +23,7 @@ installation use::
     sudo easy_install setproctitle
 
 If you are an unprivileged user or you want to limit installation to a local
-environment, you an use the command:
+environment, you can use the command::
 
     easy_install -d /target/path setproctitle
 
