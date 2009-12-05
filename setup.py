@@ -37,11 +37,12 @@ setup(
     author = 'Daniele Varrazzo',
     author_email = 'daniele.varrazzo@gmail.com',
     url = 'http://piro.develer.com/py-setproctitle',
+    license = 'BSD',
+    platforms = ['POSIX', 'Windows'],
     classifiers = filter(None, map(str.strip, """
         Development Status :: 3 - Alpha
         Intended Audience :: Developers
         License :: OSI Approved :: BSD License
-        Operating System :: POSIX
         Programming Language :: C
         Programming Language :: Python
         Topic :: Software Development
