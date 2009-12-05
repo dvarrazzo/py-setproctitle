@@ -15,10 +15,16 @@
 #include "Python.h"
 #include "spt_status.h"
 
+#ifndef SPT_VERSION
+#define SPT_VERSION "unknown"
+#endif
+
 /* defined in Modules/main.c but not publically declared */
 void Py_GetArgcArgv(int *argc, char ***argv);
 
 /* ----------------------------------------------------- */
+
+static PyObject *spt_version;
 
 static char spt_setproctitle__doc__[] =
 "Change the process title."
@@ -107,12 +113,17 @@ static char setproctitle_module_documentation[] =
 void
 initsetproctitle()
 {
-    PyObject *m;
+    PyObject *m, *d;
 
     /* Create the module and add the functions */
     m = Py_InitModule4("setproctitle", spt_methods,
         setproctitle_module_documentation,
         (PyObject*)NULL,PYTHON_API_VERSION);
+
+	/* Add version string to the module*/
+	d = PyModule_GetDict(m);
+	spt_version = PyString_FromString(SPT_VERSION);
+	PyDict_SetItemString(d, "__version__", spt_version);
 
     /* Initialize the process title */
     int argc;
