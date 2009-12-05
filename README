@@ -14,6 +14,23 @@ around it.
 .. _PostgreSQL: http://www.postgresql.org
 
 
+Installation
+------------
+
+You can use ``easy_install`` to install the module: to perform a system-wide
+installation use::
+
+    sudo easy_install setproctitle
+
+If you are an unprivileged user or you want to limit installation to a local
+environment, you an use the command:
+
+    easy_install -d /target/path setproctitle
+
+Notice that ``easy_install`` requires ``/target/path`` to be in your 
+``PYTHONPATH``.
+
+
 Module content
 --------------
 
