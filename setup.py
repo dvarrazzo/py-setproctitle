@@ -5,9 +5,10 @@ setproctitle setup script.
 Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
-VERSION = '0.1a0'
-
+import sys
 from distutils.core import setup, Extension
+
+VERSION = '0.1a0'
 
 mod_spt = Extension('setproctitle',
     define_macros=[('SPT_VERSION', '"%s"' % VERSION),],
@@ -17,6 +18,18 @@ mod_spt = Extension('setproctitle',
         'src/strlcpy.c', # TODO: not needed on some platform
         ])
 
+# patch distutils if it can't cope with the "classifiers" or
+# "download_url" keywords
+if sys.version < '2.2.3':
+    from distutils.dist import DistributionMetadata
+    DistributionMetadata.classifiers = None
+    DistributionMetadata.download_url = None
+
+# Try to include the long description in the setup
+kwargs = {}
+try: kwargs['long_description'] = open('README').read()
+except: pass
+
 setup(
     name = 'setproctitle',
     description = 'Allow customization of the process title.',
@@ -24,4 +37,14 @@ setup(
     author = 'Daniele Varrazzo',
     author_email = 'daniele.varrazzo@gmail.com',
     url = 'http://piro.develer.com/py-setproctitle',
-    ext_modules = [mod_spt])
+    classifiers = filter(None, map(str.strip, """
+        Development Status :: 3 - Alpha
+        Intended Audience :: Developers
+        License :: OSI Approved :: BSD License
+        Operating System :: POSIX
+        Programming Language :: C
+        Programming Language :: Python
+        Topic :: Software Development
+        """.splitlines())),
+    ext_modules = [mod_spt],
+    **kwargs)
