@@ -35,12 +35,10 @@ Module content
 --------------
 
 ``setproctitle(title)``
-
     Set *title* as the title for the current process.
 
 
 ``getproctitle()``
-
     Return the current process title.
 
 
