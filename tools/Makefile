@@ -9,12 +9,12 @@ CFLAGS = -g -Wall
 CURL = wget -O -
 
 
-all: pttest sptdemo
+all: pttest sptdemo prctl_demo
 
 pttest: $(PTTEST_OBJS)
 
 sptdemo: $(SPTDEMO_OBJS)
-	$(CC) $(LDFLAGS) $^ -o $@ 
+	$(CC) $(LDFLAGS) $^ -o $@
 
 pgsources: ps_status.c ps_status.h
 
