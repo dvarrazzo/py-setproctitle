@@ -55,8 +55,8 @@ tested on GNU/Linux only.
 Other known implementations and discussions
 -------------------------------------------
 
-- `procname`_: a module with the same function, but less portable and not well
-  packaged.
+- `procname`_: a exposing the same functionality, but less portable and not 
+  well packaged.
 - `Issue 5672`_: where the introduction of such functionality into the stdlib
   is being discussed.
 
