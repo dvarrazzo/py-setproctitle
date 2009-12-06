@@ -34,6 +34,8 @@ Notice that ``easy_install`` requires ``/target/path`` to be in your
 Module content
 --------------
 
+The module exports the following functions:
+
 ``setproctitle(title)``
     Set *title* as the title for the current process.
 
