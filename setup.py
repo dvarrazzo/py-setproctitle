@@ -37,6 +37,7 @@ setup(
     author = 'Daniele Varrazzo',
     author_email = 'daniele.varrazzo@gmail.com',
     url = 'http://code.google.com/p/py-setproctitle/',
+    download_url = 'http://pypi.python.org/pypi/setproctitle/',
     license = 'BSD',
     platforms = ['POSIX', 'Windows'],
     classifiers = filter(None, map(str.strip, """
