@@ -162,11 +162,6 @@ save_ps_display_args(int argc, char **argv)
 
 #if defined(PS_USE_CLOBBER_ARGV)
 
-#if defined(__darwin__)
-	/* Darwin doesn't export the environ variable */
-	environ = *_NSGetEnviron();
-#endif
-
     /*
      * If we're going to overwrite the argv area, count the available space.
      * Also move the environment to make additional room.
