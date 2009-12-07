@@ -63,7 +63,6 @@
 
 extern char **environ;
 bool        update_process_title = true;
-static bool IsUnderPostmaster = true;
 
 /*
  * Alternative ways of updating ps display:
@@ -253,10 +252,6 @@ init_ps_display(const char *initial_str)
 {
 
 #ifndef PS_USE_NONE
-    /* no ps display for stand-alone backend */
-    if (!IsUnderPostmaster)
-        return;
-
     /* no ps display if you didn't call save_ps_display_args() */
     if (!save_argv)
         return;
@@ -311,9 +306,6 @@ set_ps_display(const char *activity, bool force)
         return;
 
 #ifndef PS_USE_NONE
-    /* no ps display for stand-alone backend */
-    if (!IsUnderPostmaster)
-        return;
 
 #ifdef PS_USE_CLOBBER_ARGV
     /* If ps_buffer is a pointer, it might still be null */
