@@ -1,6 +1,10 @@
 Releases history
 ----------------
 
+0.3
+
+- Module tested on Mac OS X 10.2.
+
 0.2
 
 - Added ``prctl()`` call on Linux > 2.6.9 to update ``/proc/self/status``.
