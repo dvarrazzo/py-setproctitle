@@ -1,4 +1,4 @@
+include HISTORY
 include src/*.c
 include src/*.h
 include tests/*.py
-

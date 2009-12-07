@@ -1,0 +1,10 @@
+Releases history
+----------------
+
+0.2
+
+- Added ``prctl()`` call on Linux > 2.6.9 to update ``/proc/self/status``.
+
+0.1
+
+- Initial public release.
