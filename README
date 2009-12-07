@@ -48,8 +48,10 @@ Module status
 -------------
 
 Albeit the core part of the code has been tested on a wild variety of
-platforms, the compiling procedure for the Python module has currently been 
-tested on GNU/Linux only.
+platforms, compiling the Python module has currently been tested on:
+
+- GNU/Linux
+- Mac OS X
 
 
 Other known implementations and discussions
