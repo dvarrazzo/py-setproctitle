@@ -16,11 +16,15 @@
 #include "spt_status.h"
 
 #ifndef SPT_VERSION
-#define SPT_VERSION "unknown"
+#define SPT_VERSION unknown
 #endif
 
 /* defined in Modules/main.c but not publically declared */
 void Py_GetArgcArgv(int *argc, char ***argv);
+
+/* macro trick to stringify a macro expansion */
+#define xstr(s) str(s)
+#define str(s) #s
 
 /* ----------------------------------------------------- */
 
@@ -122,7 +126,7 @@ initsetproctitle()
 
 	/* Add version string to the module*/
 	d = PyModule_GetDict(m);
-	spt_version = PyString_FromString(SPT_VERSION);
+	spt_version = PyString_FromString(xstr(SPT_VERSION));
 	PyDict_SetItemString(d, "__version__", spt_version);
 
     /* Initialize the process title */

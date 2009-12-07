@@ -14,7 +14,7 @@ VERSION = '0.2a0'
 
 define_macros={}
 
-define_macros['SPT_VERSION'] = '"%s"' % VERSION
+define_macros['SPT_VERSION'] = VERSION
 
 if sys.platform == 'linux2':
     try:
