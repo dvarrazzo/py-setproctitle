@@ -5,13 +5,30 @@ setproctitle setup script.
 Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
+import os
+import re
 import sys
 from distutils.core import setup, Extension
 
 VERSION = '0.2a0'
 
+define_macros={}
+
+define_macros['SPT_VERSION'] = '"%s"' % VERSION
+
+if sys.platform == 'linux2':
+    try:
+        linux_version = map(int, 
+            re.search("[.0-9]+", os.popen("uname -r").read())
+                .group().split(".")[:3])
+    except:
+        pass
+    else:
+        if linux_version >= [2, 6, 9]:
+            define_macros['HAVE_SYS_PRCTL_H'] = 1
+
 mod_spt = Extension('setproctitle',
-    define_macros=[('SPT_VERSION', '"%s"' % VERSION),],
+    define_macros=define_macros.items(),
     sources = [
         'src/setproctitle.c',
         'src/spt_status.c',

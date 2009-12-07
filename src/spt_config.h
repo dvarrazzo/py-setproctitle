@@ -7,6 +7,9 @@
 /* Define to 1 if you have the <sys/pstat.h> header file. */
 /* #undef HAVE_SYS_PSTAT_H */
 
+/* Define to 1 if you have the <sys/prctl.h> header file. */
+/* #undef HAVE_SYS_PRCTL_H */
+
 /* Define to 1 if you have the declaration of `strlcpy', and to 0 if you
    don't. */
 #define HAVE_DECL_STRLCPY 0

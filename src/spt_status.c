@@ -47,6 +47,10 @@
 #include <machine/vmparam.h>    /* for old BSD */
 #include <sys/exec.h>
 #endif
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>          /* for Linux >= 2.6.9 */
+#include <linux/prctl.h>
+#endif
 #if defined(__darwin__)
 #include <crt_externs.h>
 #endif
@@ -76,6 +80,9 @@ static bool IsUnderPostmaster = true;
  * PS_USE_CHANGE_ARGV
  *     assign argv[0] = "string"
  *     (some other BSD systems)
+ * PS_USE_PRCTL
+ *     use prctl(PR_SET_NAME, )
+ *     (Linux >= 2.6.9)
  * PS_USE_CLOBBER_ARGV
  *     write over the argv and environment area
  *     (most SysV-like systems)
@@ -101,6 +108,10 @@ static bool IsUnderPostmaster = true;
 #define PS_USE_NONE
 #endif
 
+/* we use this strategy together with another one (probably PS_USE_CLOBBER_ARGV) */
+#if defined(HAVE_SYS_PRCTL_H) && !defined(PS_USE_NONE)
+#define PS_USE_PRCTL
+#endif
 
 /* Different systems want the buffer padded differently */
 #if defined(_AIX) || defined(__linux__) || defined(__svr4__)
@@ -346,6 +357,10 @@ set_ps_display(const char *activity, bool force)
         last_status_len = buflen;
     }
 #endif   /* PS_USE_CLOBBER_ARGV */
+
+#ifdef PS_USE_PRCTL
+    prctl(PR_SET_NAME, ps_buffer);
+#endif
 
 #ifdef PS_USE_WIN32
     {

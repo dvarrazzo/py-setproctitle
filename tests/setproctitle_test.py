@@ -1,11 +1,17 @@
 """setproctitle module unit test.
 
+Use nosetests to run this test suite.
+
 Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
+import os
+import re
 import sys
 import unittest
 from subprocess import Popen, PIPE, STDOUT
+
+from nose.plugins.skip import SkipTest
 
 class GetProcTitleTestCase(unittest.TestCase):
     def test_runner(self):
@@ -31,10 +37,29 @@ class GetProcTitleTestCase(unittest.TestCase):
             setproctitle.setproctitle('Hello, world!')
 
             # TODO: probably to be fixed on other systems
-            import os
-            print open('/proc/%d/cmdline' % os.getpid()).read().rstrip('\0')
+            print open('/proc/self/cmdline').read().rstrip('\0')
             """)
         self.assertEqual(rv, "Hello, world!\n")
+
+    def test_prctl(self):
+        """Check that prctl is called on supported platforms."""
+        try:
+            linux_version = map(int,
+                re.search("[.0-9]+", os.popen("uname -r").read())
+                    .group().split(".")[:3])
+        except:
+            linux_version = None
+
+        if linux_version is None or linux_version < [2,6,9]:
+            raise SkipTest
+
+        rv = self.run_script(r"""
+            import setproctitle
+            setproctitle.setproctitle('Hello, prctl!')
+            print open('/proc/self/status').read()
+            """)
+        status = dict([r.split(':', 1) for r in rv.splitlines() if ':' in r])
+        self.assertEqual(status['Name'].strip(), "Hello, prctl!")
 
     def test_getproctitle(self):
         """getproctitle() can read the process title back."""
