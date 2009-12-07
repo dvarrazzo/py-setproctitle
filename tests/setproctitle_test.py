@@ -90,8 +90,9 @@ class GetProcTitleTestCase(unittest.TestCase):
 
             # read the environment from a spawned process hineriting the
             # updated env
-            newenv = dict(r.split("=",1)
-                    for r in os.popen("env").read().splitlines())
+            newenv = dict([r.split("=",1)
+                    for r in os.popen("env").read().splitlines()
+                    if '=' in r])
 
             print setproctitle.getproctitle()
             print newenv['TEST_SETENV']
