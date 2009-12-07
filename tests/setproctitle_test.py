@@ -35,22 +35,28 @@ class GetProcTitleTestCase(unittest.TestCase):
         rv = self.run_script(r"""
             import setproctitle
             setproctitle.setproctitle('Hello, world!')
-
-            # TODO: probably to be fixed on other systems
-            print open('/proc/self/cmdline').read().rstrip('\0')
+            
+            import os
+            print os.getpid()
+            print os.popen("ps -o pid,command").read()
             """)
-        self.assertEqual(rv, "Hello, world!\n")
+        lines = filter(None, rv.splitlines())
+        pid = lines.pop(0)
+        pids = dict([r.strip().split(None, 1) for r in lines])
+        self.assertEqual(pids[pid], "Hello, world!")
 
     def test_prctl(self):
         """Check that prctl is called on supported platforms."""
-        try:
-            linux_version = map(int,
-                re.search("[.0-9]+", os.popen("uname -r").read())
-                    .group().split(".")[:3])
-        except:
-            linux_version = None
+        linux_version = []
+        if os.system == 'linux2':
+            try:
+                linux_version = map(int,
+                    re.search("[.0-9]+", os.popen("uname -r").read())
+                        .group().split(".")[:3])
+            except:
+                pass
 
-        if linux_version is None or linux_version < [2,6,9]:
+        if linux_version < [2,6,9]:
             raise SkipTest
 
         rv = self.run_script(r"""
