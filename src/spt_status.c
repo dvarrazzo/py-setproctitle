@@ -61,7 +61,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Darwin doesn't export environ */
+#if defined(__darwin__)
+#define environ (*_NSGetEnviron())
+#else
 extern char **environ;
+#endif
+
 bool        update_process_title = true;
 
 /*
@@ -113,7 +119,7 @@ bool        update_process_title = true;
 #endif
 
 /* Different systems want the buffer padded differently */
-#if defined(_AIX) || defined(__linux__) || defined(__svr4__)
+#if defined(_AIX) || defined(__linux__) || defined(__svr4__) || defined(__darwin__)
 #define PS_PADDING '\0'
 #else
 #define PS_PADDING ' '
@@ -155,6 +161,11 @@ save_ps_display_args(int argc, char **argv)
     save_argv = argv;
 
 #if defined(PS_USE_CLOBBER_ARGV)
+
+#if defined(__darwin__)
+	/* Darwin doesn't export the environ variable */
+	environ = *_NSGetEnviron();
+#endif
 
     /*
      * If we're going to overwrite the argv area, count the available space.
