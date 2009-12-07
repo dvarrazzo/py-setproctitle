@@ -1,6 +1,9 @@
 /* Stub file: should be created in configuration phase */
 /* This configuration was taken from an Ubuntu i386 installation. */
 
+/* Define to 1 if you have the `setproctitle' function. */
+/* #undef HAVE_SETPROCTITLE */
+
 /* Define to 1 if the PS_STRINGS thing exists. */
 /* #undef HAVE_PS_STRINGS */
 
