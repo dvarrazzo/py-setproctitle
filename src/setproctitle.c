@@ -115,7 +115,7 @@ static char setproctitle_module_documentation[] =
 ;
 
 void
-initsetproctitle()
+initsetproctitle(void)
 {
     PyObject *m, *d;
 
