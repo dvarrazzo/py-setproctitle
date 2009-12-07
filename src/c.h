@@ -25,9 +25,9 @@ typedef char bool;
 #endif
 #endif   /* not C++ */
 
+#include <stddef.h>
 
 #if !HAVE_DECL_STRLCPY
-#include <stddef.h>
 extern size_t strlcpy(char *dst, const char *src, size_t siz);
 #endif
 
