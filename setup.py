@@ -5,12 +5,12 @@ setproctitle setup script.
 Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
+VERSION = '0.2'
+
 import os
 import re
 import sys
 from distutils.core import setup, Extension
-
-VERSION = '0.2a0'
 
 define_macros={}
 
@@ -58,7 +58,7 @@ setup(
     license = 'BSD',
     platforms = ['POSIX', 'Windows'],
     classifiers = filter(None, map(str.strip, """
-        Development Status :: 3 - Alpha
+        Development Status :: 4 - Beta
         Intended Audience :: Developers
         License :: OSI Approved :: BSD License
         Programming Language :: C
