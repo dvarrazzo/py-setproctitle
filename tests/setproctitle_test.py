@@ -56,7 +56,7 @@ class GetProcTitleTestCase(unittest.TestCase):
     def test_prctl(self):
         """Check that prctl is called on supported platforms."""
         linux_version = []
-        if os.system == 'linux2':
+        if sys.platform == 'linux2':
             try:
                 linux_version = map(int,
                     re.search("[.0-9]+", os.popen("uname -r").read())
