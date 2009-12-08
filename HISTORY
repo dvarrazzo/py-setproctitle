@@ -4,6 +4,8 @@ Releases history
 Currently in tip
 ~~~~~~~~~~~~~~~~
 
+- Module works on BSD (tested on FreeBSD 7.2).
+
 - Module works on Windows. Many thanks to `Develer`_ which provided a neat `GCC
   package for Windows with Python integration`__ that made the Windows porting
   painless.
@@ -24,7 +26,8 @@ Version 0.3
 
 Version 0.2
 ~~~~~~~~~~~
-- Added ``prctl()`` call on Linux > 2.6.9 to update ``/proc/self/status``.
+
+- Added ``prctl()`` call on Linux >= 2.6.9 to update ``/proc/self/status``.
 
 
 Version 0.1
