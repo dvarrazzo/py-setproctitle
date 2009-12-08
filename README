@@ -52,16 +52,16 @@ The module exports the following functions:
 Module status
 -------------
 
-Albeit the core part of the code has been tested on a wild variety of
-platforms, compiling the Python module has currently been tested on:
+The module can be currently compiled and effectively used on the following
+platforms:
 
 - GNU/Linux
 - BSD
 - MacOS X
 - Windows
 
-Notice that on Windows there is no way to change the process string.
-What the module does is to create a Named Object whose value can be read
+Notice that on Windows there is no way to change the process string:
+what the module does is to create a Named Object whose value can be read
 in tools such as Process Explorer.
 
 
