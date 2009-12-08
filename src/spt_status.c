@@ -373,7 +373,7 @@ set_ps_display(const char *activity, bool force)
         if (ident_handle != INVALID_HANDLE_VALUE)
             CloseHandle(ident_handle);
 
-        sprintf(name, "pgident(%d): %s", MyProcPid, ps_buffer);
+        sprintf(name, "python(%d): %s", _getpid(), ps_buffer);
 
         ident_handle = CreateEvent(NULL, TRUE, FALSE, name);
     }

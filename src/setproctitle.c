@@ -124,12 +124,13 @@ initsetproctitle(void)
         setproctitle_module_documentation,
         (PyObject*)NULL,PYTHON_API_VERSION);
 
-	/* Add version string to the module*/
-	d = PyModule_GetDict(m);
-	spt_version = PyString_FromString(xstr(SPT_VERSION));
-	PyDict_SetItemString(d, "__version__", spt_version);
+    /* Add version string to the module*/
+    d = PyModule_GetDict(m);
+    spt_version = PyString_FromString(xstr(SPT_VERSION));
+    PyDict_SetItemString(d, "__version__", spt_version);
 
     /* Initialize the process title */
+#ifndef WIN32
     int argc;
     char **argv;
     Py_GetArgcArgv(&argc, &argv);
@@ -139,6 +140,14 @@ initsetproctitle(void)
     char *init_title = join_argv(argc, argv);
     init_ps_display(init_title);
     free(init_title);
+#else
+    /* On Windows save_ps_display_args is a no-op
+     * This is a good news, because Py_GetArgcArgv seems not usable.
+     */
+    LPTSTR init_title = GetCommandLine();
+    init_ps_display(init_title);
+#endif
+
 
     /* Check for errors */
     if (PyErr_Occurred())
