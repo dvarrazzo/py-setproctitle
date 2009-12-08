@@ -1,14 +1,28 @@
 Releases history
 ----------------
 
-0.3
+Currently in tip
+~~~~~~~~~~~~~~~~
 
-- Module tested on Mac OS X 10.2.
+- Module works on Windows.
 
-0.2
+  Notice that on Windows there is no way to change the process string.
+  What the module does is to create a Named Object whose value can be read
+  in tools such as Process Explorer.
 
+
+Version 0.3
+~~~~~~~~~~~
+
+- Module works on Mac OS X 10.2. Reported working on OS X 10.6 too.
+
+
+Version 0.2
+~~~~~~~~~~~
 - Added ``prctl()`` call on Linux > 2.6.9 to update ``/proc/self/status``.
 
-0.1
+
+Version 0.1
+~~~~~~~~~~~
 
 - Initial public release.
