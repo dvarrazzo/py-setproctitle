@@ -1,18 +1,14 @@
 Releases history
 ----------------
 
-Currently in tip
-~~~~~~~~~~~~~~~~
+Version 0.4
+~~~~~~~~~~~
 
 - Module works on BSD (tested on FreeBSD 7.2).
 
 - Module works on Windows. Many thanks to `Develer`_ which provided a neat `GCC
   package for Windows with Python integration`__ that made the Windows porting
   painless.
-
-  Notice that on Windows there is no way to change the process string.
-  What the module does is to create a Named Object whose value can be read
-  in tools such as Process Explorer.
 
   .. _Develer: http://www.develer.com/
   .. __: http://www.develer.com/oss/GccWinBinaries

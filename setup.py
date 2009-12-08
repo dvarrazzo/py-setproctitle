@@ -5,7 +5,7 @@ setproctitle setup script.
 Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
-VERSION = '0.4a0'
+VERSION = '0.4'
 
 import os
 import re
@@ -72,13 +72,17 @@ setup(
     url = 'http://code.google.com/p/py-setproctitle/',
     download_url = 'http://pypi.python.org/pypi/setproctitle/',
     license = 'BSD',
-    platforms = ['POSIX', 'Windows'],
+    platforms = ['GNU/Linux', 'BSD', 'MacOS X', 'Windows'],
     classifiers = filter(None, map(str.strip, """
         Development Status :: 4 - Beta
         Intended Audience :: Developers
         License :: OSI Approved :: BSD License
         Programming Language :: C
         Programming Language :: Python
+        Operating System :: POSIX :: Linux
+        Operating System :: POSIX :: BSD
+        Operating System :: MacOS :: MacOS X
+        Operating System :: Microsoft :: Windows
         Topic :: Software Development
         """.splitlines())),
     ext_modules = [mod_spt],

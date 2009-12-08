@@ -56,7 +56,13 @@ Albeit the core part of the code has been tested on a wild variety of
 platforms, compiling the Python module has currently been tested on:
 
 - GNU/Linux
-- Mac OS X
+- BSD
+- MacOS X
+- Windows
+
+Notice that on Windows there is no way to change the process string.
+What the module does is to create a Named Object whose value can be read
+in tools such as Process Explorer.
 
 
 Other known implementations and discussions
