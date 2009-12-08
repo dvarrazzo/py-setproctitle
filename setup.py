@@ -48,7 +48,10 @@ if sys.version < '2.2.3':
 
 # Try to include the long description in the setup
 kwargs = {}
-try: kwargs['long_description'] = open('README').read()
+try: kwargs['long_description'] = (
+    open('README').read()
+    + '\n'
+    +open('HISTORY').read())
 except: pass
 
 setup(
