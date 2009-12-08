@@ -43,7 +43,15 @@ class GetProcTitleTestCase(unittest.TestCase):
         lines = filter(None, rv.splitlines())
         pid = lines.pop(0)
         pids = dict([r.strip().split(None, 1) for r in lines])
-        self.assertEqual(pids[pid], "Hello, world!")
+
+        title = pids[pid]
+        if 'bsd' in sys.platform:
+            # BSD's setproctitle decorates the title with the process name
+            procname = os.path.basename(sys.executable)
+            title = ' '.join([t for t in title.split(' ')
+                if procname not in t])  
+
+        self.assertEqual(title, "Hello, world!")
 
     def test_prctl(self):
         """Check that prctl is called on supported platforms."""

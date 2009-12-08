@@ -27,9 +27,18 @@ if sys.platform == 'linux2':
         if linux_version >= [2, 6, 9]:
             define_macros['HAVE_SYS_PRCTL_H'] = 1
 
-if sys.platform == 'darwin':
+elif sys.platform == 'darwin':
     # __darwin__ symbol is not defined; __APPLE__ is instead.
     define_macros['__darwin__'] = 1
+
+elif 'bsd' in sys.platform: # OMG, how many of them are?
+    # Old BSD versions don't have setproctitle
+    # TODO: not tested on an "old BSD"
+    if 0 == os.spawnlp(os.P_WAIT, 'grep',
+            'grep', '-q', 'setproctitle', '/usr/include/unistd.h'):
+        define_macros['HAVE_SETPROCTITLE'] = 1
+    else:
+        define_macros['HAVE_PS_STRING'] = 1
 
 mod_spt = Extension('setproctitle',
     define_macros=define_macros.items(),
