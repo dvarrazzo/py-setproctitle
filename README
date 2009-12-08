@@ -6,9 +6,14 @@ A ``setproctitle`` implementation for Python
 The library allows a process to change its title (as displayed by system tools
 such as ``ps`` and ``top``).
 
-The procedure is hardly portable across different systems.
-A `good implementation`_ is provided by PostgreSQL_: this module is a wrapper
-around it.
+Changing a process title is mostly useful in multi-process systems, for example
+when using a pool of slave workers whose job is not decided when the process is
+spawned, but later on, after some form of communication from the controlling
+process.
+
+The procedure is hardly portable across different systems.  A `good
+implementation`_ is provided by PostgreSQL_: this module is a wrapper around
+its code.
 
 .. _good implementation: http://doxygen.postgresql.org/ps__status_8c-source.html
 .. _PostgreSQL: http://www.postgresql.org
