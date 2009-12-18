@@ -40,6 +40,11 @@ elif 'bsd' in sys.platform: # OMG, how many of them are?
     else:
         define_macros['HAVE_PS_STRING'] = 1
 
+# NOTE: the library may work on HP-UX using pstat
+# thus setting define_macros['HAVE_SYS_PSTAT_H']
+# see http://www.noc.utoronto.ca/~mikep/unix/HPTRICKS
+# But I have none handy to test with.
+
 mod_spt = Extension('setproctitle',
     define_macros=define_macros.items(),
     sources = [
