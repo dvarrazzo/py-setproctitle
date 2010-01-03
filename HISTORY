@@ -6,7 +6,7 @@ Version 0.4
 
 - Module works on BSD (tested on FreeBSD 7.2).
 
-- Module works on Windows. Many thanks to `Develer`_ which provided a neat `GCC
+- Module works on Windows. Many thanks to `Develer`_ for providing a neat `GCC
   package for Windows with Python integration`__ that made the Windows porting
   painless.
 
