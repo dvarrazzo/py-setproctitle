@@ -96,7 +96,7 @@ class GetProcTitleTestCase(unittest.TestCase):
             os.environ['PATH'] = os.environ.get('PATH', '') \
                     + os.pathsep + "fakepath"
 
-            # read the environment from a spawned process hineriting the
+            # read the environment from a spawned process inheriting the
             # updated env
             newenv = dict([r.split("=",1)
                     for r in os.popen("env").read().splitlines()
