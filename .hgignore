@@ -2,6 +2,7 @@
 \.sw[op]$
 \.orig$
 \.pyc$
+\.rej$
 tools/pttest$
 tools/sptdemo$
 tools/prctl_demo$
