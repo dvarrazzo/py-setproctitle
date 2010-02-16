@@ -5,7 +5,7 @@ setproctitle setup script.
 Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
-VERSION = '0.4'
+VERSION = '1.0'
 
 import os
 import re
@@ -62,11 +62,13 @@ if sys.version < '2.2.3':
 
 # Try to include the long description in the setup
 kwargs = {}
-try: kwargs['long_description'] = (
-    open('README').read()
-    + '\n'
-    +open('HISTORY').read())
-except: pass
+try: 
+    kwargs['long_description'] = (
+        open('README').read()
+        + '\n'
+        +open('HISTORY').read())
+except: 
+    pass
 
 setup(
     name = 'setproctitle',
@@ -79,7 +81,7 @@ setup(
     license = 'BSD',
     platforms = ['GNU/Linux', 'BSD', 'MacOS X', 'Windows'],
     classifiers = filter(None, map(str.strip, """
-        Development Status :: 4 - Beta
+        Development Status :: 5 - Production/Stable
         Intended Audience :: Developers
         License :: OSI Approved :: BSD License
         Programming Language :: C

@@ -1,6 +1,14 @@
 Releases history
 ----------------
 
+Version 1.0
+~~~~~~~~~~~
+
+No major change since the previous version.  The module has been heavily used
+in production environment without any problem reported, so it's time to declare
+it stable.
+
+
 Version 0.4
 ~~~~~~~~~~~
 
