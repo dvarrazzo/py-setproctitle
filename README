@@ -6,17 +6,18 @@ A ``setproctitle`` implementation for Python
 The library allows a process to change its title (as displayed by system tools
 such as ``ps`` and ``top``).
 
-Changing a process title is mostly useful in multi-process systems, for example
-when using a pool of slave workers whose job is not decided when the process is
-spawned, but later on, after some form of communication from the controlling
-process.
+Changing the title is mostly useful in multi-process systems, for example
+when a master process is forked: changing the children's title allows to
+identify the task each process is busy with.  The technique is used by
+PostgreSQL_ and the `OpenSSH Server`_ for example.
 
-The procedure is hardly portable across different systems.  A `good
-implementation`_ is provided by PostgreSQL_: this module is a wrapper around
-its code.
+The procedure is hardly portable across different systems.  PostgreSQL provides
+a good `multi-platform implementation`__:  this module is a Python wrapper
+around PostgreSQL code.
 
-.. _good implementation: http://doxygen.postgresql.org/ps__status_8c-source.html
 .. _PostgreSQL: http://www.postgresql.org
+.. _OpenSSH Server: http://www.openssh.com/
+.. __: http://doxygen.postgresql.org/ps__status_8c-source.html
 
 
 Installation
@@ -63,6 +64,9 @@ platforms:
 Notice that on Windows there is no way to change the process string:
 what the module does is to create a Named Object whose value can be read
 in tools such as Process Explorer.
+
+The module can probably work on HP-UX, but I haven't found any to test with.
+It is unlikely that it can work on Solaris instead.
 
 
 Other known implementations and discussions
