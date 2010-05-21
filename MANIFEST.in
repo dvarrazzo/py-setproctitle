@@ -1,5 +1,6 @@
 include HISTORY
 include COPYRIGHT
+include MANIFEST
 include src/*.c
 include src/*.h
 include tests/*.py
