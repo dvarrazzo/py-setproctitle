@@ -37,10 +37,12 @@ class SetproctitleTestCase(unittest.TestCase):
         rv = self.run_script(r"""
             import setproctitle
             setproctitle.setproctitle('Hello, world!')
-            
+
             import os
             print os.getpid()
-            print os.popen("ps -o pid,command").read()
+            # ps can fail on kfreebsd arch
+            # (http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=460331)
+            print os.popen("ps -o pid,command 2> /dev/null").read()
             """)
         lines = filter(None, rv.splitlines())
         pid = lines.pop(0)
