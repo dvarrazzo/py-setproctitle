@@ -120,9 +120,8 @@ initsetproctitle(void)
     PyObject *m, *d;
 
     /* Create the module and add the functions */
-    m = Py_InitModule4("setproctitle", spt_methods,
-        setproctitle_module_documentation,
-        (PyObject*)NULL,PYTHON_API_VERSION);
+    m = Py_InitModule3("setproctitle", spt_methods,
+        setproctitle_module_documentation);
 
     /* Add version string to the module*/
     d = PyModule_GetDict(m);
