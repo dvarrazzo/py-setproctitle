@@ -8,12 +8,14 @@ Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 import os
 import re
 import sys
+import shutil
+import tempfile
 import unittest
 from subprocess import Popen, PIPE, STDOUT
 
 from nose.plugins.skip import SkipTest
 
-class GetProcTitleTestCase(unittest.TestCase):
+class SetproctitleTestCase(unittest.TestCase):
     def test_runner(self):
         """Test the script execution method."""
         rv = self.run_script("""
@@ -112,7 +114,32 @@ class GetProcTitleTestCase(unittest.TestCase):
         self.assertEqual(test, 'setenv-value')
         self.assert_(path.endswith('fakepath'), path)
 
-    def run_script(self, script, args=None):
+    def test_issue_8(self):
+        """Test that the module works with 'python -m'."""
+        module = 'spt_issue_8'
+        pypath = os.environ.get('PYTHONPATH', None)
+        dir = tempfile.mkdtemp()
+        os.environ['PYTHONPATH'] = dir + os.pathsep + (pypath or '')
+        try:
+            open(dir + '/' + module + '.py', 'w').write(
+                self._clean_whitespaces(r"""
+                    import setproctitle
+                    setproctitle.setproctitle("X" * 40)
+                    print open("/proc/self/cmdline").read()
+                """))
+
+            rv = self.run_script(args="-m " + module)
+            self.assertEqual(rv.replace('\x00', ' ').rstrip(), 'X' * 40)
+
+        finally:
+            shutil.rmtree(dir, ignore_errors=True)
+            if pypath is not None:
+                os.environ['PYTHONPATH'] = pypath
+            else:
+                del os.environ['PYTHONPATH']
+
+
+    def run_script(self, script=None, args=None):
         """run a script in a separate process.
 
         if the script completes successfully, return the concatenation of
@@ -122,10 +149,12 @@ class GetProcTitleTestCase(unittest.TestCase):
         if args:
             cmdline = cmdline + " " + args
 
-        script = self._clean_whitespaces(script)
         proc = Popen(cmdline,
                 stdin=PIPE, stdout=PIPE, stderr=STDOUT,
                 shell=True, close_fds=True)
+
+        if script is not None:
+            script = self._clean_whitespaces(script)
 
         out = proc.communicate(script)[0]
         if 0 != proc.returncode:

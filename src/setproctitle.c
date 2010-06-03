@@ -108,6 +108,29 @@ join_argv(int argc, char **argv)
 }
 
 
+/* Return a copy of argv referring to the original arg area.
+ *
+ * python -m messes up with arg (issue #8): ensure to have a vector to the
+ * original args or save_ps_display_args() will stop processing too soon.
+ *
+ * Return a buffer allocated with malloc: should be cleaned up with free()
+ * (it is never released though).
+ */
+static char **
+fix_argv(int argc, char **argv)
+{
+    char **buf = (char **)malloc(argc * sizeof(char *));
+    int i;
+    char *ptr = argv[0];
+    for (i = 0; i < argc; ++i) {
+        buf[i] = ptr;
+        ptr += strlen(ptr) + 1;
+    }
+
+    return buf;
+}
+
+
 /* Initialization function for the module (*must* be called initsetproctitle) */
 
 static char setproctitle_module_documentation[] =
@@ -133,6 +156,7 @@ initsetproctitle(void)
     int argc;
     char **argv;
     Py_GetArgcArgv(&argc, &argv);
+    argv = fix_argv(argc, argv);
     save_ps_display_args(argc, argv);
 
     /* Set up the first title to fully initialize the code */
