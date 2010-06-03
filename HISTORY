@@ -1,6 +1,13 @@
 Releases history
 ----------------
 
+Version 1.0.1
+~~~~~~~~~~~~~
+
+- ``setproctitle()`` works even when Python messes up with argv, e.g. when run
+  with the -m option.
+
+
 Version 1.0
 ~~~~~~~~~~~
 
