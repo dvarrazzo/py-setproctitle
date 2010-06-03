@@ -157,6 +157,10 @@ class GetProcTitleTestCase(unittest.TestCase):
                         % (i + 1, line.strip()))
             script[i] = line[len(spaces):]
 
+        # drop final blank lines: they produce import errors
+        while script and script[-1].isspace():
+            del script[-1]
+
         assert not script[0][0].isspace(), script[0]
         return ''.join(script)
 
