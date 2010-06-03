@@ -3,7 +3,7 @@
  * c.h
  *    A few fundamental C definitions.
  *
- * Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+ * Copyright (c) 2009-2010 Daniele Varrazzo <daniele.varrazzo@gmail.com>
  *-------------------------------------------------------------------------
  */
 
