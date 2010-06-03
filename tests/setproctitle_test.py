@@ -164,3 +164,6 @@ class GetProcTitleTestCase(unittest.TestCase):
         assert not script[0][0].isspace(), script[0]
         return ''.join(script)
 
+
+if __name__ == '__main__':
+    unittest.main()
