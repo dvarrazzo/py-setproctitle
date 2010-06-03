@@ -48,13 +48,7 @@ class SetproctitleTestCase(unittest.TestCase):
         pid = lines.pop(0)
         pids = dict([r.strip().split(None, 1) for r in lines])
 
-        title = pids[pid]
-        if 'bsd' in sys.platform:
-            # BSD's setproctitle decorates the title with the process name
-            procname = os.path.basename(sys.executable)
-            title = ' '.join([t for t in title.split(' ')
-                if procname not in t])  
-
+        title = self._clean_up_title(pids[pid])
         self.assertEqual(title, "Hello, world!")
 
     def test_prctl(self):
@@ -127,11 +121,17 @@ class SetproctitleTestCase(unittest.TestCase):
                 self._clean_whitespaces(r"""
                     import setproctitle
                     setproctitle.setproctitle("X" * 40)
-                    print open("/proc/self/cmdline").read()
+
+                    import sys
+                    if 'bsd' in sys.platform:
+                        print open("/proc/curproc/cmdline").read()
+                    else:
+                        print open("/proc/self/cmdline").read()
                 """))
 
             rv = self.run_script(args="-m " + module)
-            self.assertEqual(rv.replace('\x00', ' ').rstrip(), 'X' * 40)
+            rv = self._clean_up_title(rv)
+            self.assert_(rv.startswith('X' * 40))
 
         finally:
             shutil.rmtree(dir, ignore_errors=True)
@@ -194,6 +194,17 @@ class SetproctitleTestCase(unittest.TestCase):
 
         assert not script[0][0].isspace(), script[0]
         return ''.join(script)
+
+    def _clean_up_title(self, title):
+        """Clean up a string from the prefix added by the platform.
+        """
+        # BSD's setproctitle decorates the title with the process name.
+        if 'bsd' in sys.platform:
+            procname = os.path.basename(sys.executable)
+            title = ' '.join([t for t in title.split(' ')
+                if procname not in t])  
+
+        return title
 
 
 if __name__ == '__main__':
