@@ -120,18 +120,20 @@ class SetproctitleTestCase(unittest.TestCase):
             open(dir + '/' + module + '.py', 'w').write(
                 self._clean_whitespaces(r"""
                     import setproctitle
-                    setproctitle.setproctitle("X" * 40)
+                    setproctitle.setproctitle("Hello, module!")
 
-                    import sys
-                    if 'bsd' in sys.platform:
-                        print open("/proc/curproc/cmdline").read()
-                    else:
-                        print open("/proc/self/cmdline").read()
+                    import os
+                    print os.getpid()
+                    print os.popen("ps -o pid,command 2> /dev/null").read()
                 """))
 
             rv = self.run_script(args="-m " + module)
-            rv = self._clean_up_title(rv)
-            self.assert_(rv.startswith('X' * 40))
+            lines = filter(None, rv.splitlines())
+            pid = lines.pop(0)
+            pids = dict([r.strip().split(None, 1) for r in lines])
+
+            title = self._clean_up_title(pids[pid])
+            self.assertEqual(title, "Hello, module!")
 
         finally:
             shutil.rmtree(dir, ignore_errors=True)
