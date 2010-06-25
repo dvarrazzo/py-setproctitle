@@ -12,15 +12,12 @@
  *-------------------------------------------------------------------------
  */
 
-#include "Python.h"
+#include "spt.h"
 #include "spt_status.h"
 
 #ifndef SPT_VERSION
 #define SPT_VERSION unknown
 #endif
-
-/* defined in Modules/main.c but not publically declared */
-void Py_GetArgcArgv(int *argc, char ***argv);
 
 /* macro trick to stringify a macro expansion */
 #define xstr(s) str(s)
