@@ -16,6 +16,10 @@ define_macros={}
 
 define_macros['SPT_VERSION'] = VERSION
 
+# Check the env to see if piro wants debug messages.
+if 'SPT_DEBUG' in os.environ:
+    define_macros['SPT_DEBUG'] = '1'
+
 if sys.platform == 'linux2':
     try:
         linux_version = map(int, 
@@ -49,6 +53,7 @@ mod_spt = Extension('setproctitle',
     define_macros=define_macros.items(),
     sources = [
         'src/setproctitle.c',
+        'src/spt_debug.c',
         'src/spt_status.c',
         'src/strlcpy.c', # TODO: not needed on some platform
         ])

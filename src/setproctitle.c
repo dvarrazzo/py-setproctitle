@@ -139,6 +139,8 @@ initsetproctitle(void)
 {
     PyObject *m, *d;
 
+    spt_debug("module init");
+
     /* Create the module and add the functions */
     m = Py_InitModule3("setproctitle", spt_methods,
         setproctitle_module_documentation);
