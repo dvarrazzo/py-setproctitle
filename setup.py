@@ -54,6 +54,7 @@ mod_spt = Extension('setproctitle',
     sources = [
         'src/setproctitle.c',
         'src/spt_debug.c',
+        'src/spt_setup.c',
         'src/spt_status.c',
         'src/strlcpy.c', # TODO: not needed on some platform
         ])
