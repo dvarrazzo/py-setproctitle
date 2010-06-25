@@ -146,23 +146,24 @@ class SetproctitleTestCase(unittest.TestCase):
     def run_script(self, script=None, args=None):
         """run a script in a separate process.
 
-        if the script completes successfully, return the concatenation of
-        ``stdout`` and ``stderr``. else fail.
+        if the script completes successfully, return its ``stdout``,
+        else fail the test.
         """
         cmdline = sys.executable
         if args:
             cmdline = cmdline + " " + args
 
         proc = Popen(cmdline,
-                stdin=PIPE, stdout=PIPE, stderr=STDOUT,
+                stdin=PIPE, stdout=PIPE, stderr=PIPE,
                 shell=True, close_fds=True)
 
         if script is not None:
             script = self._clean_whitespaces(script)
 
-        out = proc.communicate(script)[0]
+        out, err = proc.communicate(script)
         if 0 != proc.returncode:
             print out
+            print err
             self.fail("test script failed")
 
         return out
