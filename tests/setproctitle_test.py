@@ -13,6 +13,8 @@ import tempfile
 import unittest
 from subprocess import Popen, PIPE, STDOUT
 
+IS_PY3K = sys.version_info[0] == 3
+
 try:
     from nose.plugins.skip import SkipTest
 except ImportError:
@@ -20,6 +22,15 @@ except ImportError:
         pass
 
 class SetproctitleTestCase(unittest.TestCase):
+    """Test the module works as expected.
+
+    The tests are executed in external processes: setproctitle should
+    never be imported directly from here.
+
+    The tests scrits are written in Python 2 syntax: if the test suite is run
+    with Python 3 they are converted automatically. This test module should
+    be converted though: the Makefile should do that.
+    """
     def test_runner(self):
         """Test the script execution method."""
         rv = self.run_script("""
@@ -122,14 +133,14 @@ class SetproctitleTestCase(unittest.TestCase):
         os.environ['PYTHONPATH'] = dir + os.pathsep + (pypath or '')
         try:
             open(dir + '/' + module + '.py', 'w').write(
-                self._clean_whitespaces(r"""
+                self.to3(self._clean_whitespaces(r"""
                     import setproctitle
                     setproctitle.setproctitle("Hello, module!")
 
                     import os
                     print os.getpid()
                     print os.popen("ps -o pid,command 2> /dev/null").read()
-                """))
+                """)))
 
             rv = self.run_script(args="-m " + module)
             lines = filter(None, rv.splitlines())
@@ -163,6 +174,9 @@ class SetproctitleTestCase(unittest.TestCase):
 
         if script is not None:
             script = self._clean_whitespaces(script)
+            script = self.to3(script)
+            if IS_PY3K:
+                script = script.encode()
 
         out, err = proc.communicate(script)
         if 0 != proc.returncode:
@@ -170,7 +184,31 @@ class SetproctitleTestCase(unittest.TestCase):
             print err
             self.fail("test script failed")
 
+        # Py3 subprocess generates bytes strings.
+        if IS_PY3K:
+            out = out.decode()
+
         return out
+
+    def to3(self, script):
+        """Convert a script to Python3 if required."""
+        if not IS_PY3K:
+            return script
+
+        script = script.encode()
+        f = tempfile.NamedTemporaryFile(suffix=".py")
+        f.write(script)
+        f.flush()
+
+        # 2to3 is way too chatty
+        import logging
+        logging.basicConfig(filename=os.devnull)
+
+        from lib2to3.main import main
+        if main("lib2to3.fixes", ['--no-diffs', '-w', '-n', f.name]):
+            raise Exception('py3 conversion failed')
+
+        return open(f.name).read()
 
     def _clean_whitespaces(self, script):
         """clean up a script in a string
