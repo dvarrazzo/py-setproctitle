@@ -92,7 +92,7 @@ initsetproctitle(void)
 
     /* Add version string to the module*/
     d = PyModule_GetDict(m);
-    spt_version = PyString_FromString(xstr(SPT_VERSION));
+    spt_version = Py_BuildValue("s", xstr(SPT_VERSION));
     PyDict_SetItemString(d, "__version__", spt_version);
 
     /* Initialize the process title */
