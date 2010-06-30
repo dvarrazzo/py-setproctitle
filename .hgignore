@@ -9,4 +9,5 @@ tools/prctl_demo$
 tools/ps_status\.[ch]
 build
 dist
+py3
 MANIFEST
