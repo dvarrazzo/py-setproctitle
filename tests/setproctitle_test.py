@@ -13,7 +13,11 @@ import tempfile
 import unittest
 from subprocess import Popen, PIPE, STDOUT
 
-from nose.plugins.skip import SkipTest
+try:
+    from nose.plugins.skip import SkipTest
+except ImportError:
+    class SkipTest(Exception):
+        pass
 
 class SetproctitleTestCase(unittest.TestCase):
     def test_runner(self):
