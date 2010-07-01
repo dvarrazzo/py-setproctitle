@@ -114,7 +114,7 @@ bool        update_process_title = true;
 #endif
 
 /* we use this strategy together with another one (probably PS_USE_CLOBBER_ARGV) */
-#if defined(HAVE_SYS_PRCTL_H) && !defined(PS_USE_NONE)
+#if defined(HAVE_SYS_PRCTL_H) && defined(PR_SET_NAME) && !defined(PS_USE_NONE)
 #define PS_USE_PRCTL
 #endif
 
