@@ -13,7 +13,29 @@
 
 #include <Python.h>
 
+/* Things change a lot here... */
+#if PY_MAJOR_VERSION >= 3
+#define IS_PY3K
+#endif
+
+#ifdef IS_PY3K
+#define CHAR_T wchar_t
+#define STRLEN wcslen
+#define CHAR_FMT "u"
+#else
+#define CHAR_T char
+#define STRLEN strlen
+#define CHAR_FMT "s"
+#endif
+
 /* defined in Modules/main.c but not publically declared */
-void Py_GetArgcArgv(int *argc, char ***argv);
+void Py_GetArgcArgv(int *argc, CHAR_T ***argv);
+
+/* Mangle the module name into the name of the module init function */
+#ifdef IS_PY3K
+#define INIT_MODULE(m) PyInit_ ## m
+#else
+#define INIT_MODULE(m) init ## m
+#endif
 
 #endif   /* SPT_PYTHON_H */

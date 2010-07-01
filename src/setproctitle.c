@@ -79,16 +79,37 @@ static char setproctitle_module_documentation[] =
 "Allow customization of the process title."
 ;
 
-void
-initsetproctitle(void)
+#ifdef IS_PY3K
+
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "setproctitle",
+    setproctitle_module_documentation,
+    -1,
+    spt_methods,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+};
+
+#endif
+
+PyMODINIT_FUNC
+INIT_MODULE(setproctitle)(void)
 {
     PyObject *m, *d;
 
     spt_debug("module init");
 
     /* Create the module and add the functions */
+#ifdef IS_PY3K
+    m = PyModule_Create(&moduledef);
+#else
     m = Py_InitModule3("setproctitle", spt_methods,
         setproctitle_module_documentation);
+#endif
+    if (m == NULL) { goto exit; }
 
     /* Add version string to the module*/
     d = PyModule_GetDict(m);
@@ -99,7 +120,19 @@ initsetproctitle(void)
     spt_setup();
 
     /* Check for errors */
-    if (PyErr_Occurred())
+    if (PyErr_Occurred()) {
         Py_FatalError("can't initialize module setproctitle");
+        Py_DECREF(m);
+        m = NULL;
+    }
+
+exit:
+
+#ifdef IS_PY3K
+    return m;
+#else
+    return;
+#endif
+
 }
 
