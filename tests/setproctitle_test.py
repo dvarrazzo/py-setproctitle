@@ -157,14 +157,65 @@ class SetproctitleTestCase(unittest.TestCase):
             else:
                 del os.environ['PYTHONPATH']
 
+    def test_weird_args(self):
+        """No problem with encoded arguments."""
+        euro = u'\u20ac'
+        snowman = u'\u2603'
+        rv = self.run_script(r"""
+            import setproctitle
+            setproctitle.setproctitle("Hello, weird args!")
 
-    def run_script(self, script=None, args=None):
+            import os
+            print os.getpid()
+            print os.popen("ps -o pid,command 2> /dev/null").read()
+        """, args=u" ".join(["-", "hello", euro, snowman]))
+        lines = filter(None, rv.splitlines())
+        pid = lines.pop(0)
+        pids = dict([r.strip().split(None, 1) for r in lines])
+
+        title = self._clean_up_title(pids[pid])
+        self.assertEqual(title, "Hello, weird args!")
+
+    def test_weird_path(self):
+        """No problem with encoded argv[0] path."""
+        euro = u'\u20ac'
+        snowman = u'\u2603'
+        tdir = tempfile.mkdtemp()
+        dir = tdir + "/" + euro + "/" + snowman
+        try:
+            os.makedirs(dir)
+            exc = dir + "/python"
+            os.symlink(sys.executable, exc)
+
+            rv = self.run_script(r"""
+                import setproctitle
+                setproctitle.setproctitle("Hello, weird path!")
+
+                import os
+                print os.getpid()
+                print os.popen("ps -o pid,command 2> /dev/null").read()
+                """,
+                args=u" ".join(["-", "foo", "bar", "baz"]),
+                executable=exc)
+            lines = filter(None, rv.splitlines())
+            pid = lines.pop(0)
+            pids = dict([r.strip().split(None, 1) for r in lines])
+
+            title = self._clean_up_title(pids[pid])
+            self.assertEqual(title, "Hello, weird path!")
+        finally:
+            shutil.rmtree(tdir, ignore_errors=True)
+
+    def run_script(self, script=None, args=None, executable=None):
         """run a script in a separate process.
 
         if the script completes successfully, return its ``stdout``,
         else fail the test.
         """
-        cmdline = sys.executable
+        if executable is None:
+            executable = sys.executable
+
+        cmdline = executable
         if args:
             cmdline = cmdline + " " + args
 
