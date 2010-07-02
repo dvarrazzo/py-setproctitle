@@ -13,6 +13,16 @@
 #include "spt.h"
 #include "spt_status.h"
 
+/* Darwin doesn't export environ */
+#if defined(__darwin__)
+#include <crt_externs.h>
+#define environ (*_NSGetEnviron())
+#else
+extern char **environ;
+#endif
+
+#ifndef WIN32
+
 /* return a concatenated version of a strings vector
  *
  * Return newly allocated heap space: clean it up with free()
@@ -45,6 +55,8 @@ join_argv(int argc, char **argv)
 }
 
 
+#ifndef IS_PY3K
+
 /* Return a copy of argv referring to the original arg area.
  *
  * python -m messes up with arg (issue #8): ensure to have a vector to the
@@ -67,6 +79,138 @@ fix_argv(int argc, char **argv)
     return buf;
 }
 
+#else
+
+/* Return a copy of argv[0] encoded in the default encoding.
+ *
+ * Return a newly allocated buffer to be released with free()
+ */
+static char *
+get_encoded_arg0(wchar_t *argv0)
+{
+    PyObject *ua = NULL, *ba = NULL;
+    char *rv = NULL;
+
+    if (!(ua = PyUnicode_FromWideChar(argv0, -1))) {
+        spt_debug("failed to convert argv[0] to unicode");
+        goto exit;
+    }
+
+    if (!(ba = PyUnicode_AsEncodedString(
+            ua, PyUnicode_GetDefaultEncoding(), "strict"))) {
+        spt_debug("failed to encode argv[0]");
+        goto exit;
+    }
+
+    rv = strdup(PyBytes_AsString(ba));
+
+exit:
+    PyErr_Clear();
+    Py_XDECREF(ua);
+    Py_XDECREF(ba);
+
+    return rv;
+}
+
+/* Find the original arg buffer starting from the env position.
+ *
+ * Return nonzero if found.
+ *
+ * Required on Python 3 as Py_GetArgcArgv doesn't return pointers to the
+ * original area.
+ */
+static int
+find_argv_from_env(int *argc_o, char ***argv_o)
+{
+    int rv = 0;
+    int argc;
+    wchar_t **argv;
+    char **buf = NULL;
+    char *arg0 = NULL;
+
+    /* Find the number of parameters. */
+    Py_GetArgcArgv(&argc, &argv);
+
+    buf = (char **)malloc((argc + 1) * sizeof(char *));
+    buf[argc] = NULL;
+
+    /* Walk back from environ until you find argc-1 null-terminated strings.
+     * Don't look for argv[0] as it's probably not preceded by 0. */
+    int i;
+    char *ptr = environ[0];
+    --ptr;
+    for (i = argc - 1; i >= 1; --i) {
+        if (*ptr) {
+            spt_debug("zero %d not found", i);
+            goto error;
+        }
+        --ptr;
+        while (*ptr) { --ptr; }
+        buf[i] = (ptr + 1);
+    }
+
+    /* The first arg has not a zero in front. But what we have is reliable
+     * enough (modulo its encoding). Check if it is exactly what found. */
+    arg0 = get_encoded_arg0(argv[0]);
+    if (!arg0) { goto error; }
+    ptr -= strlen(arg0);
+
+    if (strcmp(ptr, arg0)) {
+        spt_debug("failed to recognize argv[0]");
+        goto error;
+    }
+
+    /* We have all the pieces of the jigsaw. */
+    buf[0] = ptr;
+    *argc_o = argc;
+    *argv_o = buf;
+    rv = 1;
+
+    goto exit;
+
+error:
+    if (buf) { free(buf); }
+
+exit:
+    if (arg0) { free(arg0); }
+
+    return rv;
+}
+
+#endif  /* IS_PY3K */
+
+/* Find the original arg buffer, return nonzero if found.
+ *
+ * If found, set argc to the number of arguments, argv to an array
+ * of pointers to the single arguments. The array is allocated via malloc.
+ *
+ * The function overcomes two Py_GetArgcArgv shortcomings:
+ * - some python parameters mess up with the original argv, e.g. -m
+ *   (see issue #8)
+ * - with Python 3, argv is a decoded copy and doesn't point to
+ *   the original area.
+ */
+static int
+get_argc_argv(int *argc, char ***argv)
+{
+    int rv = false;
+
+#ifdef IS_PY3K
+    if (!(rv = find_argv_from_env(argc, argv))) {
+        spt_debug("setup failed");
+    }
+#else
+    Py_GetArgcArgv(argc, argv);
+    *argv = fix_argv(*argc, *argv);
+    rv = true;
+#endif
+
+    return rv;
+}
+
+#endif  /* WIN32 */
+
+
 /* Initialize the module internal functions.
  *
  * The function reproduces the initialization performed by PostgreSQL
@@ -80,10 +224,14 @@ void
 spt_setup(void)
 {
 #ifndef WIN32
-    int argc;
-    char **argv;
-    Py_GetArgcArgv(&argc, &argv);
-    argv = fix_argv(argc, argv);
+    int argc = 0;
+    char **argv = NULL;
+
+    if (!get_argc_argv(&argc, &argv)) {
+        spt_debug("setup failed");
+        return;
+    }
+
     save_ps_display_args(argc, argv);
 
     /* Set up the first title to fully initialize the code */
