@@ -12,6 +12,8 @@ import re
 import sys
 from distutils.core import setup, Extension
 
+IS_PY3K = sys.version_info[0] == 3
+
 define_macros={}
 
 define_macros['SPT_VERSION'] = VERSION
@@ -77,7 +79,7 @@ except:
     pass
 
 setup(
-    name = 'setproctitle',
+    name = 'setproctitle' + (IS_PY3K and "-py3" or ""),
     description = 'Allow customization of the process title.',
     version = VERSION,
     author = 'Daniele Varrazzo',
