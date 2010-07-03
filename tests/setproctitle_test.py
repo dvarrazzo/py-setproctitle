@@ -188,14 +188,19 @@ class SetproctitleTestCase(unittest.TestCase):
         """No problem with encoded arguments."""
         euro = u'\u20ac'
         snowman = u'\u2603'
-        rv = self.run_script(r"""
+        try:
+            rv = self.run_script(r"""
             import setproctitle
             setproctitle.setproctitle("Hello, weird args!")
 
             import os
             print os.getpid()
             print os.popen("ps -o pid,command 2> /dev/null").read()
-        """, args=u" ".join(["-", "hello", euro, snowman]))
+            """, args=u" ".join(["-", "hello", euro, snowman]))
+        except TypeError:
+            raise SkipTest(
+                "apparently we can't pass unicode args to a program")
+
         lines = filter(None, rv.splitlines())
         pid = lines.pop(0)
         pids = dict([r.strip().split(None, 1) for r in lines])
@@ -210,7 +215,11 @@ class SetproctitleTestCase(unittest.TestCase):
         tdir = tempfile.mkdtemp()
         dir = tdir + "/" + euro + "/" + snowman
         try:
-            os.makedirs(dir)
+            try:
+                os.makedirs(dir)
+            except UnicodeEncodeError:
+                raise SkipTest("file system doesn't support unicode")
+
             exc = dir + "/python"
             os.symlink(sys.executable, exc)
 
