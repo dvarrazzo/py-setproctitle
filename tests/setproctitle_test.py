@@ -181,8 +181,12 @@ class SetproctitleTestCase(unittest.TestCase):
         pids = dict([r.strip().split(None, 1) for r in lines])
 
         snowman = u'\u2603'
+        sm2 = r'\M-b\M^X\M^C' # on bsd appears like this in ps output
+                              # but it's OK in /proc/PID/cmdline
         title = self._clean_up_title(pids[pid])
-        self.assertEqual(title, "Hello, " + snowman + "!")
+        self.assert_(title in (
+            "Hello, " + snowman + "!", "Hello, " + sm2 + "!"),
+            repr(title))
 
     def test_weird_args(self):
         """No problem with encoded arguments."""
