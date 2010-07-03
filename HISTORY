@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.1
+~~~~~~~~~~~
+
+- The module works correctly with Python 3.
+
+
 Version 1.0.1
 ~~~~~~~~~~~~~
 

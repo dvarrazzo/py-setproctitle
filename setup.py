@@ -92,6 +92,7 @@ setup(
         License :: OSI Approved :: BSD License
         Programming Language :: C
         Programming Language :: Python
+        Programming Language :: Python :: 3
         Operating System :: POSIX :: Linux
         Operating System :: POSIX :: BSD
         Operating System :: MacOS :: MacOS X

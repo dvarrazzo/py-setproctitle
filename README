@@ -72,6 +72,18 @@ It is unlikely that it can work on Solaris instead.
 .. _Process Explorer: http://technet.microsoft.com/en-us/sysinternals/bb896653.aspx
 
 
+Python 3 support
+----------------
+
+As of version 1.1 the module works with Python 3.  In order to install the
+module, you can use the `distribute`_ replacemente for ``easy_install``.
+
+In order to build and test the module under Python 3, the ``Makefile``
+contains some helper targets.
+
+.. _distribute: http://pypi.python.org/pypi/distribute
+
+
 Other known implementations and discussions
 -------------------------------------------
 
