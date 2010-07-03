@@ -44,9 +44,6 @@ test3: build3
 	PYTHONPATH=$(BUILD3_DIR):$$PYTHONPATH \
 		$(PYTHON3) py3/tests/setproctitle_test.py -v
 
-sdist3: py3
-	cd py3 && $(PYTHON3) setup.py sdist --formats=gztar,zip --dist-dir=../dist
-
 clean:
 	$(RM) -r MANIFEST py3 build dist
 
