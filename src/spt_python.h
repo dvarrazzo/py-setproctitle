@@ -18,18 +18,12 @@
 #define IS_PY3K
 #endif
 
-#ifdef IS_PY3K
-#define CHAR_T wchar_t
-#define STRLEN wcslen
-#define CHAR_FMT "u"
-#else
-#define CHAR_T char
-#define STRLEN strlen
-#define CHAR_FMT "s"
-#endif
-
 /* defined in Modules/main.c but not publically declared */
-void Py_GetArgcArgv(int *argc, CHAR_T ***argv);
+#ifdef IS_PY3K
+void Py_GetArgcArgv(int *argc, wchar_t ***argv);
+#else
+void Py_GetArgcArgv(int *argc, char ***argv);
+#endif
 
 /* Mangle the module name into the name of the module init function */
 #ifdef IS_PY3K
