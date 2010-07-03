@@ -160,6 +160,30 @@ class SetproctitleTestCase(unittest.TestCase):
             else:
                 del os.environ['PYTHONPATH']
 
+    def test_unicode(self):
+        """Title can contain unicode characters."""
+        if 'utf-8' != sys.getdefaultencoding():
+            raise SkipTest("encoding '%s' can't deal with snowmen"
+                    % sys.getdefaultencoding())
+
+        rv = self.run_script(r"""
+            snowman = u'\u2603'
+
+            import setproctitle
+            setproctitle.setproctitle("Hello, " + snowman + "!")
+
+            import os
+            print os.getpid()
+            print os.popen("ps -o pid,command 2> /dev/null").read()
+        """)
+        lines = filter(None, rv.splitlines())
+        pid = lines.pop(0)
+        pids = dict([r.strip().split(None, 1) for r in lines])
+
+        snowman = u'\u2603'
+        title = self._clean_up_title(pids[pid])
+        self.assertEqual(title, "Hello, " + snowman + "!")
+
     def test_weird_args(self):
         """No problem with encoded arguments."""
         euro = u'\u20ac'
