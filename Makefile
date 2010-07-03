@@ -16,8 +16,8 @@ build:
 	$(PYTHON) setup.py build --build-lib $(BUILD_DIR)
 
 test: build
-	PYTHONPATH=$(BUILD_DIR):$$PYTHONPATH \
-		$(PYTHON) tests/setproctitle_test.py -v
+	PYTHONPATH=`pwd`/$(BUILD_DIR):$$PYTHONPATH \
+		$(PYTHON) `which nosetests` -v -s -w tests
 
 sdist: MANIFEST
 	$(PYTHON) setup.py sdist --formats=gztar,zip

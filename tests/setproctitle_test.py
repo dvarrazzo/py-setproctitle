@@ -18,8 +18,11 @@ IS_PY3K = sys.version_info[0] == 3
 try:
     from nose.plugins.skip import SkipTest
 except ImportError:
-    class SkipTest(Exception):
-        pass
+    try:
+        from unittest import SkipTest
+    except ImportError:
+        class SkipTest(Exception):
+            pass
 
 class SetproctitleTestCase(unittest.TestCase):
     """Test the module works as expected.
