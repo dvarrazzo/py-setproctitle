@@ -3,6 +3,7 @@
 # Copyright (c) 2010 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 
 MKDIR = mkdir -p
+RM = rm -f
 PYTHON = python
 PYTHON3 = python3.1
 PY2TO3 = 2to3
