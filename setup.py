@@ -24,9 +24,9 @@ if 'SPT_DEBUG' in os.environ:
 
 if sys.platform == 'linux2':
     try:
-        linux_version = map(int, 
+        linux_version = list(map(int,
             re.search("[.0-9]+", os.popen("uname -r").read())
-                .group().split(".")[:3])
+                .group().split(".")[:3]))
     except:
         pass
     else:
@@ -52,7 +52,7 @@ elif 'bsd' in sys.platform: # OMG, how many of them are?
 # But I have none handy to test with.
 
 mod_spt = Extension('setproctitle',
-    define_macros=define_macros.items(),
+    define_macros=list(define_macros.items()),
     sources = [
         'src/setproctitle.c',
         'src/spt_debug.c',
@@ -88,7 +88,7 @@ setup(
     download_url = 'http://pypi.python.org/pypi/setproctitle/',
     license = 'BSD',
     platforms = ['GNU/Linux', 'BSD', 'MacOS X', 'Windows'],
-    classifiers = filter(None, map(str.strip, """
+    classifiers = [ r for r in map(str.strip, """
         Development Status :: 5 - Production/Stable
         Intended Audience :: Developers
         License :: OSI Approved :: BSD License
@@ -99,6 +99,6 @@ setup(
         Operating System :: MacOS :: MacOS X
         Operating System :: Microsoft :: Windows
         Topic :: Software Development
-        """.splitlines())),
+        """.splitlines()) if r],
     ext_modules = [mod_spt],
     **kwargs)

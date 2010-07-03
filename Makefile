@@ -33,7 +33,9 @@ py3: MANIFEST
 	$(MKDIR) py3/src
 	$(MKDIR) py3/tests
 	for f in `cat MANIFEST`; do cp -v $$f py3/$$f; done
-	$(PY2TO3) -w --no-diffs py3
+	# setup.py should be executable with python3 as distribute
+	# currenlty doesn't seem to try to convert it
+	$(PY2TO3) -w --no-diffs py3/tests
 
 build3: py3
 	$(PYTHON3) py3/setup.py build --build-lib $(BUILD3_DIR)
