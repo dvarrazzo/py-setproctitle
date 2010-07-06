@@ -81,7 +81,7 @@ class SetproctitleTestCase(unittest.TestCase):
                 pass
 
         if linux_version < [2,6,9]:
-            raise SkipTest
+            raise SkipTest("syscall not supported")
 
         rv = self.run_script(r"""
             import setproctitle
