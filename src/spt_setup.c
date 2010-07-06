@@ -138,6 +138,7 @@ find_argv_from_env(int *argc_o, char ***argv_o)
      * Don't look for argv[0] as it's probably not preceded by 0. */
     int i;
     char *ptr = environ[0];
+    char *limit = ptr - 8192;  /* TODO: empiric limit: should use MAX_ARG */
     --ptr;
     for (i = argc - 1; i >= 1; --i) {
         if (*ptr) {
@@ -145,7 +146,11 @@ find_argv_from_env(int *argc_o, char ***argv_o)
             goto error;
         }
         --ptr;
-        while (*ptr) { --ptr; }
+        while (*ptr && ptr > limit) { --ptr; }
+        if (ptr <= limit) {
+            spt_debug("failed to found arg %d start", i);
+            goto error;
+        }
         buf[i] = (ptr + 1);
     }
 
@@ -159,6 +164,10 @@ find_argv_from_env(int *argc_o, char ***argv_o)
     if (!arg0) { goto error; }
     ptr -= strlen(arg0);
 
+    if (ptr <= limit) {
+        spt_debug("failed to found argv[0] start");
+        goto error;
+    }
     if (strcmp(ptr, arg0)) {
         spt_debug("failed to recognize argv[0]");
         goto error;
@@ -201,7 +210,7 @@ get_argc_argv(int *argc, char ***argv)
 
 #ifdef IS_PY3K
     if (!(rv = find_argv_from_env(argc, argv))) {
-        spt_debug("setup failed");
+        spt_debug("get_argc_argv failed");
     }
 #else
     Py_GetArgcArgv(argc, argv);
