@@ -150,7 +150,11 @@ find_argv_from_env(int *argc_o, char ***argv_o)
     }
 
     /* The first arg has not a zero in front. But what we have is reliable
-     * enough (modulo its encoding). Check if it is exactly what found. */
+     * enough (modulo its encoding). Check if it is exactly what found.
+     *
+     * The check is known to fail on OS X with locale C if there are
+     * non-ascii characters in the executable path. See Python issue #9167
+     */
     arg0 = get_encoded_arg0(argv[0]);
     if (!arg0) { goto error; }
     ptr -= strlen(arg0);

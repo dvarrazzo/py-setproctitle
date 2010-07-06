@@ -218,6 +218,7 @@ class SetproctitleTestCase(unittest.TestCase):
 
     def test_weird_path(self):
         """No problem with encoded argv[0] path."""
+        self._check_4388()
         euro = u'\u20ac'
         snowman = u'\u2603'
         tdir = tempfile.mkdtemp()
@@ -345,6 +346,23 @@ class SetproctitleTestCase(unittest.TestCase):
                 if procname not in t])  
 
         return title
+
+    def _check_4388(self):
+        """Check if the system is affected by bug #4388.
+
+        If positive, unicode chars in the cmdline are not reliable,
+        so bail out.
+
+        see: http://bugs.python.org/issue4388
+        """
+        if not IS_PY3K:
+            return
+
+        from subprocess import Popen, PIPE
+        p = Popen([sys.executable, '-c', "ord('\xe9')"], stderr=PIPE)
+        p.communicate()
+        if p.returncode:
+            raise SkipTest("bug #4388 detected")
 
 
 if __name__ == '__main__':
