@@ -8,8 +8,8 @@ PYTHON = python
 PYTHON3 = python3.1
 PY2TO3 = 2to3
 
-BUILD_DIR = build/lib.$(PYTHON)
-BUILD3_DIR = build/lib.$(PYTHON3)
+BUILD_DIR = build/lib.`basename $(PYTHON)`
+BUILD3_DIR = build/lib.`basename $(PYTHON3)`
 
 .PHONY: build test py3 build3 test3 clean
 
