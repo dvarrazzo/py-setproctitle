@@ -358,6 +358,13 @@ class SetproctitleTestCase(unittest.TestCase):
         if not IS_PY3K:
             return
 
+        if sys.getfilesystemencoding() == 'ascii':
+            # in this case the char below would get translated in some
+            # inconsistent way.
+            # I'm not getting why the FS encoding is involved in process
+            # spawning, the whole story just seems a gigantic can of worms.
+            return
+
         from subprocess import Popen, PIPE
         p = Popen([sys.executable, '-c', "ord('\xe9')"], stderr=PIPE)
         p.communicate()
