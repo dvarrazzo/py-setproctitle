@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+tip
+~~~
+
+- Fixed segfault when the module is imported under mod_wsgi (issue #9).
+
+
 Version 1.1
 ~~~~~~~~~~~
 
