@@ -2,7 +2,7 @@
 """
 setproctitle setup script.
 
-Copyright (c) 2009-2010 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+Copyright (c) 2009-2011 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
 VERSION = '1.1.1.dev1'
