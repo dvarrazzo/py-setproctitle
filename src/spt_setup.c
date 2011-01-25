@@ -130,7 +130,7 @@ find_argv_from_env(int *argc_o, char ***argv_o)
 
     /* Find the number of parameters. */
     Py_GetArgcArgv(&argc, &argv);
-    if (argc == NULL || argv == 0) {
+    if (argc <= 0 || argv == NULL) {
         spt_debug("no good news from Py_GetArgcArgv");
         goto exit;
     }
@@ -218,7 +218,7 @@ get_argc_argv(int *argc, char ***argv)
     }
 #else
     Py_GetArgcArgv(argc, argv);
-    if (argc == NULL || argv == 0) {
+    if (*argc <= 0 || *argv == NULL) {
         spt_debug("no good news from Py_GetArgcArgv");
         return rv;
     }
