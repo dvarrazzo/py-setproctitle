@@ -258,6 +258,10 @@ class SetproctitleTestCase(unittest.TestCase):
         (see issue #9). Probably due to the Python interpreter main()
         not executed.
         """
+        exe = os.environ.get('ROOT_PATH', '.') + '/tests/pyrun'
+        if not os.path.exists(exe):
+            raise Exception('test program not found: %s' % exe)
+
         rv = self.run_script(r"""
             import setproctitle
             setproctitle.setproctitle("Hello, embedded!")
@@ -266,7 +270,7 @@ class SetproctitleTestCase(unittest.TestCase):
             print os.getpid()
             print os.popen("ps -o pid,command 2> /dev/null").read()
             """,
-            executable='tests/pyrun')
+            executable=exe)
 
     def run_script(self, script=None, args=None, executable=None):
         """run a script in a separate process.

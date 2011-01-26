@@ -12,6 +12,7 @@ PY2TO3 ?= 2to3
 
 # PYVER value is 2 or 3
 PYVER := $(shell $(PYTHON) -c "import sys; print(sys.version_info[0])")
+ROOT_PATH := $(shell pwd)
 
 PYINC := $(shell $(PYCONFIG) --includes)
 PYLIB := $(shell $(PYCONFIG) --ldflags)
@@ -27,7 +28,8 @@ build:
 
 test: build tests/pyrun
 	PYTHONPATH=`pwd`/$(BUILD_DIR):$$PYTHONPATH \
-		$(PYTHON) `which nosetests` -v -s -w tests
+	ROOT_PATH=$(ROOT_PATH) \
+	$(PYTHON) `which nosetests` -v -s -w tests
 
 else
 
@@ -36,7 +38,8 @@ build: py3
 
 test: build tests/pyrun
 	PYTHONPATH=$(BUILD_DIR):$$PYTHONPATH \
-		$(PYTHON) py3/tests/setproctitle_test.py -v
+	ROOT_PATH=$(ROOT_PATH) \
+	$(PYTHON) py3/tests/setproctitle_test.py -v
 
 py3: MANIFEST
 	$(MKDIR) py3
