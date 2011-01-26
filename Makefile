@@ -23,7 +23,7 @@ ifeq (2,$(PYVER))
 build:
 	$(PYTHON) setup.py build --build-lib $(BUILD_DIR)
 
-test: build
+test: build tests/pyrun
 	PYTHONPATH=`pwd`/$(BUILD_DIR):$$PYTHONPATH \
 		$(PYTHON) `which nosetests` -v -s -w tests
 
@@ -32,7 +32,7 @@ else
 build: py3
 	$(PYTHON) py3/setup.py build --build-lib $(BUILD_DIR)
 
-test: build
+test: build tests/pyrun
 	PYTHONPATH=$(BUILD_DIR):$$PYTHONPATH \
 		$(PYTHON) py3/tests/setproctitle_test.py -v
 

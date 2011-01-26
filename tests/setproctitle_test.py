@@ -251,6 +251,23 @@ class SetproctitleTestCase(unittest.TestCase):
         finally:
             shutil.rmtree(tdir, ignore_errors=True)
 
+    def test_embedded(self):
+        """Check the module doesn't explode with embedded Python.
+
+        Simulate the condition that made spt explode with mod_wsgi
+        (see issue #9). Probably due to the Python interpreter main()
+        not executed.
+        """
+        rv = self.run_script(r"""
+            import setproctitle
+            setproctitle.setproctitle("Hello, embedded!")
+
+            import os
+            print os.getpid()
+            print os.popen("ps -o pid,command 2> /dev/null").read()
+            """,
+            executable='tests/pyrun')
+
     def run_script(self, script=None, args=None, executable=None):
         """run a script in a separate process.
 
