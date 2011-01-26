@@ -4,14 +4,17 @@
 
 MKDIR = mkdir -p
 RM = rm -f
-PYTHON = python
-PYTHON3 = python3.1
-PY2TO3 = 2to3
+PYTHON ?= python
+PY2TO3 ?= 2to3
 
-BUILD_DIR = build/lib.`basename $(PYTHON)`
-BUILD3_DIR = build/lib.`basename $(PYTHON3)`
+# PYVER value is 2 or 3
+PYVER := $(shell $(PYTHON) -c "import sys; print(sys.version_info[0])")
 
-.PHONY: build test py3 build3 test3 clean
+BUILD_DIR = build/lib.$(PYVER)
+
+.PHONY: build test py3 clean
+
+ifeq (2,$(PYVER))
 
 build:
 	$(PYTHON) setup.py build --build-lib $(BUILD_DIR)
@@ -20,13 +23,14 @@ test: build
 	PYTHONPATH=`pwd`/$(BUILD_DIR):$$PYTHONPATH \
 		$(PYTHON) `which nosetests` -v -s -w tests
 
-sdist: MANIFEST
-	$(PYTHON) setup.py sdist --formats=gztar,zip
+else
 
-MANIFEST:
-	# Must run twice because the manifest contains the manifest itself.
-	$(PYTHON) setup.py sdist --manifest-only
-	$(PYTHON) setup.py sdist --manifest-only
+build: py3
+	$(PYTHON) py3/setup.py build --build-lib $(BUILD_DIR)
+
+test: build
+	PYTHONPATH=$(BUILD_DIR):$$PYTHONPATH \
+		$(PYTHON) py3/tests/setproctitle_test.py -v
 
 py3: MANIFEST
 	$(MKDIR) py3
@@ -37,12 +41,15 @@ py3: MANIFEST
 	# currenlty doesn't seem to try to convert it
 	$(PY2TO3) -w --no-diffs py3/tests
 
-build3: py3
-	$(PYTHON3) py3/setup.py build --build-lib $(BUILD3_DIR)
+endif
 
-test3: build3
-	PYTHONPATH=$(BUILD3_DIR):$$PYTHONPATH \
-		$(PYTHON3) py3/tests/setproctitle_test.py -v
+sdist: MANIFEST
+	$(PYTHON) setup.py sdist --formats=gztar,zip
+
+MANIFEST:
+	# Must run twice because the manifest contains the manifest itself.
+	$(PYTHON) setup.py sdist --manifest-only
+	$(PYTHON) setup.py sdist --manifest-only
 
 clean:
 	$(RM) -r MANIFEST py3 build dist
