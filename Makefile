@@ -10,6 +10,10 @@ PY2TO3 ?= 2to3
 # PYVER value is 2 or 3
 PYVER := $(shell $(PYTHON) -c "import sys; print(sys.version_info[0])")
 
+PYCONFIG ?= python-config
+PYINC := $(shell $(PYCONFIG) --includes)
+PYLIB := $(shell $(PYCONFIG) --libs)
+
 BUILD_DIR = build/lib.$(PYVER)
 
 .PHONY: build test py3 clean
@@ -51,7 +55,10 @@ MANIFEST:
 	$(PYTHON) setup.py sdist --manifest-only
 	$(PYTHON) setup.py sdist --manifest-only
 
+tests/pyrun: tests/pyrun.c
+	$(CC) $(PYINC) $(PYLIB) -o $@ $<
+
 clean:
-	$(RM) -r MANIFEST py3 build dist
+	$(RM) -r MANIFEST py3 build dist tests/pyrun
 
 

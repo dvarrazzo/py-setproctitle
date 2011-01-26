@@ -11,3 +11,4 @@ build
 dist
 py3
 MANIFEST
+tests/pyrun
