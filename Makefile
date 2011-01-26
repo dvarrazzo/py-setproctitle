@@ -4,15 +4,17 @@
 
 MKDIR = mkdir -p
 RM = rm -f
+
+# Customize these to select the Python to build/test
 PYTHON ?= python
+PYCONFIG ?= python-config
 PY2TO3 ?= 2to3
 
 # PYVER value is 2 or 3
 PYVER := $(shell $(PYTHON) -c "import sys; print(sys.version_info[0])")
 
-PYCONFIG ?= python-config
 PYINC := $(shell $(PYCONFIG) --includes)
-PYLIB := $(shell $(PYCONFIG) --libs)
+PYLIB := $(shell $(PYCONFIG) --ldflags)
 
 BUILD_DIR = build/lib.$(PYVER)
 
