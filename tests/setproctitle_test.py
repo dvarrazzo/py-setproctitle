@@ -163,9 +163,18 @@ class SetproctitleTestCase(unittest.TestCase):
 
     def test_unicode(self):
         """Title can contain unicode characters."""
-        if 'utf-8' != sys.getdefaultencoding():
-            raise SkipTest("encoding '%s' can't deal with snowmen"
+        snowman = u'\u2603'
+        try:
+            snowman.encode(sys.getdefaultencoding())
+        except UnicodeEncodeError:
+            raise SkipTest("default encoding '%s' can't deal with snowmen"
                     % sys.getdefaultencoding())
+
+        try:
+            snowman.encode(sys.getfilesystemencoding())
+        except UnicodeEncodeError:
+            raise SkipTest("file system encoding '%s' can't deal with snowmen"
+                    % sys.getfilesystemencoding())
 
         rv = self.run_script(r"""
             snowman = u'\u2603'
