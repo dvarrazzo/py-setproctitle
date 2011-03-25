@@ -39,7 +39,7 @@ elif 'bsd' in sys.platform: # OMG, how many of them are?
     # Old BSD versions don't have setproctitle
     # TODO: not tested on an "old BSD"
     if 0 == os.spawnlp(os.P_WAIT, 'grep',
-            'grep', '-q', 'setproctitle', '/usr/include/unistd.h'):
+            'grep', '-q', 'setproctitle', '/usr/include/unistd.h', '/usr/include/stdlib.h'):
         define_macros['HAVE_SETPROCTITLE'] = 1
     else:
         define_macros['HAVE_PS_STRING'] = 1
