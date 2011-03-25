@@ -15,7 +15,7 @@ PYVER := $(shell $(PYTHON) -c "import sys; print(sys.version_info[0])")
 ROOT_PATH := $(shell pwd)
 
 PYINC := $(shell $(PYCONFIG) --includes)
-PYLIB := $(shell $(PYCONFIG) --ldflags)
+PYLIB := $(shell $(PYCONFIG) --ldflags) -L$(shell $(PYCONFIG) --prefix)/lib
 
 BUILD_DIR = build/lib.$(PYVER)
 
