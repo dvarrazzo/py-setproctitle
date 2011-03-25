@@ -15,11 +15,12 @@ from subprocess import Popen, PIPE, STDOUT
 
 IS_PY3K = sys.version_info[0] == 3
 
+# SkipTest is available from Python 2.7 and in nose
 try:
-    from nose.plugins.skip import SkipTest
+    from unittest import SkipTest
 except ImportError:
     try:
-        from unittest import SkipTest
+        from nose.plugins.skip import SkipTest
     except ImportError:
         class SkipTest(Exception):
             pass
