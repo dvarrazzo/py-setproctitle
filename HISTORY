@@ -1,6 +1,14 @@
 Releases history
 ----------------
 
+Version 1.1.2
+~~~~~~~~~~~~~
+
+- Find the setproctitle include file on OpenBSD (issue #11).
+- Skip test with unicode if the file system encoding wouldn't make it pass
+  (issue #13).
+
+
 Version 1.1.1
 ~~~~~~~~~~~~~
 
@@ -17,7 +25,7 @@ Version 1.0.1
 ~~~~~~~~~~~~~
 
 - ``setproctitle()`` works even when Python messes up with argv, e.g. when run
-  with the -m option.
+  with the -m option (issue #8).
 
 
 Version 1.0
