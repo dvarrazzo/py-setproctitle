@@ -33,7 +33,7 @@ environment, you can use the command::
 
     easy_install -d /target/path setproctitle
 
-Notice that ``easy_install`` requires ``/target/path`` to be in your 
+Note that ``easy_install`` requires ``/target/path`` to be in your
 ``PYTHONPATH``.
 
 
@@ -44,6 +44,14 @@ The module exports the following functions:
 
 ``setproctitle(title)``
     Set *title* as the title for the current process.
+
+    Note: on many platforms, setting the process title will clobber the
+    ``environ`` memory area. ``os.environ`` will work as expected from within
+    the Python process, but the content of the file ``/proc/PID/environ`` will
+    be overwritten.  If you require this file not to be broken you can set the
+    ``SPT_NOENV`` environment variable to any non-empty value: in this case
+    the maximum length for the title will be limited to the length of the
+    command line, but the ``environ`` file will be untouched.
 
 
 ``getproctitle()``
@@ -61,7 +69,7 @@ platforms:
 - MacOS X
 - Windows
 
-Notice that on Windows there is no way to change the process string:
+Note that on Windows there is no way to change the process string:
 what the module does is to create a *Named Object* whose value can be read
 using a tool such as `Process Explorer`_ (contribution of a more useful tool
 to be used together with ``setproctitle`` would be well accepted).

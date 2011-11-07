@@ -282,7 +282,41 @@ class SetproctitleTestCase(unittest.TestCase):
             """,
             executable=exe)
 
-    def run_script(self, script=None, args=None, executable=None):
+    def test_noenv(self):
+        """Check that SPT_NOENV avoids clobbering environ."""
+        env = os.environ.copy()
+        env['SPT_TESTENV'] = 'testenv'
+        rv = self.run_script("""
+            import os
+            os.environ['SPT_NOENV'] = "1"
+
+            cmdline_len = len(open('/proc/self/cmdline').read())
+            print cmdline_len
+            print 'SPT_TESTENV=testenv' in open('/proc/self/environ').read()
+
+            import setproctitle
+            setproctitle.setproctitle('X' * cmdline_len * 10)
+
+            title = open('/proc/self/cmdline').read().rstrip()
+            print title
+            print len(title)
+
+            print 'SPT_TESTENV=testenv' in open('/proc/self/environ').read()
+        """, env=env)
+        lines = rv.splitlines()
+        cmdline_len = int(lines[0])
+        self.assertEqual(lines[1], 'True', "can't verify testenv")
+        title = lines[2]
+        self.assert_('XXX' in self._clean_up_title(title),
+            "title not set as expected")
+        title_len = int(lines[3])
+        self.assertEqual(lines[1], 'True', "env has been clobbered")
+        self.assert_(title_len <= cmdline_len,
+            "title (len %s) not limited to argv (len %s)"
+            % (title_len, cmdline_len))
+
+
+    def run_script(self, script=None, args=None, executable=None, env=None):
         """run a script in a separate process.
 
         if the script completes successfully, return its ``stdout``,
@@ -297,7 +331,7 @@ class SetproctitleTestCase(unittest.TestCase):
 
         proc = Popen(cmdline,
                 stdin=PIPE, stdout=PIPE, stderr=PIPE,
-                shell=True, close_fds=True)
+                env=env, shell=True, close_fds=True)
 
         if script is not None:
             script = self._clean_whitespaces(script)

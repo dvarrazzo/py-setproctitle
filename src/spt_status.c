@@ -187,26 +187,41 @@ save_ps_display_args(int argc, char **argv)
             return argv;
         }
 
-        /*
-         * check for contiguous environ strings following argv
-         */
-        for (i = 0; environ[i] != NULL; i++)
         {
-            if (end_of_area + 1 == environ[i])
-                end_of_area = environ[i] + strlen(environ[i]);
+            /*
+             * Clobbering environ works fine from within the process, but some
+             * external utils use /proc/PID/environ and they would find noting,
+             * or mess, if we clobber it. An user can define SPT_NOENV to limit
+             * clobbering to argv (see ticket #16).
+             */
+            char *noenv;
+
+            noenv = getenv("SPT_NOENV");
+            if (!noenv || !*noenv) {
+
+                /*
+                 * check for contiguous environ strings following argv
+                 */
+                for (i = 0; environ[i] != NULL; i++)
+                {
+                    if (end_of_area + 1 == environ[i])
+                        end_of_area = environ[i] + strlen(environ[i]);
+                }
+
+                /*
+                 * move the environment out of the way
+                 */
+                new_environ = (char **) malloc((i + 1) * sizeof(char *));
+                for (i = 0; environ[i] != NULL; i++)
+                    new_environ[i] = strdup(environ[i]);
+                new_environ[i] = NULL;
+                environ = new_environ;
+            }
         }
 
         ps_buffer = argv[0];
         last_status_len = ps_buffer_size = end_of_area - argv[0];
 
-        /*
-         * move the environment out of the way
-         */
-        new_environ = (char **) malloc((i + 1) * sizeof(char *));
-        for (i = 0; environ[i] != NULL; i++)
-            new_environ[i] = strdup(environ[i]);
-        new_environ[i] = NULL;
-        environ = new_environ;
     }
 #endif   /* PS_USE_CLOBBER_ARGV */
 

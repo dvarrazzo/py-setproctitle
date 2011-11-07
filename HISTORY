@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.1.3
+~~~~~~~~~~~~~
+
+- Don't clobber environ if the variable SPT_NOENV is set (issue #16).
+
+
 Version 1.1.2
 ~~~~~~~~~~~~~
 
