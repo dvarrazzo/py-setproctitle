@@ -310,7 +310,7 @@ class SetproctitleTestCase(unittest.TestCase):
         self.assert_('XXX' in self._clean_up_title(title),
             "title not set as expected")
         title_len = int(lines[3])
-        self.assertEqual(lines[1], 'True', "env has been clobbered")
+        self.assertEqual(lines[4], 'True', "env has been clobbered")
         self.assert_(title_len <= cmdline_len,
             "title (len %s) not limited to argv (len %s)"
             % (title_len, cmdline_len))
