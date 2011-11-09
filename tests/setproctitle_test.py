@@ -11,7 +11,7 @@ import sys
 import shutil
 import tempfile
 import unittest
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE
 
 IS_PY3K = sys.version_info[0] == 3
 
