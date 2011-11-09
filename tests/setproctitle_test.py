@@ -79,11 +79,15 @@ class SetproctitleTestCase(unittest.TestCase):
         linux_version = []
         if sys.platform == 'linux2':
             try:
-                linux_version = map(int,
-                    re.search("[.0-9]+", os.popen("uname -r").read())
-                        .group().split(".")[:3])
+                f = os.popen("uname -r")
+                name = f.read()
+                f.close()
             except:
                 pass
+            else:
+                linux_version = map(int,
+                    re.search("[.0-9]+", name)
+                        .group().split(".")[:3])
 
         if linux_version < [2,6,9]:
             raise SkipTest("syscall not supported")
@@ -140,15 +144,19 @@ class SetproctitleTestCase(unittest.TestCase):
         dir = tempfile.mkdtemp()
         os.environ['PYTHONPATH'] = dir + os.pathsep + (pypath or '')
         try:
-            open(dir + '/' + module + '.py', 'w').write(
-                self.to3(self._clean_whitespaces(r"""
-                    import setproctitle
-                    setproctitle.setproctitle("Hello, module!")
+            f = open(dir + '/' + module + '.py', 'w')
+            try:
+                f.write(
+                    self.to3(self._clean_whitespaces(r"""
+                        import setproctitle
+                        setproctitle.setproctitle("Hello, module!")
 
-                    import os
-                    print os.getpid()
-                    print os.popen("ps -o pid,command 2> /dev/null").read()
-                """)))
+                        import os
+                        print os.getpid()
+                        print os.popen("ps -o pid,command 2> /dev/null").read()
+                    """)))
+            finally:
+                f.close()
 
             rv = self.run_script(args="-m " + module)
             lines = filter(None, rv.splitlines())
@@ -365,18 +373,26 @@ class SetproctitleTestCase(unittest.TestCase):
 
         script = script.encode()
         f = tempfile.NamedTemporaryFile(suffix=".py")
-        f.write(script)
-        f.flush()
+        try:
+            f.write(script)
+            f.flush()
 
-        # 2to3 is way too chatty
-        import logging
-        logging.basicConfig(filename=os.devnull)
+            # 2to3 is way too chatty
+            import logging
+            logging.basicConfig(filename=os.devnull)
 
-        from lib2to3.main import main
-        if main("lib2to3.fixes", ['--no-diffs', '-w', '-n', f.name]):
-            raise Exception('py3 conversion failed')
+            from lib2to3.main import main
+            if main("lib2to3.fixes", ['--no-diffs', '-w', '-n', f.name]):
+                raise Exception('py3 conversion failed')
 
-        return open(f.name).read()
+            ff = open(f.name)
+            try:
+                return ff.read()
+            finally:
+                ff.close()
+
+        finally:
+            f.close()
 
     def _clean_whitespaces(self, script):
         """clean up a script in a string
