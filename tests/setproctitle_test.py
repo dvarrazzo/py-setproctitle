@@ -25,6 +25,10 @@ except ImportError:
         class SkipTest(Exception):
             pass
 
+if unittest.TestCase.assert_ is not unittest.TestCase.assertTrue:
+    # Vaffanculo, Wolf
+    unittest.TestCase.assert_ = unittest.TestCase.assertTrue
+
 class SetproctitleTestCase(unittest.TestCase):
     """Test the module works as expected.
 
