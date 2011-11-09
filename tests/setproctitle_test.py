@@ -284,6 +284,9 @@ class SetproctitleTestCase(unittest.TestCase):
 
     def test_noenv(self):
         """Check that SPT_NOENV avoids clobbering environ."""
+        if not os.path.exists('/proc/self/environ'):
+            raise SkipTest("'/proc/self/environ' not available")
+
         env = os.environ.copy()
         env['SPT_TESTENV'] = 'testenv'
         rv = self.run_script("""
