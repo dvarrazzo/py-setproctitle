@@ -61,7 +61,7 @@ MANIFEST:
 	$(PYTHON) setup.py sdist --manifest-only
 
 tests/pyrun: tests/pyrun.c
-	$(CC) $(PYINC) $(PYLIB) -o $@ $<
+	$(CC) $(PYINC) -o $@ $< $(PYLIB)
 
 clean:
 	$(RM) -r MANIFEST py3 build dist tests/pyrun
