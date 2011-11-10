@@ -19,14 +19,14 @@ PYLIB := $(shell $(PYCONFIG) --ldflags) -L$(shell $(PYCONFIG) --prefix)/lib
 
 BUILD_DIR = build/lib.$(PYVER)
 
-.PHONY: build test py3 clean
+.PHONY: build check py3 clean
 
 ifeq (2,$(PYVER))
 
 build:
 	$(PYTHON) setup.py build --build-lib $(BUILD_DIR)
 
-test: build tests/pyrun
+check: build tests/pyrun
 	PYTHONPATH=`pwd`/$(BUILD_DIR):$$PYTHONPATH \
 	ROOT_PATH=$(ROOT_PATH) \
 	$(PYTHON) `which nosetests` -v -s -w tests
@@ -36,7 +36,7 @@ else
 build: py3
 	$(PYTHON) py3/setup.py build --build-lib $(BUILD_DIR)
 
-test: build tests/pyrun
+check: build tests/pyrun
 	PYTHONPATH=$(BUILD_DIR):$$PYTHONPATH \
 	ROOT_PATH=$(ROOT_PATH) \
 	$(PYTHON) py3/tests/setproctitle_test.py -v
