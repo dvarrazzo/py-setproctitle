@@ -17,7 +17,7 @@ around PostgreSQL code.
 
 .. _PostgreSQL: http://www.postgresql.org
 .. _OpenSSH Server: http://www.openssh.com/
-.. __: http://doxygen.postgresql.org/ps__status_8c-source.html
+.. __: http://doxygen.postgresql.org/ps__status_8c_source.html
 
 
 Installation
