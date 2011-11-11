@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.1.4
+~~~~~~~~~~~~~
+
+- ``setproctitle()`` accepts a keyword argument.
+
+
 Version 1.1.3
 ~~~~~~~~~~~~~
 

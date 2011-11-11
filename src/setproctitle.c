@@ -27,16 +27,18 @@
 
 static PyObject *spt_version;
 
+
 static char spt_setproctitle__doc__[] =
 "Change the process title."
 ;
 
 static PyObject *
-spt_setproctitle(PyObject *self /* Not used */, PyObject *args)
+spt_setproctitle(PyObject *self, PyObject *args, PyObject *kwargs)
 {
-    const char *title;
+    const char *title = NULL;
+    static char *kwlist[] = {"title", NULL};
 
-    if (!PyArg_ParseTuple(args, "s", &title))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s", kwlist, &title))
         return NULL;
 
     set_ps_display(title, true);
@@ -45,17 +47,14 @@ spt_setproctitle(PyObject *self /* Not used */, PyObject *args)
     return Py_None;
 }
 
+
 static char spt_getproctitle__doc__[] =
 "Get the current process title."
 ;
 
 static PyObject *
-spt_getproctitle(PyObject *self /* Not used */, PyObject *args)
+spt_getproctitle(PyObject *self, PyObject *args)
 {
-
-    if (!PyArg_ParseTuple(args, ""))
-        return NULL;
-
     int tlen;
     const char *title;
     title = get_ps_display(&tlen);
@@ -63,13 +62,21 @@ spt_getproctitle(PyObject *self /* Not used */, PyObject *args)
     return Py_BuildValue("s#", title, tlen);
 }
 
+
 /* List of methods defined in the module */
 
 static struct PyMethodDef spt_methods[] = {
-    {"setproctitle",    (PyCFunction)spt_setproctitle,  METH_VARARGS,   spt_setproctitle__doc__},
-    {"getproctitle",    (PyCFunction)spt_getproctitle,  METH_VARARGS,   spt_getproctitle__doc__},
+    {"setproctitle",
+        (PyCFunction)spt_setproctitle,
+        METH_VARARGS|METH_KEYWORDS,
+        spt_setproctitle__doc__},
 
-    {NULL,   (PyCFunction)NULL, 0, NULL}        /* sentinel */
+    {"getproctitle",
+        (PyCFunction)spt_getproctitle,
+        METH_NOARGS,
+        spt_getproctitle__doc__},
+
+    {NULL, (PyCFunction)NULL, 0, NULL}        /* sentinel */
 };
 
 

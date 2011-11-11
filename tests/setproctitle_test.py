@@ -109,6 +109,15 @@ class SetproctitleTestCase(unittest.TestCase):
             """)
         self.assertEqual(rv, "Hello, world!\n")
 
+    def test_kwarg(self):
+        """setproctitle() supports keyword args."""
+        rv = self.run_script(r"""
+            import setproctitle
+            setproctitle.setproctitle(title='Hello, world!')
+            print setproctitle.getproctitle()
+            """)
+        self.assertEqual(rv, "Hello, world!\n")
+
     def test_environ(self):
         """Check that clobbering environ didn't break env."""
         rv = self.run_script(r"""
