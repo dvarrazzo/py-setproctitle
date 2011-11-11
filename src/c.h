@@ -10,6 +10,8 @@
 #ifndef C_H
 #define C_H
 
+#include "spt_config.h"
+
 #ifndef __cplusplus
 
 #ifndef bool
@@ -28,7 +30,7 @@ typedef char bool;
 #include <stddef.h>
 
 #if !HAVE_DECL_STRLCPY
-extern size_t strlcpy(char *dst, const char *src, size_t siz);
+HIDDEN extern size_t strlcpy(char *dst, const char *src, size_t siz);
 #endif
 
 #ifdef WIN32

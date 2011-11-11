@@ -15,6 +15,6 @@
 #include "spt_python.h"
 
 /* expose the debug function to the extension code */
-void spt_debug(const char *fmt, ...);
+HIDDEN void spt_debug(const char *fmt, ...);
 
 #endif

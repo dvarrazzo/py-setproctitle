@@ -12,15 +12,15 @@
 
 #include "c.h"
 
-extern bool update_process_title;
+HIDDEN extern bool update_process_title;
 
-extern char **save_ps_display_args(int argc, char **argv);
+HIDDEN extern char **save_ps_display_args(int argc, char **argv);
 
-extern void init_ps_display(const char *initial_str);
+HIDDEN extern void init_ps_display(const char *initial_str);
 
-extern void set_ps_display(const char *activity, bool force);
+HIDDEN extern void set_ps_display(const char *activity, bool force);
 
-extern const char *get_ps_display(int *displen);
+HIDDEN extern const char *get_ps_display(int *displen);
 
 #endif   /* SPT_STATUS_H */
 

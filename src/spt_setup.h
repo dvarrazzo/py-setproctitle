@@ -11,6 +11,8 @@
 #ifndef SPT_SETUP_H
 #define SPT_SETUP_H
 
-void spt_setup(void);
+#include "spt_config.h"
+
+HIDDEN void spt_setup(void);
 
 #endif
