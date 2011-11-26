@@ -20,7 +20,7 @@ define_macros['SPT_VERSION'] = VERSION
 if 'SPT_DEBUG' in os.environ:
     define_macros['SPT_DEBUG'] = '1'
 
-if sys.platform == 'linux2':
+if sys.platform.startswith('linux'):
     try:
         linux_version = list(map(int,
             re.search("[.0-9]+", os.popen("uname -r").read())
