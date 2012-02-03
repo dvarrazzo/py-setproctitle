@@ -3,7 +3,7 @@
  * setproctitle.c
  *    Python extension module to update and read the process title.
  *
- * Copyright (c) 2009-2011 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+ * Copyright (c) 2009-2012 Daniele Varrazzo <daniele.varrazzo@gmail.com>
  *
  * The module allows Python code to access the functions get_ps_display()
  * and set_ps_display().

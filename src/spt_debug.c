@@ -3,7 +3,7 @@
  * spt_python.c
  *    A simple function for the module debugging.
  *
- * Copyright (c) 2009-2011 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+ * Copyright (c) 2009-2012 Daniele Varrazzo <daniele.varrazzo@gmail.com>
  *
  * Debug logging is enabled if the extension is compiled with the
  * SPT_DEBUG symbol and is emitted on stdout.
