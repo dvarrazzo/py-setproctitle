@@ -29,7 +29,7 @@ static PyObject *spt_version;
 
 
 static char spt_setproctitle__doc__[] =
-"Change the process title."
+"setproctitle(title) -- Change the process title."
 ;
 
 static PyObject *
@@ -49,7 +49,7 @@ spt_setproctitle(PyObject *self, PyObject *args, PyObject *kwargs)
 
 
 static char spt_getproctitle__doc__[] =
-"Get the current process title."
+"getproctitle() -- Get the current process title."
 ;
 
 static PyObject *
