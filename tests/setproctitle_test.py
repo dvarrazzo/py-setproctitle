@@ -289,7 +289,8 @@ class SetproctitleTestCase(unittest.TestCase):
         (see issue #9). Probably due to the Python interpreter main()
         not executed.
         """
-        exe = os.environ.get('ROOT_PATH', '.') + '/tests/pyrun'
+        exe = os.environ.get('ROOT_PATH', '.') \
+            + ('/tests/pyrun%s' % sys.version_info[0])
         if not os.path.exists(exe):
             raise Exception('test program not found: %s' % exe)
 
