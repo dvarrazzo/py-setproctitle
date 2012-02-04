@@ -4,6 +4,7 @@ Releases history
 Version 1.1.4
 ~~~~~~~~~~~~~
 
+- The module works correctly in embedded Python.
 - ``setproctitle()`` accepts a keyword argument.
 
 

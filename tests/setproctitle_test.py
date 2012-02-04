@@ -283,11 +283,7 @@ class SetproctitleTestCase(unittest.TestCase):
             shutil.rmtree(tdir, ignore_errors=True)
 
     def test_embedded(self):
-        """Check the module doesn't explode with embedded Python.
-
-        Simulate the condition that made spt explode with mod_wsgi
-        (see issue #9). Probably due to the Python interpreter main()
-        not executed.
+        """Check the module works with embedded Python.
         """
         exe = os.environ.get('ROOT_PATH', '.') \
             + ('/tests/pyrun%s' % sys.version_info[0])
@@ -303,6 +299,36 @@ class SetproctitleTestCase(unittest.TestCase):
             print os.popen("ps -o pid,command 2> /dev/null").read()
             """,
             executable=exe)
+        lines = filter(None, rv.splitlines())
+        pid = lines.pop(0)
+        pids = dict([r.strip().split(None, 1) for r in lines])
+
+        title = self._clean_up_title(pids[pid])
+        self.assertEqual(title, "Hello, embedded!")
+
+    def test_embedded_many_args(self):
+        """Check more complex cmdlines are handled in embedded env too."""
+        exe = os.environ.get('ROOT_PATH', '.') \
+            + ('/tests/pyrun%s' % sys.version_info[0])
+        if not os.path.exists(exe):
+            raise Exception('test program not found: %s' % exe)
+
+        rv = self.run_script(r"""
+            import setproctitle
+            setproctitle.setproctitle("Hello, embedded!")
+
+            import os
+            print os.getpid()
+            print os.popen("ps -o pid,command 2> /dev/null").read()
+            """,
+            executable=exe,
+            args=u" ".join(["foo", "bar", "baz"]))
+        lines = filter(None, rv.splitlines())
+        pid = lines.pop(0)
+        pids = dict([r.strip().split(None, 1) for r in lines])
+
+        title = self._clean_up_title(pids[pid])
+        self.assertEqual(title, "Hello, embedded!")
 
     def test_noenv(self):
         """Check that SPT_NOENV avoids clobbering environ."""

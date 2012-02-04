@@ -35,4 +35,20 @@ void Py_GetArgcArgv(int *argc, argv_t ***argv);
 #define INIT_MODULE(m) init ## m
 #endif
 
+/* Py2/3 compatibility layer */
+
+#ifdef IS_PY3K
+
+#define PyInt_AsLong           PyLong_AsLong
+
+#define Bytes_Size PyBytes_Size
+#define Bytes_AsString PyBytes_AsString
+
+#else   /* Python 2 */
+
+#define Bytes_Size PyString_Size
+#define Bytes_AsString PyString_AsString
+
+#endif  /* IS_PY3K > 2 */
+
 #endif   /* SPT_PYTHON_H */

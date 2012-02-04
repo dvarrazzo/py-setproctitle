@@ -166,6 +166,126 @@ error:
 }
 
 
+#ifdef IS_PY3K
+
+/* Come on, why is this missing?! this is just cruel!
+ * I guess you club seal pups for hobby. */
+PyObject *
+PyFile_FromString(const char *filename, const char *mode)
+{
+    PyObject *io = NULL;
+    PyObject *rv = NULL;
+
+    if (!(io = PyImport_ImportModule("io"))) {
+        spt_debug("failed to import io");
+        goto exit;
+    }
+
+    rv = PyObject_CallMethod(io, "open", "ss", filename, mode);
+
+exit:
+    Py_XDECREF(io);
+    return rv;
+}
+
+#endif  /* IS_PY3K */
+
+/* Read the number of arguments and the first argument from /proc/pid/cmdline
+ *
+ * Return 1 if found, else 0. Return arg0 in a malloc'd array.
+ */
+static int
+get_args_from_proc(int *argc_o, char **arg0_o)
+{
+    /* allow /proc/XXXXX/cmdline */
+#define FNLEN 20
+    char fn[FNLEN];
+
+    PyObject *os = NULL;
+    PyObject *pid_py = NULL;
+    long pid;
+    PyObject *f = NULL;
+    PyObject *cl = NULL;
+
+    PyObject *tmp = NULL;
+    int rv = 0;
+
+    spt_debug("looking for args into proc fs");
+
+    /* get the pid from os.getpid() */
+    if (!(os = PyImport_ImportModule("os"))) {
+        spt_debug("failed to import os");
+        goto exit;
+    }
+    if (!(pid_py = PyObject_CallMethod(os, "getpid", NULL))) {
+        spt_debug("calling os.getpid() failed");
+        goto exit;
+    }
+    if (-1 == (pid = PyInt_AsLong(pid_py))) {
+        spt_debug("os.getpid() returned crap?");
+        /* Don't bother to check PyErr_Occurred as pid can't just be -1. */
+        goto exit;
+    }
+
+    /* get the content of /proc/PID/cmdline */
+    snprintf(fn, FNLEN, "/proc/%ld/cmdline", pid);
+    if (!(f = PyFile_FromString(fn, "rb"))) {
+        spt_debug("opening '%s' failed", fn);
+        goto exit;
+    }
+    /* the file has been open in binary mode, so we get bytes */
+    cl = PyObject_CallMethod(f, "read", NULL);
+    if (!(tmp = PyObject_CallMethod(f, "close", NULL))) {
+        spt_debug("closing failed");
+    }
+    else {
+        Py_DECREF(tmp);
+    }
+
+    if (!cl) {
+        spt_debug("reading failed");
+        goto exit;
+    }
+
+    /* the cmdline is a buffer of null-terminated strings. We can strdup it to
+     * get a copy of arg0, and count the zeros to get argc */
+    {
+        char *ccl;
+        Py_ssize_t i;
+
+        if (!(ccl = Bytes_AsString(cl))) {
+            spt_debug("failed to get cmdline string");
+            goto exit;
+        }
+        if (!(*arg0_o = strdup(ccl))) {
+            spt_debug("arg0 strdup failed");
+            goto exit;
+        }
+        spt_debug("got argv[0] = '%s' from /proc", *arg0_o);
+
+        *argc_o = 0;
+        for (i = Bytes_Size(cl) - 1; i >= 0; --i) {
+            if (ccl[i] == '\0') { (*argc_o)++; }
+        }
+        spt_debug("got argc = %d from /proc", *argc_o);
+    }
+
+    /* success */
+    rv = 1;
+
+exit:
+    /* clear the exception. Propagating it to the module init would make a
+     * fatal error. What we want instead is just to create a no-op module. */
+    PyErr_Clear();
+
+    Py_XDECREF(cl);
+    Py_XDECREF(f);
+    Py_XDECREF(pid_py);
+    Py_XDECREF(os);
+
+    return rv;
+}
+
 /* Find the original arg buffer, return nonzero if found.
  *
  * If found, set argc to the number of arguments, argv to an array
@@ -205,7 +325,11 @@ get_argc_argv(int *argc_o, char ***argv_o)
     }
     else {
         spt_debug("no good news from Py_GetArgcArgv");
-        goto exit;
+
+        if (!get_args_from_proc(&argc, &arg0)) {
+            spt_debug("failed to get args from proc fs");
+            goto exit;
+        }
     }
 
     if (!(argv = find_argv_from_env(argc, arg0))) {
