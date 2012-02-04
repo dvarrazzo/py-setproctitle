@@ -18,12 +18,15 @@
 #define IS_PY3K
 #endif
 
-/* defined in Modules/main.c but not publically declared */
+/* The type returned by Py_GetArgcArgv */
 #ifdef IS_PY3K
-void Py_GetArgcArgv(int *argc, wchar_t ***argv);
+typedef wchar_t argv_t;
 #else
-void Py_GetArgcArgv(int *argc, char ***argv);
+typedef char argv_t;
 #endif
+
+/* defined in Modules/main.c but not publically declared */
+void Py_GetArgcArgv(int *argc, argv_t ***argv);
 
 /* Mangle the module name into the name of the module init function */
 #ifdef IS_PY3K

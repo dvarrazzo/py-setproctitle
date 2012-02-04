@@ -55,31 +55,7 @@ join_argv(int argc, char **argv)
 }
 
 
-#ifndef IS_PY3K
-
-/* Return a copy of argv referring to the original arg area.
- *
- * python -m messes up with arg (issue #8): ensure to have a vector to the
- * original args or save_ps_display_args() will stop processing too soon.
- *
- * Return a buffer allocated with malloc: should be cleaned up with free()
- * (it is never released though).
- */
-static char **
-fix_argv(int argc, char **argv)
-{
-    char **buf = (char **)malloc(argc * sizeof(char *));
-    int i;
-    char *ptr = argv[0];
-    for (i = 0; i < argc; ++i) {
-        buf[i] = ptr;
-        ptr += strlen(ptr) + 1;
-    }
-
-    return buf;
-}
-
-#else
+#ifdef IS_PY3K
 
 /* Return a copy of argv[0] encoded in the default encoding.
  *
@@ -112,36 +88,36 @@ exit:
     return rv;
 }
 
+#endif  /* IS_PY3K */
+
+
 /* Find the original arg buffer starting from the env position.
  *
- * Return nonzero if found.
+ * Return a malloc'd argv vector, pointing to the original arguments.
  *
  * Required on Python 3 as Py_GetArgcArgv doesn't return pointers to the
- * original area.
+ * original area. It is also called on Python 2 as some cmdline parameters
+ * mess up argv (issue #8).
  */
-static int
-find_argv_from_env(int *argc_o, char ***argv_o)
+static char **
+find_argv_from_env(int argc, char *arg0)
 {
-    int rv = 0;
-    int argc;
-    wchar_t **argv;
     char **buf = NULL;
-    char *arg0 = NULL;
+    char **rv = NULL;
 
-    /* Find the number of parameters. */
-    Py_GetArgcArgv(&argc, &argv);
-    if (argc <= 0 || argv == NULL) {
-        spt_debug("no good news from Py_GetArgcArgv");
-        goto exit;
+    spt_debug("walking from environ to look for the arguments");
+
+    if (!(buf = (char **)malloc((argc + 1) * sizeof(char *)))) {
+        spt_debug("can't malloc %d args!", argc);
+        goto error;
     }
-
-    buf = (char **)malloc((argc + 1) * sizeof(char *));
     buf[argc] = NULL;
 
     /* Walk back from environ until you find argc-1 null-terminated strings.
      * Don't look for argv[0] as it's probably not preceded by 0. */
     int i;
     char *ptr = environ[0];
+    spt_debug("found environ at %p", ptr);
     char *limit = ptr - 8192;  /* TODO: empiric limit: should use MAX_ARG */
     --ptr;
     for (i = argc - 1; i >= 1; --i) {
@@ -156,6 +132,7 @@ find_argv_from_env(int *argc_o, char ***argv_o)
             goto error;
         }
         buf[i] = (ptr + 1);
+        spt_debug("found argv[%d] at %p: %s", i, buf[i], buf[i]);
     }
 
     /* The first arg has not a zero in front. But what we have is reliable
@@ -164,37 +141,30 @@ find_argv_from_env(int *argc_o, char ***argv_o)
      * The check is known to fail on OS X with locale C if there are
      * non-ascii characters in the executable path. See Python issue #9167
      */
-    arg0 = get_encoded_arg0(argv[0]);
-    if (!arg0) { goto error; }
     ptr -= strlen(arg0);
+    spt_debug("argv[0] should be at %p", ptr);
 
     if (ptr <= limit) {
         spt_debug("failed to found argv[0] start");
         goto error;
     }
     if (strcmp(ptr, arg0)) {
-        spt_debug("failed to recognize argv[0]");
+        spt_debug("argv[0] doesn't match '%s'", arg0);
         goto error;
     }
 
     /* We have all the pieces of the jigsaw. */
     buf[0] = ptr;
-    *argc_o = argc;
-    *argv_o = buf;
-    rv = 1;
-
-    goto exit;
+    spt_debug("found argv[0]: %s", buf[0]);
+    rv = buf;
+    buf = NULL;
 
 error:
     if (buf) { free(buf); }
 
-exit:
-    if (arg0) { free(arg0); }
-
     return rv;
 }
 
-#endif  /* IS_PY3K */
 
 /* Find the original arg buffer, return nonzero if found.
  *
@@ -206,31 +176,57 @@ exit:
  *   (see issue #8)
  * - with Python 3, argv is a decoded copy and doesn't point to
  *   the original area.
+ * - If python is embedded, the function doesn't return anything.
  */
 static int
-get_argc_argv(int *argc, char ***argv)
+get_argc_argv(int *argc_o, char ***argv_o)
 {
-    int rv = false;
+    int argc = 0;
+    argv_t **argv_py = NULL;
+    char **argv = NULL;
+    char *arg0 = NULL;
+    int rv = 0;
+
+    spt_debug("reading argc/argv from Python main");
+    Py_GetArgcArgv(&argc, &argv_py);
+
+    if (argc > 0) {
+        spt_debug("found %d arguments", argc);
 
 #ifdef IS_PY3K
-    if (!(rv = find_argv_from_env(argc, argv))) {
-        spt_debug("get_argc_argv failed");
-    }
+        arg0 = get_encoded_arg0(argv_py[0]);
 #else
-    Py_GetArgcArgv(argc, argv);
-    if (*argc <= 0 || *argv == NULL) {
+        arg0 = strdup(argv_py[0]);
+#endif
+        if (!arg0) {
+            spt_debug("couldn't get a copy of argv[0]");
+            goto exit;
+        }
+    }
+    else {
         spt_debug("no good news from Py_GetArgcArgv");
-        return rv;
+        goto exit;
     }
 
-    *argv = fix_argv(*argc, *argv);
-    rv = true;
-#endif
+    if (!(argv = find_argv_from_env(argc, arg0))) {
+        spt_debug("couldn't find argv from environ");
+        goto exit;
+    }
+
+    /* success */
+    *argc_o = argc;
+    *argv_o = argv;
+    argv = NULL;
+    rv = 1;
+
+exit:
+    if (arg0) { free(arg0); }
+    if (argv) { free(argv); }
 
     return rv;
 }
 
-#endif  /* WIN32 */
+#endif  /* !WIN32 */
 
 
 /* Initialize the module internal functions.
