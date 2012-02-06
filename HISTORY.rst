@@ -6,12 +6,14 @@ Version 1.1.4
 
 - The module works correctly in embedded Python.
 - ``setproctitle()`` accepts a keyword argument.
+- Debug output support always compiled in: the variable ``SPT_DEBUG`` can be
+  used to emit debug log.
 
 
 Version 1.1.3
 ~~~~~~~~~~~~~
 
-- Don't clobber environ if the variable SPT_NOENV is set (issue #16).
+- Don't clobber environ if the variable ``SPT_NOENV`` is set (issue #16).
 
 
 Version 1.1.2

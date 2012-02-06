@@ -16,10 +16,6 @@ define_macros={}
 
 define_macros['SPT_VERSION'] = VERSION
 
-# Check the env to see if piro wants debug messages.
-if 'SPT_DEBUG' in os.environ:
-    define_macros['SPT_DEBUG'] = '1'
-
 if sys.platform.startswith('linux'):
     try:
         linux_version = list(map(int,
