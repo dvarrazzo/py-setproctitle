@@ -42,25 +42,53 @@ Note that ``easy_install`` requires ``/target/path`` to be in your
 ``PYTHONPATH``.
 
 
-Module content
---------------
+Python 3 support
+~~~~~~~~~~~~~~~~
 
-The module exports the following functions:
+As of version 1.1 the module works with Python 3.  In order to install the
+module, you can use the `distribute`_ replacemente for ``easy_install``.
+
+In order to build and test the module under Python 3, the ``Makefile``
+contains some helper targets.
+
+.. _distribute: http://pypi.python.org/pypi/distribute
+
+
+Usage
+-----
+
+The ``setproctitle`` module exports the following functions:
 
 ``setproctitle(title)``
     Set *title* as the title for the current process.
 
-    Note: on many platforms, setting the process title will clobber the
+``getproctitle()``
+    Return the current process title.
+
+
+Environment variables
+~~~~~~~~~~~~~~~~~~~~~
+
+A few environment variables can be used to customize the module behavior:
+
+``SPT_NOENV``
+    Avoid clobbering ``/proc/PID/environ``.
+
+    On many platforms, setting the process title will clobber the
     ``environ`` memory area. ``os.environ`` will work as expected from within
     the Python process, but the content of the file ``/proc/PID/environ`` will
     be overwritten.  If you require this file not to be broken you can set the
     ``SPT_NOENV`` environment variable to any non-empty value: in this case
     the maximum length for the title will be limited to the length of the
-    command line, but the ``environ`` file will be untouched.
+    command line.
 
+``SPT_DEBUG``
+    Print debug information on ``stderr``.
 
-``getproctitle()``
-    Return the current process title.
+    If the module doesn't work as expected you can set this variable to a
+    non-empty value to generate information useful for debugging.  Note that
+    the most useful information is printed when the module is imported, not
+    when the functions are called.
 
 
 Module status
@@ -83,18 +111,6 @@ The module can probably work on HP-UX, but I haven't found any to test with.
 It is unlikely that it can work on Solaris instead.
 
 .. _Process Explorer: http://technet.microsoft.com/en-us/sysinternals/bb896653.aspx
-
-
-Python 3 support
-----------------
-
-As of version 1.1 the module works with Python 3.  In order to install the
-module, you can use the `distribute`_ replacemente for ``easy_install``.
-
-In order to build and test the module under Python 3, the ``Makefile``
-contains some helper targets.
-
-.. _distribute: http://pypi.python.org/pypi/distribute
 
 
 Other known implementations and discussions
