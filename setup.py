@@ -70,9 +70,9 @@ if sys.version < '2.2.3':
 kwargs = {}
 try: 
     kwargs['long_description'] = (
-        open('README').read()
+        open('README.rst').read()
         + '\n'
-        +open('HISTORY').read())
+        +open('HISTORY.rst').read())
 except: 
     pass
 
