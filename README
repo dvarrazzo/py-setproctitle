@@ -15,6 +15,11 @@ The procedure is hardly portable across different systems.  PostgreSQL provides
 a good `multi-platform implementation`__:  this module is a Python wrapper
 around PostgreSQL code.
 
+- `Homepage <http://code.google.com/p/py-setproctitle/>`__
+- `Source repository <https://github.com/dvarrazzo/py-setproctitle>`__
+- `Bug tracker <http://code.google.com/p/py-setproctitle/issues/list>`__
+
+
 .. _PostgreSQL: http://www.postgresql.org
 .. _OpenSSH Server: http://www.openssh.com/
 .. __: http://doxygen.postgresql.org/ps__status_8c_source.html
