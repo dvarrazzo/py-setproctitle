@@ -1,0 +1,14 @@
+*.o
+*.sw[op]
+*.orig
+*.pyc
+*.rej
+tools/pttest
+tools/sptdemo
+tools/prctl_demo
+tools/ps_status.[ch]
+build
+dist
+py3
+MANIFEST
+tests/pyrun?
