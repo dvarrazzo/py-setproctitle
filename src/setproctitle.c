@@ -55,11 +55,11 @@ static char spt_getproctitle__doc__[] =
 static PyObject *
 spt_getproctitle(PyObject *self, PyObject *args)
 {
-    int tlen;
+    size_t tlen;
     const char *title;
     title = get_ps_display(&tlen);
 
-    return Py_BuildValue("s#", title, tlen);
+    return Py_BuildValue("s#", title, (int)tlen);
 }
 
 

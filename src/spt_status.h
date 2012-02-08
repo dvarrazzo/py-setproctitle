@@ -20,7 +20,7 @@ HIDDEN extern void init_ps_display(const char *initial_str);
 
 HIDDEN extern void set_ps_display(const char *activity, bool force);
 
-HIDDEN extern const char *get_ps_display(int *displen);
+HIDDEN extern const char *get_ps_display(size_t *displen);
 
 #endif   /* SPT_STATUS_H */
 

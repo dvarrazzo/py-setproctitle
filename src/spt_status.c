@@ -361,7 +361,7 @@ set_ps_display(const char *activity, bool force)
 
 #ifdef PS_USE_CLOBBER_ARGV
     {
-        int         buflen;
+        size_t      buflen;
 
         /* pad unused memory */
         buflen = strlen(ps_buffer);
@@ -405,7 +405,7 @@ set_ps_display(const char *activity, bool force)
  * length into *displen.
  */
 const char *
-get_ps_display(int *displen)
+get_ps_display(size_t *displen)
 {
 #ifdef PS_USE_CLOBBER_ARGV
     size_t      offset;
