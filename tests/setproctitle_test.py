@@ -204,8 +204,13 @@ class SetproctitleTestCase(unittest.TestCase):
             setproctitle.setproctitle("Hello, " + snowman + "!")
 
             import os
+            import locale
+            from subprocess import Popen, PIPE
             print os.getpid()
-            print os.popen("ps -o pid,command 2> /dev/null").read()
+            proc = Popen("ps -o pid,command 2> /dev/null", shell=True,
+                close_fds=True, stdout=PIPE, stderr=PIPE)
+            buf = proc.stdout.read()
+            print buf.decode(locale.getpreferredencoding(), 'replace')
         """)
         lines = filter(None, rv.splitlines())
         pid = lines.pop(0)
@@ -214,7 +219,8 @@ class SetproctitleTestCase(unittest.TestCase):
         snowmen = [
             u'\u2603',          # ps supports unicode
             r'\M-b\M^X\M^C',    # ps output on BSD
-            r'M-bM^XM^C',       # ps output on OS-X
+            r'M-bM^XM^C',       # ps output on some Darwin < 11.2
+            u'\ufffdM^XM^C',    # ps output on Darwin 11.2
         ]
         title = self._clean_up_title(pids[pid])
         for snowman in snowmen:
