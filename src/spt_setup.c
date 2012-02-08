@@ -291,7 +291,7 @@ exit:
  * If found, set argc to the number of arguments, argv to an array
  * of pointers to the single arguments. The array is allocated via malloc.
  *
- * The function overcomes two Py_GetArgcArgv shortcomings:
+ * The function overcomes three Py_GetArgcArgv shortcomings:
  * - some python parameters mess up with the original argv, e.g. -m
  *   (see issue #8)
  * - with Python 3, argv is a decoded copy and doesn't point to
