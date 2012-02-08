@@ -16,6 +16,7 @@ a good `multi-platform implementation`__:  this module is a Python wrapper
 around PostgreSQL code.
 
 - `Homepage <http://code.google.com/p/py-setproctitle/>`__
+- `Download <http://pypi.python.org/pypi/setproctitle/>`__
 - `Source repository <https://github.com/dvarrazzo/py-setproctitle>`__
 - `Bug tracker <http://code.google.com/p/py-setproctitle/issues/list>`__
 
