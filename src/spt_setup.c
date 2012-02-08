@@ -81,7 +81,6 @@ get_encoded_arg0(wchar_t *argv0)
     rv = strdup(PyBytes_AsString(ba));
 
 exit:
-    PyErr_Clear();
     Py_XDECREF(ua);
     Py_XDECREF(ba);
 
@@ -274,10 +273,6 @@ get_args_from_proc(int *argc_o, char **arg0_o)
     rv = 1;
 
 exit:
-    /* clear the exception. Propagating it to the module init would make a
-     * fatal error. What we want instead is just to create a no-op module. */
-    PyErr_Clear();
-
     Py_XDECREF(cl);
     Py_XDECREF(f);
     Py_XDECREF(pid_py);
@@ -371,7 +366,7 @@ spt_setup(void)
 
     if (!get_argc_argv(&argc, &argv)) {
         spt_debug("setup failed");
-        return;
+        goto exit;
     }
 
     save_ps_display_args(argc, argv);
@@ -388,5 +383,9 @@ spt_setup(void)
     init_ps_display(init_title);
 #endif
 
+exit:
+    /* clear the exception. Propagating it to the module init would make a
+     * fatal error. What we want instead is just to create a no-op module. */
+    PyErr_Clear();
 }
 
