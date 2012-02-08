@@ -64,17 +64,17 @@ if sys.version < '2.2.3':
 
 # Try to include the long description in the setup
 kwargs = {}
-try: 
+try:
     kwargs['long_description'] = (
         open('README.rst').read()
         + '\n'
         +open('HISTORY.rst').read())
-except: 
+except:
     pass
 
 setup(
     name = 'setproctitle',
-    description = 'Allow customization of the process title.',
+    description = 'A library to allow customization of the process title.',
     version = VERSION,
     author = 'Daniele Varrazzo',
     author_email = 'daniele.varrazzo@gmail.com',
