@@ -197,8 +197,8 @@ exit:
 static int
 get_args_from_proc(int *argc_o, char **arg0_o)
 {
-    /* allow /proc/XXXXX/cmdline */
-#define FNLEN 20
+    /* allow /proc/PID/cmdline, with oversize max_pid, and them some. */
+#define FNLEN 30
     char fn[FNLEN];
 
     PyObject *os = NULL;
