@@ -285,6 +285,9 @@ class SetproctitleTestCase(unittest.TestCase):
     def test_embedded(self):
         """Check the module works with embedded Python.
         """
+        if not os.path.exists('/proc/%s/cmdline' % os.getpid()):
+            raise SkipTest("known failure: '/proc/PID/cmdline' not available")
+
         exe = os.environ.get('ROOT_PATH', '.') \
             + ('/tests/pyrun%s' % sys.version_info[0])
         if not os.path.exists(exe):
@@ -308,6 +311,9 @@ class SetproctitleTestCase(unittest.TestCase):
 
     def test_embedded_many_args(self):
         """Check more complex cmdlines are handled in embedded env too."""
+        if not os.path.exists('/proc/%s/cmdline' % os.getpid()):
+            raise SkipTest("known failure: '/proc/PID/cmdline' not available")
+
         exe = os.environ.get('ROOT_PATH', '.') \
             + ('/tests/pyrun%s' % sys.version_info[0])
         if not os.path.exists(exe):
