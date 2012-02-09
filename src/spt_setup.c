@@ -87,6 +87,34 @@ exit:
     return rv;
 }
 
+#else  /* !IS_PY3K */
+
+/* Return a copy of argv referring to the original arg area.
+ *
+ * python -m messes up with arg (issue #8): ensure to have a vector to the
+ * original args or save_ps_display_args() will stop processing too soon.
+ *
+ * Return a buffer allocated with malloc: should be cleaned up with free()
+ */
+static char **
+fix_argv(int argc, char **argv)
+{
+    char **buf = NULL;
+    int i;
+    char *ptr = argv[0];
+
+    if (!(buf = (char **)malloc(argc * sizeof(char *)))) {
+        return buf;
+    }
+
+    for (i = 0; i < argc; ++i) {
+        buf[i] = ptr;
+        ptr += strlen(ptr) + 1;
+    }
+
+    return buf;
+}
+
 #endif  /* IS_PY3K */
 
 
@@ -95,8 +123,8 @@ exit:
  * Return a malloc'd argv vector, pointing to the original arguments.
  *
  * Required on Python 3 as Py_GetArgcArgv doesn't return pointers to the
- * original area. It is also called on Python 2 as some cmdline parameters
- * mess up argv (issue #8).
+ * original area. It can be used on Python 2 too in case we can't get argv,
+ * such as in embedded environment.
  */
 static char **
 find_argv_from_env(int argc, char *arg0)
@@ -309,27 +337,38 @@ get_argc_argv(int *argc_o, char ***argv_o)
         spt_debug("found %d arguments", argc);
 
 #ifdef IS_PY3K
-        arg0 = get_encoded_arg0(argv_py[0]);
-#else
-        arg0 = strdup(argv_py[0]);
-#endif
-        if (!arg0) {
+        if (!(arg0 = get_encoded_arg0(argv_py[0]))) {
             spt_debug("couldn't get a copy of argv[0]");
             goto exit;
         }
+#else
+        if (!(argv = fix_argv(argc, (char **)argv_py))) {
+            spt_debug("failed to fix argv");
+            goto exit;
+        }
+#endif
+        /* we got argv: on py2 it points to the right place in memory; on py3
+         * we only got a copy of argv[0]: we will use it to look from environ
+         */
     }
     else {
         spt_debug("no good news from Py_GetArgcArgv");
 
+        /* get a copy of argv[0] from /proc, so we get back in the same
+         * situation of Py3 */
         if (!get_args_from_proc(&argc, &arg0)) {
             spt_debug("failed to get args from proc fs");
             goto exit;
         }
     }
 
-    if (!(argv = find_argv_from_env(argc, arg0))) {
-        spt_debug("couldn't find argv from environ");
-        goto exit;
+    /* If we don't know argv but we know the content of argv[0], we can walk
+     * backwards from environ and see if we get it. */
+    if (arg0 && !argv) {
+        if (!(argv = find_argv_from_env(argc, arg0))) {
+            spt_debug("couldn't find argv from environ");
+            goto exit;
+        }
     }
 
     /* success */
