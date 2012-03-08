@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "spt.h"
+
 void spt_debug(const char *fmt, ...)
 {
     static int enabled = -1;
