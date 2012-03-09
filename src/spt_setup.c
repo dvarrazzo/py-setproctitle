@@ -41,7 +41,10 @@ join_argv(int argc, char **argv)
         len += strlen(argv[i]) + 1;
     }
 
-    dest = buf = (char *)malloc(len);
+    if (!(dest = buf = (char *)malloc(len))) {
+        PyErr_NoMemory();
+        return NULL;
+    }
 
     /* Copy the strings in the buffer joining with spaces */
     for (i = 0; i < argc; i++) {
@@ -106,7 +109,8 @@ fix_argv(int argc, char **argv)
     char *ptr = argv[0];
 
     if (!(buf = (char **)malloc(argc * sizeof(char *)))) {
-        return buf;
+        PyErr_NoMemory();
+        return NULL;
     }
 
     for (i = 0; i < argc; ++i) {
@@ -141,6 +145,7 @@ find_argv_from_env(int argc, char *arg0)
 
     if (!(buf = (char **)malloc((argc + 1) * sizeof(char *)))) {
         spt_debug("can't malloc %d args!", argc);
+        PyErr_NoMemory();
         goto error;
     }
     buf[argc] = NULL;
@@ -416,9 +421,10 @@ spt_setup(void)
     save_ps_display_args(argc, argv);
 
     /* Set up the first title to fully initialize the code */
-    init_title = join_argv(argc, argv);
+    if (!(init_title = join_argv(argc, argv))) { goto exit; }
     init_ps_display(init_title);
     free(init_title);
+
 #else
     /* On Windows save_ps_display_args is a no-op
      * This is a good news, because Py_GetArgcArgv seems not usable.
