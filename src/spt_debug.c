@@ -15,9 +15,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "spt.h"
+#include "spt_config.h"
 
-void spt_debug(const char *fmt, ...)
+HIDDEN void
+spt_debug(const char *fmt, ...)
 {
     static int enabled = -1;
     va_list ap;
