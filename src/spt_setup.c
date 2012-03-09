@@ -30,18 +30,20 @@ extern char **environ;
 static char *
 join_argv(int argc, char **argv)
 {
-    /* Calculate the final string length */
     int i;
     size_t len = 0;
+    char *buf;
+    char *src;
+    char *dest;
+
+    /* Calculate the final string length */
     for (i = 0; i < argc; i++) {
         len += strlen(argv[i]) + 1;
     }
 
-    char *buf = (char *)malloc(len);
+    dest = buf = (char *)malloc(len);
 
     /* Copy the strings in the buffer joining with spaces */
-    char *dest = buf;
-    char *src;
     for (i = 0; i < argc; i++) {
         src = argv[i];
         while (*src) {
@@ -129,8 +131,11 @@ fix_argv(int argc, char **argv)
 static char **
 find_argv_from_env(int argc, char *arg0)
 {
+    int i;
     char **buf = NULL;
     char **rv = NULL;
+    char *ptr;
+    char *limit;
 
     spt_debug("walking from environ to look for the arguments");
 
@@ -142,10 +147,9 @@ find_argv_from_env(int argc, char *arg0)
 
     /* Walk back from environ until you find argc-1 null-terminated strings.
      * Don't look for argv[0] as it's probably not preceded by 0. */
-    int i;
-    char *ptr = environ[0];
+    ptr = environ[0];
     spt_debug("found environ at %p", ptr);
-    char *limit = ptr - 8192;  /* TODO: empiric limit: should use MAX_ARG */
+    limit = ptr - 8192;  /* TODO: empiric limit: should use MAX_ARG */
     --ptr;
     for (i = argc - 1; i >= 1; --i) {
         if (*ptr) {
@@ -402,6 +406,7 @@ spt_setup(void)
 #ifndef WIN32
     int argc = 0;
     char **argv = NULL;
+    char *init_title;
 
     if (!get_argc_argv(&argc, &argv)) {
         spt_debug("setup failed");
@@ -411,7 +416,7 @@ spt_setup(void)
     save_ps_display_args(argc, argv);
 
     /* Set up the first title to fully initialize the code */
-    char *init_title = join_argv(argc, argv);
+    init_title = join_argv(argc, argv);
     init_ps_display(init_title);
     free(init_title);
 #else
