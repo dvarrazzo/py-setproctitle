@@ -124,13 +124,13 @@ INIT_MODULE(setproctitle)(void)
     PyDict_SetItemString(d, "__version__", spt_version);
 
     /* Initialize the process title */
-    spt_setup();
+    if (0 > spt_setup()) {
+        spt_debug("failed to initialize module setproctitle");
 
-    /* Check for errors */
-    if (PyErr_Occurred()) {
-        Py_FatalError("can't initialize module setproctitle");
-        Py_DECREF(m);
-        m = NULL;
+        /* Check for errors */
+        if (PyErr_Occurred()) {
+            spt_debug("an exception is set: import will fail");
+        }
     }
 
 exit:

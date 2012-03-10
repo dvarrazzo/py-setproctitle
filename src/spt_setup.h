@@ -13,6 +13,6 @@
 
 #include "spt_config.h"
 
-HIDDEN void spt_setup(void);
+HIDDEN int spt_setup(void);
 
 #endif

@@ -23,9 +23,11 @@ extern char **environ;
 
 #ifndef WIN32
 
-/* return a concatenated version of a strings vector
+/* Return a concatenated version of a strings vector.
  *
- * Return newly allocated heap space: clean it up with free()
+ * Return newly allocated heap space: clean it up with free().
+ *
+ * Return NULL and raise an exception on error.
  */
 static char *
 join_argv(int argc, char **argv)
@@ -64,7 +66,10 @@ join_argv(int argc, char **argv)
 
 /* Return a copy of argv[0] encoded in the default encoding.
  *
- * Return a newly allocated buffer to be released with free()
+ * Return a newly allocated buffer to be released with free().
+ *
+ * Return NULL in case of error. If the error shouldn't be ignored, also set
+ * a Python exception.
  */
 static char *
 get_encoded_arg0(wchar_t *argv0)
@@ -74,16 +79,20 @@ get_encoded_arg0(wchar_t *argv0)
 
     if (!(ua = PyUnicode_FromWideChar(argv0, -1))) {
         spt_debug("failed to convert argv[0] to unicode");
+        PyErr_Clear();
         goto exit;
     }
 
     if (!(ba = PyUnicode_AsEncodedString(
             ua, PyUnicode_GetDefaultEncoding(), "strict"))) {
         spt_debug("failed to encode argv[0]");
+        PyErr_Clear();
         goto exit;
     }
 
-    rv = strdup(PyBytes_AsString(ba));
+    if (!(rv = strdup(PyBytes_AsString(ba)))) {
+        PyErr_NoMemory();
+    }
 
 exit:
     Py_XDECREF(ua);
@@ -99,7 +108,10 @@ exit:
  * python -m messes up with arg (issue #8): ensure to have a vector to the
  * original args or save_ps_display_args() will stop processing too soon.
  *
- * Return a buffer allocated with malloc: should be cleaned up with free()
+ * Return a buffer allocated with malloc: should be cleaned up with free().
+ *
+ * Return NULL in case of error. If the error shouldn't be ignored, also set
+ * a Python exception.
  */
 static char **
 fix_argv(int argc, char **argv)
@@ -128,6 +140,9 @@ fix_argv(int argc, char **argv)
  *
  * Return a malloc'd argv vector, pointing to the original arguments.
  *
+ * Return NULL in case of error. If the error shouldn't be ignored, also set
+ * a Python exception.
+ *
  * Required on Python 3 as Py_GetArgcArgv doesn't return pointers to the
  * original area. It can be used on Python 2 too in case we can't get argv,
  * such as in embedded environment.
@@ -146,7 +161,7 @@ find_argv_from_env(int argc, char *arg0)
     if (!(buf = (char **)malloc((argc + 1) * sizeof(char *)))) {
         spt_debug("can't malloc %d args!", argc);
         PyErr_NoMemory();
-        goto error;
+        goto exit;
     }
     buf[argc] = NULL;
 
@@ -159,13 +174,13 @@ find_argv_from_env(int argc, char *arg0)
     for (i = argc - 1; i >= 1; --i) {
         if (*ptr) {
             spt_debug("zero %d not found", i);
-            goto error;
+            goto exit;
         }
         --ptr;
         while (*ptr && ptr > limit) { --ptr; }
         if (ptr <= limit) {
             spt_debug("failed to found arg %d start", i);
-            goto error;
+            goto exit;
         }
         buf[i] = (ptr + 1);
         spt_debug("found argv[%d] at %p: %s", i, buf[i], buf[i]);
@@ -182,11 +197,11 @@ find_argv_from_env(int argc, char *arg0)
 
     if (ptr <= limit) {
         spt_debug("failed to found argv[0] start");
-        goto error;
+        goto exit;
     }
     if (strcmp(ptr, arg0)) {
         spt_debug("argv[0] doesn't match '%s'", arg0);
-        goto error;
+        goto exit;
     }
 
     /* We have all the pieces of the jigsaw. */
@@ -195,7 +210,7 @@ find_argv_from_env(int argc, char *arg0)
     rv = buf;
     buf = NULL;
 
-error:
+exit:
     if (buf) { free(buf); }
 
     return rv;
@@ -228,7 +243,10 @@ exit:
 
 /* Read the number of arguments and the first argument from /proc/pid/cmdline
  *
- * Return 1 if found, else 0. Return arg0 in a malloc'd array.
+ * Return 0 if found, else -1. Return arg0 in a malloc'd array.
+ *
+ * If the function fails in a way that shouldn't be ignored, also set
+ * a Python exception.
  */
 static int
 get_args_from_proc(int *argc_o, char **arg0_o)
@@ -244,7 +262,7 @@ get_args_from_proc(int *argc_o, char **arg0_o)
     PyObject *cl = NULL;
 
     PyObject *tmp = NULL;
-    int rv = 0;
+    int rv = -1;
 
     spt_debug("looking for args into proc fs");
 
@@ -255,6 +273,8 @@ get_args_from_proc(int *argc_o, char **arg0_o)
     }
     if (!(pid_py = PyObject_CallMethod(os, "getpid", NULL))) {
         spt_debug("calling os.getpid() failed");
+        /* os.getpid() may be not available, so ignore this error. */
+        PyErr_Clear();
         goto exit;
     }
     if (-1 == (pid = PyInt_AsLong(pid_py))) {
@@ -267,6 +287,8 @@ get_args_from_proc(int *argc_o, char **arg0_o)
     snprintf(fn, FNLEN, "/proc/%ld/cmdline", pid);
     if (!(f = PyFile_FromString(fn, "rb"))) {
         spt_debug("opening '%s' failed", fn);
+        /* That's ok: procfs is easily not available on menomated unices */
+        PyErr_Clear();
         goto exit;
     }
     /* the file has been open in binary mode, so we get bytes */
@@ -280,6 +302,9 @@ get_args_from_proc(int *argc_o, char **arg0_o)
 
     if (!cl) {
         spt_debug("reading failed");
+        /* could there be some protected environment where a process cannot
+         * read its own pid? Who knows, better not to risk. */
+        PyErr_Clear();
         goto exit;
     }
 
@@ -295,6 +320,7 @@ get_args_from_proc(int *argc_o, char **arg0_o)
         }
         if (!(*arg0_o = strdup(ccl))) {
             spt_debug("arg0 strdup failed");
+            PyErr_NoMemory();
             goto exit;
         }
         spt_debug("got argv[0] = '%s' from /proc", *arg0_o);
@@ -307,7 +333,7 @@ get_args_from_proc(int *argc_o, char **arg0_o)
     }
 
     /* success */
-    rv = 1;
+    rv = 0;
 
 exit:
     Py_XDECREF(cl);
@@ -318,10 +344,13 @@ exit:
     return rv;
 }
 
-/* Find the original arg buffer, return nonzero if found.
+/* Find the original arg buffer, return 0 if found, else -1.
  *
  * If found, set argc to the number of arguments, argv to an array
  * of pointers to the single arguments. The array is allocated via malloc.
+ *
+ * If the function fails in a way that shouldn't be ignored, also set
+ * a Python exception.
  *
  * The function overcomes three Py_GetArgcArgv shortcomings:
  * - some python parameters mess up with the original argv, e.g. -m
@@ -337,7 +366,7 @@ get_argc_argv(int *argc_o, char ***argv_o)
     argv_t **argv_py = NULL;
     char **argv = NULL;
     char *arg0 = NULL;
-    int rv = 0;
+    int rv = -1;
 
     spt_debug("reading argc/argv from Python main");
     Py_GetArgcArgv(&argc, &argv_py);
@@ -365,7 +394,7 @@ get_argc_argv(int *argc_o, char ***argv_o)
 
         /* get a copy of argv[0] from /proc, so we get back in the same
          * situation of Py3 */
-        if (!get_args_from_proc(&argc, &arg0)) {
+        if (0 > get_args_from_proc(&argc, &arg0)) {
             spt_debug("failed to get args from proc fs");
             goto exit;
         }
@@ -384,7 +413,7 @@ get_argc_argv(int *argc_o, char ***argv_o)
     *argc_o = argc;
     *argv_o = argv;
     argv = NULL;
-    rv = 1;
+    rv = 0;
 
 exit:
     if (arg0) { free(arg0); }
@@ -401,20 +430,24 @@ exit:
  * The function reproduces the initialization performed by PostgreSQL
  * to be able to call the functions in pg_status.c
  *
+ * Return 0 in case of success, else -1. In case of failure with an error that
+ * shouldn't be ignored, also set a Python exception.
+ *
  * The function should be called only once in the process lifetime.
  * so is called at module initialization. After the function is called,
  * set_ps_display() can be used.
  */
-void
+int
 spt_setup(void)
 {
 #ifndef WIN32
     int argc = 0;
     char **argv = NULL;
     char *init_title;
+    int rv = -1;
 
-    if (!get_argc_argv(&argc, &argv)) {
-        spt_debug("setup failed");
+    if (0 > get_argc_argv(&argc, &argv)) {
+        spt_debug("get_argc_argv failed");
         goto exit;
     }
 
@@ -433,9 +466,9 @@ spt_setup(void)
     init_ps_display(init_title);
 #endif
 
+    rv = 0;
+
 exit:
-    /* clear the exception. Propagating it to the module init would make a
-     * fatal error. What we want instead is just to create a no-op module. */
-    PyErr_Clear();
+    return rv;
 }
 
