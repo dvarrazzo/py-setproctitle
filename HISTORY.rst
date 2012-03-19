@@ -1,6 +1,13 @@
 Releases history
 ----------------
 
+Version 1.1.5
+~~~~~~~~~~~~~
+
+- No module bug, but a packaging issue: files ``README`` and ``HISTORY``
+  added back into the distribution.
+
+
 Version 1.1.4
 ~~~~~~~~~~~~~
 
