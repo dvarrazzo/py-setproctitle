@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.1.6
+~~~~~~~~~~~~~
+
+- The module can be compiled again on Windows.
+
+
 Version 1.1.5
 ~~~~~~~~~~~~~
 

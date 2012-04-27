@@ -440,11 +440,12 @@ exit:
 int
 spt_setup(void)
 {
+    int rv = -1;
+
 #ifndef WIN32
     int argc = 0;
     char **argv = NULL;
     char *init_title;
-    int rv = -1;
 
     if (0 > get_argc_argv(&argc, &argv)) {
         spt_debug("get_argc_argv failed");
