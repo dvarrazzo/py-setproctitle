@@ -18,6 +18,11 @@
 #define IS_PY3K
 #endif
 
+/* Detect pypy */
+#ifdef PYPY_VERSION
+#define IS_PYPY
+#endif
+
 /* The type returned by Py_GetArgcArgv */
 #ifdef IS_PY3K
 typedef wchar_t argv_t;
