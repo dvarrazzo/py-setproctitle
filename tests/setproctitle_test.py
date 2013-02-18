@@ -14,6 +14,7 @@ import unittest
 from subprocess import Popen, PIPE
 
 IS_PY3K = sys.version_info[0] == 3
+IS_PYPY = '__pypy__' in sys.builtin_module_names
 
 # SkipTest is available from Python 2.7 and in nose
 try:
@@ -65,12 +66,11 @@ class SetproctitleTestCase(unittest.TestCase):
             print os.getpid()
             # ps can fail on kfreebsd arch
             # (http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=460331)
-            print os.popen("ps -o pid,command 2> /dev/null").read()
+            print os.popen("ps -x -o pid,command").read()
             """)
         lines = filter(None, rv.splitlines())
         pid = lines.pop(0)
         pids = dict([r.strip().split(None, 1) for r in lines])
-
         title = self._clean_up_title(pids[pid])
         self.assertEqual(title, "Hello, world!")
 
@@ -162,7 +162,7 @@ class SetproctitleTestCase(unittest.TestCase):
 
                         import os
                         print os.getpid()
-                        print os.popen("ps -o pid,command 2> /dev/null").read()
+                        print os.popen("ps -x -o pid,command 2> /dev/null").read()
                     """)))
             finally:
                 f.close()
@@ -207,7 +207,7 @@ class SetproctitleTestCase(unittest.TestCase):
             import locale
             from subprocess import Popen, PIPE
             print os.getpid()
-            proc = Popen("ps -o pid,command 2> /dev/null", shell=True,
+            proc = Popen("ps -x -o pid,command 2> /dev/null", shell=True,
                 close_fds=True, stdout=PIPE, stderr=PIPE)
             buf = proc.stdout.read()
             print buf.decode(locale.getpreferredencoding(), 'replace')
@@ -240,7 +240,7 @@ class SetproctitleTestCase(unittest.TestCase):
 
             import os
             print os.getpid()
-            print os.popen("ps -o pid,command 2> /dev/null").read()
+            print os.popen("ps -x -o pid,command 2> /dev/null").read()
             """, args=u" ".join(["-", "hello", euro, snowman]))
         except TypeError:
             raise SkipTest(
@@ -275,7 +275,7 @@ class SetproctitleTestCase(unittest.TestCase):
 
                 import os
                 print os.getpid()
-                print os.popen("ps -o pid,command 2> /dev/null").read()
+                print os.popen("ps -x -o pid,command 2> /dev/null").read()
                 """,
                 args=u" ".join(["-", "foo", "bar", "baz"]),
                 executable=exc)
@@ -291,6 +291,9 @@ class SetproctitleTestCase(unittest.TestCase):
     def test_embedded(self):
         """Check the module works with embedded Python.
         """
+        if IS_PYPY:
+            raise SkipTest("skip test, pypy")
+
         if not os.path.exists('/proc/%s/cmdline' % os.getpid()):
             raise SkipTest("known failure: '/proc/PID/cmdline' not available")
 
@@ -305,7 +308,7 @@ class SetproctitleTestCase(unittest.TestCase):
 
             import os
             print os.getpid()
-            print os.popen("ps -o pid,command 2> /dev/null").read()
+            print os.popen("ps -x -o pid,command 2> /dev/null").read()
             """,
             executable=exe)
         lines = filter(None, rv.splitlines())
@@ -317,6 +320,9 @@ class SetproctitleTestCase(unittest.TestCase):
 
     def test_embedded_many_args(self):
         """Check more complex cmdlines are handled in embedded env too."""
+        if IS_PYPY:
+            raise SkipTest("skip test, pypy")
+
         if not os.path.exists('/proc/%s/cmdline' % os.getpid()):
             raise SkipTest("known failure: '/proc/PID/cmdline' not available")
 
@@ -331,7 +337,7 @@ class SetproctitleTestCase(unittest.TestCase):
 
             import os
             print os.getpid()
-            print os.popen("ps -o pid,command 2> /dev/null").read()
+            print os.popen("ps -x -o pid,command 2> /dev/null").read()
             """,
             executable=exe,
             args=u" ".join(["foo", "bar", "baz"]))
