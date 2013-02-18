@@ -368,8 +368,10 @@ get_argc_argv(int *argc_o, char ***argv_o)
     char *arg0 = NULL;
     int rv = -1;
 
+#ifndef IS_PYPY
     spt_debug("reading argc/argv from Python main");
     Py_GetArgcArgv(&argc, &argv_py);
+#endif
 
     if (argc > 0) {
         spt_debug("found %d arguments", argc);
