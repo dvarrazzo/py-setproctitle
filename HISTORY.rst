@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.1.7
+~~~~~~~~~~~~~
+
+- Added PyPy support, courtesy of Ozan Turksever (http://www.logsign.net).
+
+
 Version 1.1.6
 ~~~~~~~~~~~~~
 
