@@ -66,7 +66,7 @@ class SetproctitleTestCase(unittest.TestCase):
             print os.getpid()
             # ps can fail on kfreebsd arch
             # (http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=460331)
-            print os.popen("ps -x -o pid,command").read()
+            print os.popen("ps -x -o pid,command 2> /dev/null").read()
             """)
         lines = filter(None, rv.splitlines())
         pid = lines.pop(0)
