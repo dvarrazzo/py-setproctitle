@@ -56,7 +56,7 @@ void Py_GetArgcArgv(int *argc, argv_t ***argv);
 
 /* Adds missing type in Py2.4 */
 #if PY_MAJOR_VERSION == 2 && PY_MINOR_VERSION == 4
-typedef int Py_ssize_t;
+typedef ssize_t Py_ssize_t;
 #endif
 
 #endif  /* IS_PY3K > 2 */
