@@ -54,6 +54,11 @@ void Py_GetArgcArgv(int *argc, argv_t ***argv);
 #define Bytes_Size PyString_Size
 #define Bytes_AsString PyString_AsString
 
+/* Adds missing type in Py2.4 */
+#if PY_MAJOR_VERSION == 2 && PY_MINOR_VERSION == 4
+typedef int Py_ssize_t;
+#endif
+
 #endif  /* IS_PY3K > 2 */
 
 #endif   /* SPT_PYTHON_H */
