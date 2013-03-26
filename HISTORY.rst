@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.1.8
+~~~~~~~~~~~~~
+
+- Added support for Python "diehard" 2.4.
+
+
 Version 1.1.7
 ~~~~~~~~~~~~~
 

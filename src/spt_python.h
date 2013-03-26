@@ -54,6 +54,10 @@ void Py_GetArgcArgv(int *argc, argv_t ***argv);
 #define Bytes_Size PyString_Size
 #define Bytes_AsString PyString_AsString
 
+#if PY_VERSION_HEX < 0x02050000 && !defined(PY_SSIZE_T_MIN)
+typedef int Py_ssize_t;
+#endif
+
 #endif  /* IS_PY3K > 2 */
 
 #endif   /* SPT_PYTHON_H */
