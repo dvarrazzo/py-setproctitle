@@ -5,6 +5,7 @@ Version 1.1.8
 ~~~~~~~~~~~~~
 
 - Added support for Python "diehard" 2.4.
+- Fixed build on Mac OS X 10.9 Maverick (issue #27).
 
 
 Version 1.1.7
