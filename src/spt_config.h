@@ -13,10 +13,6 @@
 /* Define to 1 if you have the <sys/prctl.h> header file. */
 /* #undef HAVE_SYS_PRCTL_H */
 
-/* Define to 1 if you have the declaration of `strlcpy', and to 0 if you
-   don't. */
-#define HAVE_DECL_STRLCPY 0
-
 /* GCC 4.0 and later have support for specifying symbol visibility */
 #if __GNUC__ >= 4 && !defined(__MINGW32__)
 #  define HIDDEN __attribute__((visibility("hidden")))
