@@ -39,7 +39,6 @@
  */
 
 #include "spt_config.h"
-#include "spt_strlcpy.h"
 
 #include <unistd.h>
 #ifdef HAVE_SYS_PSTAT_H
