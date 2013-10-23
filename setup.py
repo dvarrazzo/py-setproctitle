@@ -52,7 +52,7 @@ mod_spt = Extension('setproctitle',
         'src/spt_debug.c',
         'src/spt_setup.c',
         'src/spt_status.c',
-        'src/spt_strlcpy.c', # TODO: not needed on some platform
+        'src/spt_strlcpy.c',
         ])
 
 # patch distutils if it can't cope with the "classifiers" or
