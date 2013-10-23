@@ -42,7 +42,7 @@
  * Function creation history:  http://www.gratisoft.us/todd/papers/strlcpy.html
  */
 size_t
-strlcpy(char *dst, const char *src, size_t siz)
+spt_strlcpy(char *dst, const char *src, size_t siz)
 {
 	char	   *d = dst;
 	const char *s = src;

@@ -29,10 +29,6 @@ typedef char bool;
 
 #include <stddef.h>
 
-#if !HAVE_DECL_STRLCPY
-HIDDEN extern size_t strlcpy(char *dst, const char *src, size_t siz);
-#endif
-
 #ifdef WIN32
 #include <Windows.h>
 #endif
