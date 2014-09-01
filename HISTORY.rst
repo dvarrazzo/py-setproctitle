@@ -1,6 +1,13 @@
 Releases history
 ----------------
 
+Version 1.1.9
+~~~~~~~~~~~~~
+
+- Added ``MANIFEST.in`` to the source distribution to help with RPM building
+  (issue #30).
+
+
 Version 1.1.8
 ~~~~~~~~~~~~~
 

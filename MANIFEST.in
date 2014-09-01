@@ -1,6 +1,7 @@
 include HISTORY.rst
 include README.rst
 include COPYRIGHT
+include MANIFEST.in
 include MANIFEST
 include Makefile
 include src/*.c
