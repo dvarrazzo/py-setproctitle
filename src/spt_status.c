@@ -40,7 +40,10 @@
 
 #include "spt_config.h"
 
+#ifndef WIN32
 #include <unistd.h>
+#endif
+
 #ifdef HAVE_SYS_PSTAT_H
 #include <sys/pstat.h>          /* for HP-UX */
 #endif
