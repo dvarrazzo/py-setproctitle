@@ -29,30 +29,30 @@ around PostgreSQL code.
 Installation
 ------------
 
-You can use ``easy_install`` to install the module: to perform a system-wide
-installation use::
+``setproctitle`` is a C extension: in order to build it you will need a C
+compiler and the Python development support (the ``python-dev`` package in
+most Linux distributions). No further external dependencies are required.
 
-    sudo easy_install setproctitle
+You can use ``pip`` to install the module::
 
-If you are an unprivileged user or you want to limit installation to a local
-environment, you can use the command::
+    pip install setproctitle
 
-    easy_install -d /target/path setproctitle
+You can use ``pip -t`` or ``virtualenv`` for local installations, ``sudo pip``
+for a system-wide one... the usual stuff. Read pip_ or virtualenv_ docs for
+all the details.
 
-Note that ``easy_install`` requires ``/target/path`` to be in your
-``PYTHONPATH``.
+.. _pip: https://pip.readthedocs.org/
+.. _virtualenv: https://virtualenv.readthedocs.org/
+
 
 
 Python 3 support
 ~~~~~~~~~~~~~~~~
 
-As of version 1.1 the module works with Python 3.  In order to install the
-module, you can use the `distribute`_ replacemente for ``easy_install``.
+As of version 1.1 the module works with Python 3. Just use pip/virtualenv for Python 3.
 
-In order to build and test the module under Python 3, the ``Makefile``
-contains some helper targets.
-
-.. _distribute: http://pypi.python.org/pypi/distribute
+In order to build from the source package and test the module under Python 3,
+the ``Makefile`` contains some helper targets.
 
 
 Usage
@@ -117,15 +117,10 @@ It is unlikely that it can work on Solaris instead.
 Other known implementations and discussions
 -------------------------------------------
 
-- `procname`_: a module exposing the same functionality, but less portable 
+- `procname`_: a module exposing the same functionality, but less portable
   and not well packaged.
 - `Issue 5672`_: where the introduction of such functionality into the stdlib
   is being discussed.
 
 .. _procname: http://code.google.com/p/procname/
 .. _Issue 5672: http://bugs.python.org/issue5672
-
-
-..
-    vim: set filetype=rst:
-
