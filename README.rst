@@ -45,11 +45,11 @@ all the details.
 .. _virtualenv: https://virtualenv.readthedocs.org/
 
 
-
 Python 3 support
 ~~~~~~~~~~~~~~~~
 
-As of version 1.1 the module works with Python 3. Just use pip/virtualenv for Python 3.
+As of version 1.1 the module works with Python 3. Just use
+``pip``/``virtualenv`` for Python 3.
 
 In order to build from the source package and test the module under Python 3,
 the ``Makefile`` contains some helper targets.
