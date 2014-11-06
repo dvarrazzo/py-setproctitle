@@ -21,7 +21,7 @@
 extern char **environ;
 #endif
 
-#ifndef WIN32
+#ifndef _WIN32
 
 /* Return a concatenated version of a strings vector.
  *
@@ -424,7 +424,7 @@ exit:
     return rv;
 }
 
-#endif  /* !WIN32 */
+#endif  /* !_WIN32 */
 
 
 /* Initialize the module internal functions.
@@ -444,7 +444,7 @@ spt_setup(void)
 {
     int rv = -1;
 
-#ifndef WIN32
+#ifndef _WIN32
     int argc = 0;
     char **argv = NULL;
     char *init_title;
