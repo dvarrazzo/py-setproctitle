@@ -78,7 +78,7 @@ setup(
     version = VERSION,
     author = 'Daniele Varrazzo',
     author_email = 'daniele.varrazzo@gmail.com',
-    url = 'http://code.google.com/p/py-setproctitle/',
+    url = 'https://github.com/dvarrazzo/py-setproctitle',
     download_url = 'http://pypi.python.org/pypi/setproctitle/',
     license = 'BSD',
     platforms = ['GNU/Linux', 'BSD', 'MacOS X', 'Windows'],

@@ -15,10 +15,9 @@ The procedure is hardly portable across different systems.  PostgreSQL provides
 a good `multi-platform implementation`__:  this module is a Python wrapper
 around PostgreSQL code.
 
-- `Homepage <http://code.google.com/p/py-setproctitle/>`__
+- `Homepage <https://github.com/dvarrazzo/py-setproctitle>`__
 - `Download <http://pypi.python.org/pypi/setproctitle/>`__
-- `Source repository <https://github.com/dvarrazzo/py-setproctitle>`__
-- `Bug tracker <http://code.google.com/p/py-setproctitle/issues/list>`__
+- `Bug tracker <https://github.com/dvarrazzo/py-setproctitle/issues>`__
 
 
 .. _PostgreSQL: http://www.postgresql.org
