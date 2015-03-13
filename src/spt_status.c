@@ -40,7 +40,9 @@
 
 #include "spt_config.h"
 
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #ifdef HAVE_SYS_PSTAT_H
 #include <sys/pstat.h>          /* for HP-UX */
 #endif
@@ -108,7 +110,7 @@ bool        update_process_title = true;
 #define PS_USE_CHANGE_ARGV
 #elif defined(__linux__) || defined(_AIX) || defined(__sgi) || (defined(sun) && !defined(BSD)) || defined(ultrix) || defined(__ksr__) || defined(__osf__) || defined(__svr4__) || defined(__svr5__) || defined(__darwin__)
 #define PS_USE_CLOBBER_ARGV
-#elif defined(WIN32)
+#elif defined(_WIN32)
 #define PS_USE_WIN32
 #else
 #define PS_USE_NONE
