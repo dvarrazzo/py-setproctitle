@@ -1,10 +1,10 @@
-A ``setproctitle`` implementation for Python
-============================================
+A Python module to customize the process title
+==============================================
 
 :author: Daniele Varrazzo
 
-The library allows a process to change its title (as displayed by system tools
-such as ``ps`` and ``top``).
+The ``setproctitle`` module allows a process to change its title (as displayed
+by system tools such as ``ps`` and ``top``).
 
 Changing the title is mostly useful in multi-process systems, for example
 when a master process is forked: changing the children's title allows to
