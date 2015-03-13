@@ -4,6 +4,7 @@ Releases history
 Version 1.1.9
 ~~~~~~~~~~~~~
 
+- Fixed build on VC (issues #20, #33).
 - Added ``MANIFEST.in`` to the source distribution to help with RPM building
   (issue #30).
 

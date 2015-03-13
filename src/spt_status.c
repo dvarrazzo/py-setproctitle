@@ -40,7 +40,12 @@
 
 #include "spt_config.h"
 
+/* note: VC doesn't have this, but it was working on mingw instead
+ * so check on _WIN32 (defined by VC) instead of WIN32 */
+#ifndef _WIN32
 #include <unistd.h>
+#endif
+
 #ifdef HAVE_SYS_PSTAT_H
 #include <sys/pstat.h>          /* for HP-UX */
 #endif
