@@ -5,7 +5,7 @@
  *
  *    Run a Python program read from stdin. In case of error return 1.
  *
- * Copyright (c) 2011-2012 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+ * Copyright (c) 2011-2015 Daniele Varrazzo <daniele.varrazzo@gmail.com>
  *
  *-------------------------------------------------------------------------
  */

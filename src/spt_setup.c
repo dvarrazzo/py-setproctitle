@@ -3,7 +3,7 @@
  * spt_setup.c
  *    Initalization code for the spt_status.c module functions.
  *
- * Copyright (c) 2009-2012 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+ * Copyright (c) 2009-2015 Daniele Varrazzo <daniele.varrazzo@gmail.com>
  *
  *-------------------------------------------------------------------------
  */
