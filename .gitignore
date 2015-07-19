@@ -12,3 +12,4 @@ dist
 py3
 MANIFEST
 tests/pyrun?
+env
