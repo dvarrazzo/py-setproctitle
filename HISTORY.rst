@@ -12,14 +12,15 @@ Version 1.1.9
 Version 1.1.8
 ~~~~~~~~~~~~~
 
-- Added support for Python "diehard" 2.4.
+- Added support for Python "diehard" 2.4 (pull request #3).
 - Fixed build on Mac OS X 10.9 Maverick (issue #27).
 
 
 Version 1.1.7
 ~~~~~~~~~~~~~
 
-- Added PyPy support, courtesy of Ozan Turksever (http://www.logsign.net).
+- Added PyPy support, courtesy of Ozan Turksever - http://www.logsign.net
+  (pull request #2).
 
 
 Version 1.1.6
