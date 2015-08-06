@@ -5,7 +5,7 @@ setproctitle setup script.
 Copyright (c) 2009-2015 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
-VERSION = '1.1.9'
+VERSION = '1.1.10.dev0'
 
 import os
 import re
