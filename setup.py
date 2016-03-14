@@ -10,7 +10,11 @@ VERSION = '1.1.10.dev0'
 import os
 import re
 import sys
-from distutils.core import setup, Extension
+try:
+    from setuptools import setup, Extension
+except ImportError:
+    from distutils.core import setup, Extension
+
 
 define_macros = {}
 
