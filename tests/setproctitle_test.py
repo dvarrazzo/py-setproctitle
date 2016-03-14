@@ -30,6 +30,7 @@ if unittest.TestCase.assert_ is not unittest.TestCase.assertTrue:
     # Vaffanculo, Wolf
     unittest.TestCase.assert_ = unittest.TestCase.assertTrue
 
+
 class SetproctitleTestCase(unittest.TestCase):
     """Test the module works as expected.
 
@@ -86,10 +87,9 @@ class SetproctitleTestCase(unittest.TestCase):
                 pass
             else:
                 linux_version = map(int,
-                    re.search("[.0-9]+", name)
-                        .group().split(".")[:3])
+                    re.search("[.0-9]+", name).group().split(".")[:3])
 
-        if linux_version < [2,6,9]:
+        if linux_version < [2, 6, 9]:
             raise SkipTest("syscall not supported")
 
         rv = self.run_script(r"""
@@ -384,6 +384,7 @@ class SetproctitleTestCase(unittest.TestCase):
             "title (len %s) not limited to argv (len %s)"
             % (title_len, cmdline_len))
 
+    # Support functions
 
     def run_script(self, script=None, args=None, executable=None, env=None):
         """run a script in a separate process.
@@ -460,12 +461,12 @@ class SetproctitleTestCase(unittest.TestCase):
         if not script:
             raise ValueError("empty script")
 
-        line1 = script[0]
         spaces = script[0][:-len(script[0].lstrip())]
         assert spaces.isspace()
 
         for i, line in enumerate(script):
-            if line.isspace(): continue
+            if line.isspace():
+                continue
             if line.find(spaces) != 0:
                 raise ValueError("inconsistent spaces at line %d (%s)"
                         % (i + 1, line.strip()))
@@ -485,7 +486,7 @@ class SetproctitleTestCase(unittest.TestCase):
         if 'bsd' in sys.platform:
             procname = os.path.basename(sys.executable)
             title = ' '.join([t for t in title.split(' ')
-                if procname not in t])  
+                if procname not in t])
 
         return title
 

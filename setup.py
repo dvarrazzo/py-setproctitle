@@ -12,7 +12,7 @@ import re
 import sys
 from distutils.core import setup, Extension
 
-define_macros={}
+define_macros = {}
 
 define_macros['SPT_VERSION'] = VERSION
 
@@ -20,7 +20,7 @@ if sys.platform.startswith('linux'):
     try:
         linux_version = list(map(int,
             re.search("[.0-9]+", os.popen("uname -r").read())
-                .group().split(".")[:3]))
+            .group().split(".")[:3]))
     except:
         pass
     else:
@@ -31,7 +31,7 @@ elif sys.platform == 'darwin':
     # __darwin__ symbol is not defined; __APPLE__ is instead.
     define_macros['__darwin__'] = 1
 
-elif 'bsd' in sys.platform: # OMG, how many of them are?
+elif 'bsd' in sys.platform:     # OMG, how many of them are?
     # Old BSD versions don't have setproctitle
     # TODO: not tested on an "old BSD"
     if 0 == os.spawnlp(os.P_WAIT, 'grep',
@@ -47,13 +47,13 @@ elif 'bsd' in sys.platform: # OMG, how many of them are?
 
 mod_spt = Extension('setproctitle',
     define_macros=list(define_macros.items()),
-    sources = [
+    sources=[
         'src/setproctitle.c',
         'src/spt_debug.c',
         'src/spt_setup.c',
         'src/spt_status.c',
         'src/spt_strlcpy.c',
-        ])
+    ])
 
 # patch distutils if it can't cope with the "classifiers" or
 # "download_url" keywords
@@ -66,23 +66,23 @@ if sys.version < '2.2.3':
 kwargs = {}
 try:
     kwargs['long_description'] = (
-        open('README.rst').read()
-        + '\n'
-        +open('HISTORY.rst').read())
+        open('README.rst').read() +
+        '\n' +
+        open('HISTORY.rst').read())
 except:
     pass
 
 setup(
-    name = 'setproctitle',
-    description = 'A Python module to customize the process title',
-    version = VERSION,
-    author = 'Daniele Varrazzo',
-    author_email = 'daniele.varrazzo@gmail.com',
-    url = 'https://github.com/dvarrazzo/py-setproctitle',
-    download_url = 'http://pypi.python.org/pypi/setproctitle/',
-    license = 'BSD',
-    platforms = ['GNU/Linux', 'BSD', 'MacOS X', 'Windows'],
-    classifiers = [ r for r in map(str.strip, """
+    name='setproctitle',
+    description='A Python module to customize the process title',
+    version=VERSION,
+    author='Daniele Varrazzo',
+    author_email='daniele.varrazzo@gmail.com',
+    url='https://github.com/dvarrazzo/py-setproctitle',
+    download_url='http://pypi.python.org/pypi/setproctitle/',
+    license='BSD',
+    platforms=['GNU/Linux', 'BSD', 'MacOS X', 'Windows'],
+    classifiers=[r for r in map(str.strip, """
         Development Status :: 5 - Production/Stable
         Intended Audience :: Developers
         License :: OSI Approved :: BSD License
@@ -95,5 +95,5 @@ setup(
         Operating System :: Microsoft :: Windows
         Topic :: Software Development
         """.splitlines()) if r],
-    ext_modules = [mod_spt],
+    ext_modules=[mod_spt],
     **kwargs)

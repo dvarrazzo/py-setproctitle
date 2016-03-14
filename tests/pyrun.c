@@ -11,17 +11,24 @@
  */
 
 #include <Python.h>
+#include <stdio.h>
+
+extern char **environ;
 
 int
 main(int argc, char *argv[])
 {
     int rv = 0;
 
+    printf("environ before: %p\n", environ);
+
     Py_Initialize();
 
     if (0 != PyRun_SimpleFile(stdin, "stdin")) {
         rv = 1;
     }
+
+    printf("environ after:  %p\n", environ);
 
     Py_Finalize();
 
