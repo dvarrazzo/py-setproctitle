@@ -5,7 +5,7 @@
  * Mechanism differs wildly across platforms.
  *
  * Copyright (c) 2000-2009, PostgreSQL Global Development Group
- * Copyright (c) 2009-2015 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+ * Copyright (c) 2009-2016 Daniele Varrazzo <daniele.varrazzo@gmail.com>
  * various details abducted from various places
  *
  * This file was taken from PostgreSQL. The PostgreSQL copyright terms follow.

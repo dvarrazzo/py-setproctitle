@@ -2,7 +2,7 @@
 
 Use nosetests to run this test suite.
 
-Copyright (c) 2009-2015 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+Copyright (c) 2009-2016 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
 import os
