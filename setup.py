@@ -5,15 +5,17 @@ setproctitle setup script.
 Copyright (c) 2009-2016 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
-VERSION = '1.1.10.dev0'
-
 import os
 import re
 import sys
+
 try:
     from setuptools import setup, Extension
 except ImportError:
     from distutils.core import setup, Extension
+
+
+VERSION = '1.1.10'
 
 
 define_macros = {}
