@@ -48,7 +48,7 @@ py3:
 	$(MKDIR) py3
 	$(MKDIR) py3/src
 	$(MKDIR) py3/tests
-	for f in *.rst COPYRIGHT MANIFEST.in src/*.{c,h} tests/*.{py,c}; do cp -v $$f py3/$$f; done
+	for f in *.rst setup.py COPYRIGHT MANIFEST.in src/*.c src/*.h tests/*.py tests/*.c; do cp -v $$f py3/$$f; done
 	# setup.py should be executable with python3 as distribute
 	# currenlty doesn't seem to try to convert it
 	$(PY2TO3) -w --no-diffs py3/tests
