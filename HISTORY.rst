@@ -5,6 +5,7 @@ Version 1.1.10
 ~~~~~~~~~~~~~~
 
 - Fixed building with certain ``prctl.h`` implementations (issue #44).
+- Use ``setuptools`` if available (issue #48).
 
 
 Version 1.1.9
