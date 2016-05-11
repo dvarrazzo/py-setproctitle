@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.1.10
+~~~~~~~~~~~~~~
+
+- Fixed building with certain ``prctl.h`` implementations (issue #44).
+
+
 Version 1.1.9
 ~~~~~~~~~~~~~
 

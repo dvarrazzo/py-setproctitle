@@ -55,7 +55,6 @@
 #endif
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>          /* for Linux >= 2.6.9 */
-#include <linux/prctl.h>
 #endif
 #if defined(__darwin__)
 #include <crt_externs.h>
