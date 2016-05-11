@@ -10,6 +10,6 @@ tools/ps_status.[ch]
 build
 dist
 py3
-MANIFEST
 tests/pyrun?
 env
+/setproctitle.egg-info

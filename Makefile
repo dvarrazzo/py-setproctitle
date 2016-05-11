@@ -44,11 +44,11 @@ check: build tests/pyrun3
 	ROOT_PATH=$(ROOT_PATH) \
 	$(PYTHON) py3/tests/setproctitle_test.py -v
 
-py3: MANIFEST
+py3:
 	$(MKDIR) py3
 	$(MKDIR) py3/src
 	$(MKDIR) py3/tests
-	for f in `grep -v "#" MANIFEST`; do cp -v $$f py3/$$f; done
+	for f in *.rst COPYRIGHT MANIFEST.in src/*.{c,h} tests/*.{py,c}; do cp -v $$f py3/$$f; done
 	# setup.py should be executable with python3 as distribute
 	# currenlty doesn't seem to try to convert it
 	$(PY2TO3) -w --no-diffs py3/tests
@@ -58,15 +58,8 @@ tests/pyrun3: tests/pyrun.c
 
 endif
 
-sdist: MANIFEST
+sdist:
 	$(PYTHON) setup.py sdist --formats=gztar,zip
 
-MANIFEST:
-	# Must run twice because the manifest contains the manifest itself.
-	$(PYTHON) setup.py sdist --manifest-only
-	$(PYTHON) setup.py sdist --manifest-only
-
 clean:
-	$(RM) -r MANIFEST py3 build dist tests/pyrun2 tests/pyrun3
-
-
+	$(RM) -r py3 build dist tests/pyrun2 tests/pyrun3 setproctitle.egg-info
