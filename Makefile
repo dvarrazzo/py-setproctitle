@@ -10,12 +10,17 @@ PYTHON ?= python
 PYCONFIG ?= python-config
 PY2TO3 ?= 2to3
 
-# PYVER value is 2 or 3
-PYVER := $(shell $(PYTHON) -c "import sys; print(sys.version_info[0])")
+# PYVER value is 2 for Python 2, 3 for Python 3 < 3.8, 3embed for Python >= 3.8
+PYVER := $(shell $(PYTHON) -c "import sys; print('%d%s' % (sys.version_info[0], 'embed' if sys.version_info >= (3, 8) else ''))")
 ROOT_PATH := $(shell pwd)
 
 PYINC := $(shell $(PYCONFIG) --includes)
-PYLIB := $(shell $(PYCONFIG) --ldflags) -L$(shell $(PYCONFIG) --prefix)/lib
+
+ifeq (3embed,$(PYVER))
+   PYLIB := $(shell $(PYCONFIG) --ldflags --embed)
+else
+   PYLIB := $(shell $(PYCONFIG) --ldflags) -L$(shell $(PYCONFIG) --prefix)/lib
+endif
 
 BUILD_DIR = build/lib.$(PYVER)
 
