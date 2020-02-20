@@ -5,8 +5,6 @@ setproctitle setup script.
 Copyright (c) 2009-2016 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
-import os
-import re
 import sys
 
 try:
@@ -23,15 +21,7 @@ define_macros = {}
 define_macros['SPT_VERSION'] = VERSION
 
 if sys.platform.startswith('linux'):
-    try:
-        linux_version = list(map(int,
-            re.search("[.0-9]+", os.popen("uname -r").read())
-            .group().split(".")[:3]))
-    except:
-        pass
-    else:
-        if linux_version >= [2, 6, 9]:
-            define_macros['HAVE_SYS_PRCTL_H'] = 1
+    define_macros['HAVE_SYS_PRCTL_H'] = 1
 
 elif sys.platform == 'darwin':
     # __darwin__ symbol is not defined; __APPLE__ is instead.
