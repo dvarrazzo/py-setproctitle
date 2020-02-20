@@ -28,6 +28,7 @@ elif sys.platform == 'darwin':
     define_macros['__darwin__'] = 1
 
 elif 'bsd' in sys.platform:     # OMG, how many of them are?
+    define_macros['BSD'] = 1
     define_macros['HAVE_SETPROCTITLE'] = 1
     define_macros['HAVE_PS_STRING'] = 1
 
