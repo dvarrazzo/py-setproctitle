@@ -13,6 +13,8 @@
 #include "spt.h"
 #include "spt_status.h"
 
+#include <string.h>
+
 /* Darwin doesn't export environ */
 #if defined(__darwin__)
 #include <crt_externs.h>
