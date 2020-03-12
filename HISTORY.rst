@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.1.11
+~~~~~~~~~~~~~~
+
+- Improved build on BSD, dropped ancient versions (issue #67).
+
+
 Version 1.1.10
 ~~~~~~~~~~~~~~
 
