@@ -11,9 +11,6 @@ Copyright (c) 2009-2020 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 import os
 import re
 import sys
-import shutil
-import tempfile
-import unittest
 import subprocess as sp
 
 import pytest
@@ -21,24 +18,8 @@ import pytest
 IS_PYPY = "__pypy__" in sys.builtin_module_names
 
 
-def pyconfig(opt):
-    """Return the result of 'python-config --opt' as a list of strings"""
-    for name in ("python3-config", "python-config"):
-        pyconfig = os.path.join(os.path.dirname(sys.executable), name)
-        if os.path.exists(pyconfig):
-            break
-    else:
-        pytest.fail(
-            f"can't find python-config from executable {sys.executable}"
-        )
-
-    bout = sp.check_output([pyconfig, f"--{opt}"])
-    out = bout.decode(sys.getfilesystemencoding())  # sounds like a good bet
-    return out.split()
-
-
 @pytest.fixture(scope="session")
-def pyrun():
+def pyrun(pyconfig):
     """
     Build the pyrun executable and return its path
     """
@@ -57,9 +38,52 @@ def pyrun():
     cmdline.extend(pyconfig("includes"))
     cmdline.extend(["-o", target, source])
     cmdline.extend(pyconfig("ldflags"))
-    cmdline.append("-L{pyconfig('prefix')}/lib")
+    # not sure still needed
+    # cmdline.append(f"-L{pyconfig('prefix')[0]}/lib")
     sp.check_call(cmdline)
     return target
+
+
+@pytest.fixture(scope="session")
+def pyconfig():
+    """Return the result of 'python-config --opt' as a list of strings"""
+    pyexe = os.path.realpath(sys.executable)
+    ver2 = "%s.%s" % sys.version_info[:2]
+    for name in (f"python{ver2}-config", "python3-config", "python-config"):
+        pyconfexe = os.path.join(os.path.dirname(pyexe), name)
+        if os.path.exists(pyconfexe):
+            break
+    else:
+        pytest.fail(
+            f"can't find python-config from executable {sys.executable}"
+        )
+
+    def pyconfig_func(opt):
+        cmdline = [pyconfexe, f"--{opt}"]
+        if sys.version_info[:2] >= (3, 8):
+            cmdline.append("--embed")
+        bout = sp.check_output(cmdline)
+        out = bout.decode(
+            sys.getfilesystemencoding()
+        )  # sounds like a good bet
+        return out.split()
+
+    return pyconfig_func
+
+
+@pytest.fixture(scope="session")
+def spt_directory():
+    """
+    Where is the setproctitle module installed?
+    """
+    rv = run_script(
+        """
+import os
+import setproctitle
+print(os.path.dirname(setproctitle.__file__))
+"""
+    )
+    return rv.rstrip()
 
 
 def test_runner():
@@ -113,7 +137,7 @@ def test_prctl():
             f = os.popen("uname -r")
             name = f.read()
             f.close()
-        except:
+        except Exception:
             pass
         else:
             linux_version = list(
@@ -121,7 +145,7 @@ def test_prctl():
             )
 
     if linux_version < [2, 6, 9]:
-        raise SkipTest("syscall not supported")
+        pytest.skip("syscall not supported")
 
     rv = run_script(
         r"""
@@ -189,42 +213,33 @@ print(newenv['PATH'])
     assert path.endswith("fakepath"), path
 
 
-def test_issue_8():
+def test_issue_8(monkeypatch, tmp_path):
     """Test that the module works with 'python -m'."""
     module = "spt_issue_8"
-    pypath = os.environ.get("PYTHONPATH", None)
-    dir = tempfile.mkdtemp()
-    os.environ["PYTHONPATH"] = dir + os.pathsep + (pypath or "")
-    try:
-        f = open(dir + "/" + module + ".py", "w")
-        try:
-            f.write(
-                r"""
+    monkeypatch.setenv(
+        "PYTHONPATH",
+        str(tmp_path) + os.pathsep + os.environ.get("PYTHONPATH", ""),
+    )
+
+    with open(tmp_path / f"{module}.py", "w") as f:
+        f.write(
+            r"""
 import setproctitle
 setproctitle.setproctitle("Hello, module!")
 
 import os
 print(os.getpid())
 print(os.popen("ps -x -o pid,command 2> /dev/null").read())
-                """
-            )
-        finally:
-            f.close()
+            """
+        )
 
-        rv = run_script(args="-m " + module)
-        lines = [line for line in rv.splitlines() if line]
-        pid = lines.pop(0)
-        pids = dict([r.strip().split(None, 1) for r in lines])
+    rv = run_script(args="-m " + module)
+    lines = [line for line in rv.splitlines() if line]
+    pid = lines.pop(0)
+    pids = dict([r.strip().split(None, 1) for r in lines])
 
-        title = _clean_up_title(pids[pid])
-        assert title == "Hello, module!"
-
-    finally:
-        shutil.rmtree(dir, ignore_errors=True)
-        if pypath is not None:
-            os.environ["PYTHONPATH"] = pypath
-        else:
-            del os.environ["PYTHONPATH"]
+    title = _clean_up_title(pids[pid])
+    assert title == "Hello, module!"
 
 
 def test_unicode():
@@ -233,7 +248,7 @@ def test_unicode():
     try:
         snowman.encode(sys.getdefaultencoding())
     except UnicodeEncodeError:
-        raise SkipTest(
+        pytest.skip(
             "default encoding '%s' can't deal with snowmen"
             % sys.getdefaultencoding()
         )
@@ -241,7 +256,7 @@ def test_unicode():
     try:
         snowman.encode(sys.getfilesystemencoding())
     except UnicodeEncodeError:
-        raise SkipTest(
+        pytest.skip(
             "file system encoding '%s' can't deal with snowmen"
             % sys.getfilesystemencoding()
         )
@@ -298,7 +313,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
             args=" ".join(["-", "hello", euro, snowman]),
         )
     except TypeError:
-        raise SkipTest("apparently we can't pass unicode args to a program")
+        pytest.skip("apparently we can't pass unicode args to a program")
 
     lines = [line for line in rv.splitlines() if line]
     pid = lines.pop(0)
@@ -308,24 +323,25 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
     assert title == "Hello, weird args!"
 
 
-def test_weird_path():
+def test_weird_path(tmp_path, spt_directory):
     """No problem with encoded argv[0] path."""
     _check_4388()
     euro = "\u20ac"
     snowman = "\u2603"
-    tdir = tempfile.mkdtemp()
-    dir = tdir + "/" + euro + "/" + snowman
+    dir = tmp_path / euro / snowman
     try:
-        try:
-            os.makedirs(dir)
-        except UnicodeEncodeError:
-            raise SkipTest("file system doesn't support unicode")
+        os.makedirs(dir)
+    except UnicodeEncodeError:
+        pytest.skip("file system doesn't support unicode")
 
-        exc = dir + "/python"
-        os.symlink(sys.executable, exc)
+    exc = dir / "python"
+    os.symlink(sys.executable, exc)
 
-        rv = run_script(
-            r"""
+    rv = run_script(
+        f"""
+import sys
+sys.path.insert(0, {repr(spt_directory)})
+
 import setproctitle
 setproctitle.setproctitle("Hello, weird path!")
 
@@ -333,27 +349,25 @@ import os
 print(os.getpid())
 print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 """,
-            args=" ".join(["-", "foo", "bar", "baz"]),
-            executable=exc,
-        )
-        lines = [line for line in rv.splitlines() if line]
-        pid = lines.pop(0)
-        pids = dict([r.strip().split(None, 1) for r in lines])
+        args=" ".join(["-", "foo", "bar", "baz"]),
+        executable=exc,
+    )
+    lines = [line for line in rv.splitlines() if line]
+    pid = lines.pop(0)
+    pids = dict([r.strip().split(None, 1) for r in lines])
 
-        title = _clean_up_title(pids[pid])
-        assert title == "Hello, weird path!"
-    finally:
-        shutil.rmtree(tdir, ignore_errors=True)
+    title = _clean_up_title(pids[pid])
+    assert title == "Hello, weird path!"
 
 
 def test_embedded(pyrun):
     """Check the module works with embedded Python.
     """
     if IS_PYPY:
-        raise SkipTest("skip test, pypy")
+        pytest.skip("skip test, pypy")
 
     if not os.path.exists("/proc/%s/cmdline" % os.getpid()):
-        raise SkipTest("known failure: '/proc/PID/cmdline' not available")
+        pytest.skip("known failure: '/proc/PID/cmdline' not available")
 
     rv = run_script(
         r"""
@@ -377,10 +391,10 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 def test_embedded_many_args(pyrun):
     """Check more complex cmdlines are handled in embedded env too."""
     if IS_PYPY:
-        raise SkipTest("skip test, pypy")
+        pytest.skip("skip test, pypy")
 
     if not os.path.exists("/proc/%s/cmdline" % os.getpid()):
-        raise SkipTest("known failure: '/proc/PID/cmdline' not available")
+        pytest.skip("known failure: '/proc/PID/cmdline' not available")
 
     rv = run_script(
         r"""
@@ -405,7 +419,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 def test_noenv():
     """Check that SPT_NOENV avoids clobbering environ."""
     if not os.path.exists("/proc/self/environ"):
-        raise SkipTest("'/proc/self/environ' not available")
+        pytest.skip("'/proc/self/environ' not available")
 
     env = os.environ.copy()
     env["SPT_TESTENV"] = "testenv"
@@ -453,7 +467,7 @@ def run_script(script=None, args=None, executable=None, env=None):
     if executable is None:
         executable = sys.executable
 
-    cmdline = executable
+    cmdline = str(executable)
     if args:
         cmdline = cmdline + " " + args
 
@@ -508,8 +522,4 @@ def _check_4388():
     p = sp.Popen([sys.executable, "-c", "ord('\xe9')"], stderr=sp.PIPE)
     p.communicate()
     if p.returncode:
-        raise SkipTest("bug #4388 detected")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        pytest.skip("bug #4388 detected")
