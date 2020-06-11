@@ -13,3 +13,4 @@ py3
 tests/pyrun?
 env
 /setproctitle.egg-info
+/setproctitle.*.so

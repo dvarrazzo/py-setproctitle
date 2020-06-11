@@ -7,26 +7,19 @@ RM = rm -f
 PYTHON ?= python3
 PYCONFIG ?= python3-config
 
-ROOT_PATH := $(shell pwd)
-
 PYINC := $(shell $(PYCONFIG) --includes)
 PYLIB := $(shell $(PYCONFIG) --ldflags) -L$(shell $(PYCONFIG) --prefix)/lib
 
-.PHONY: build check py3 clean
+.PHONY: build check clean
 
-build:
-	$(PYTHON) py3/setup.py build
+check: tests/pyrun
+	pytest -v
 
-check: build tests/pyrun3
-	PYTHONPATH=$(BUILD_DIR):$$PYTHONPATH \
-	ROOT_PATH=$(ROOT_PATH) \
-	$(PYTHON) py3/tests/setproctitle_test.py -v
-
-tests/pyrun3: tests/pyrun.c
+tests/pyrun: tests/pyrun.c
 	$(CC) $(PYINC) -o $@ $< $(PYLIB)
 
 sdist:
 	$(PYTHON) setup.py sdist --formats=gztar,zip
 
 clean:
-	$(RM) -r py3 build dist tests/pyrun3 setproctitle.egg-info
+	$(RM) -r build dist tests/pyrun setproctitle.egg-info

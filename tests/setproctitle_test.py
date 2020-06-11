@@ -281,8 +281,7 @@ class SetproctitleTestCase(unittest.TestCase):
         if not os.path.exists('/proc/%s/cmdline' % os.getpid()):
             raise SkipTest("known failure: '/proc/PID/cmdline' not available")
 
-        exe = os.environ.get('ROOT_PATH', '.') \
-            + ('/tests/pyrun%s' % sys.version_info[0])
+        exe = os.path.join(os.path.dirname(__file__), "pyrun")
         if not os.path.exists(exe):
             raise Exception('test program not found: %s' % exe)
 
@@ -310,8 +309,7 @@ class SetproctitleTestCase(unittest.TestCase):
         if not os.path.exists('/proc/%s/cmdline' % os.getpid()):
             raise SkipTest("known failure: '/proc/PID/cmdline' not available")
 
-        exe = os.environ.get('ROOT_PATH', '.') \
-            + ('/tests/pyrun%s' % sys.version_info[0])
+        exe = os.path.join(os.path.dirname(__file__), "pyrun")
         if not os.path.exists(exe):
             raise Exception('test program not found: %s' % exe)
 
