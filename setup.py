@@ -74,13 +74,16 @@ setup(
     download_url='http://pypi.python.org/pypi/setproctitle/',
     license='BSD',
     platforms=['GNU/Linux', 'BSD', 'MacOS X', 'Windows'],
+    python_requires=">=3.6",
     classifiers=[r for r in map(str.strip, """
         Development Status :: 5 - Production/Stable
         Intended Audience :: Developers
         License :: OSI Approved :: BSD License
         Programming Language :: C
-        Programming Language :: Python
         Programming Language :: Python :: 3
+        Programming Language :: Python :: 3.6
+        Programming Language :: Python :: 3.7
+        Programming Language :: Python :: 3.8
         Operating System :: POSIX :: Linux
         Operating System :: POSIX :: BSD
         Operating System :: MacOS :: MacOS X
