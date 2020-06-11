@@ -387,6 +387,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
     assert title == "Hello, weird path!"
 
 
+@pytest.mark.embedded
 def test_embedded(pyrun):
     """Check the module works with embedded Python.
     """
@@ -415,6 +416,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
     assert title == "Hello, embedded!"
 
 
+@pytest.mark.embedded
 def test_embedded_many_args(pyrun):
     """Check more complex cmdlines are handled in embedded env too."""
     if IS_PYPY:
