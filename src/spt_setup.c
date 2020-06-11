@@ -444,7 +444,15 @@ exit:
 int
 spt_setup(void)
 {
-    int rv = -1;
+    const int not_happened = 3;
+    static int rv = not_happened;
+
+    /* Make sure setup happens just once, either successful or failed */
+    if (rv != not_happened) {
+        return rv;
+    }
+
+    rv = -1;
 
 #ifndef WIN32
     int argc = 0;

@@ -41,10 +41,16 @@ spt_setproctitle(PyObject *self, PyObject *args, PyObject *kwargs)
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s", kwlist, &title))
         return NULL;
 
-    set_ps_display(title, true);
+    /* Initialize the process title */
+    if (0 <= spt_setup()) {
+        set_ps_display(title, true);
+    }
+    else {
+        spt_debug("failed to initialize setproctitle");
+    }
 
-    Py_INCREF(Py_None);
-    return Py_None;
+
+    Py_RETURN_NONE;
 }
 
 
@@ -57,6 +63,8 @@ spt_getproctitle(PyObject *self, PyObject *args)
 {
     size_t tlen;
     const char *title;
+
+    spt_setup();
     title = get_ps_display(&tlen);
 
     return Py_BuildValue("s#", title, (int)tlen);
@@ -122,16 +130,6 @@ INIT_MODULE(setproctitle)(void)
     d = PyModule_GetDict(m);
     spt_version = Py_BuildValue("s", xstr(SPT_VERSION));
     PyDict_SetItemString(d, "__version__", spt_version);
-
-    /* Initialize the process title */
-    if (0 > spt_setup()) {
-        spt_debug("failed to initialize module setproctitle");
-
-        /* Check for errors */
-        if (PyErr_Occurred()) {
-            spt_debug("an exception is set: import will fail");
-        }
-    }
 
 exit:
 

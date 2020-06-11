@@ -1,10 +1,14 @@
 Releases history
 ----------------
 
-Version 1.1.11
-~~~~~~~~~~~~~~
+Version 1.2
+~~~~~~~~~~~
 
+- Initialisation of the module moved to the first usage: importing the module
+  doesn't cause side effects.
 - Improved build on BSD, dropped ancient versions (issue #67).
+- Fixed build for Python 3.8 (#66, #72)
+- Dropped support for Python < 3.6
 
 
 Version 1.1.10
