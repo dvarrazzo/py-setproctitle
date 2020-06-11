@@ -56,6 +56,13 @@ The ``setproctitle`` module exports the following functions:
 ``getproctitle()``
     Return the current process title.
 
+.. important::
+   You should import and use the module (even just calling ``getproctitle()``)
+   pretty early in your program lifetime: code writing env vars `may
+   interfere`__ with the module initialisation.
+
+    .. __: https://github.com/dvarrazzo/py-setproctitle/issues/42
+
 
 Environment variables
 ~~~~~~~~~~~~~~~~~~~~~
