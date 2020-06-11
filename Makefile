@@ -1,6 +1,6 @@
 # Oh, makefile, help me with the python3 craze :D
 #
-# Copyright (c) 2010-2016 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+# Copyright (c) 2010-2020 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 
 MKDIR = mkdir -p
 RM = rm -f

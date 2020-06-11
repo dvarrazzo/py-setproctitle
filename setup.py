@@ -2,7 +2,7 @@
 """
 setproctitle setup script.
 
-Copyright (c) 2009-2016 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+Copyright (c) 2009-2020 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
 import sys
