@@ -38,8 +38,7 @@ def pyrun(pyconfig):
     cmdline.extend(pyconfig("includes"))
     cmdline.extend(["-o", target, source])
     cmdline.extend(pyconfig("ldflags"))
-    # not sure still needed
-    # cmdline.append(f"-L{pyconfig('prefix')[0]}/lib")
+    cmdline.append(f"-L{pyconfig('prefix')[0]}/lib")
     sp.check_call(cmdline)
     return target
 
@@ -58,14 +57,18 @@ def pyconfig():
             f"can't find python-config from executable {sys.executable}"
         )
 
+    # Travis' Python 3.8 is not built with --embed
+    help = sp.check_output([pyconfexe, "--help"])
+    has_embed = b"--embed" in help
+
     def pyconfig_func(opt):
         cmdline = [pyconfexe, f"--{opt}"]
-        if sys.version_info[:2] >= (3, 8):
+        if has_embed:
             cmdline.append("--embed")
         bout = sp.check_output(cmdline)
         out = bout.decode(
-            sys.getfilesystemencoding()
-        )  # sounds like a good bet
+            sys.getfilesystemencoding()  # sounds like a good bet
+        )
         return out.split()
 
     return pyconfig_func
