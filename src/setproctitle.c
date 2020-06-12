@@ -49,7 +49,6 @@ spt_setproctitle(PyObject *self, PyObject *args, PyObject *kwargs)
         spt_debug("failed to initialize setproctitle");
     }
 
-
     Py_RETURN_NONE;
 }
 
@@ -71,6 +70,40 @@ spt_getproctitle(PyObject *self, PyObject *args)
 }
 
 
+static char spt_setthreadtitle__doc__[] =
+"setthreadtitle(title) -- Change the thread title."
+;
+
+static PyObject *
+spt_setthreadtitle(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    const char *title = NULL;
+    static char *kwlist[] = {"title", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s", kwlist, &title))
+        return NULL;
+
+    set_thread_title(title);
+
+    Py_RETURN_NONE;
+}
+
+
+static char spt_getthreadtitle__doc__[] =
+"getthreadtitle() -- Return the thread title."
+;
+
+static PyObject *
+spt_getthreadtitle(PyObject *self, PyObject *args)
+{
+    char title[16] = {'\0'};
+
+    get_thread_title(title);
+
+    return Py_BuildValue("s", title);
+}
+
+
 /* List of methods defined in the module */
 
 static struct PyMethodDef spt_methods[] = {
@@ -83,6 +116,16 @@ static struct PyMethodDef spt_methods[] = {
         (PyCFunction)spt_getproctitle,
         METH_NOARGS,
         spt_getproctitle__doc__},
+
+    {"setthreadtitle",
+        (PyCFunction)spt_setthreadtitle,
+        METH_VARARGS|METH_KEYWORDS,
+        spt_setthreadtitle__doc__},
+
+    {"getthreadtitle",
+        (PyCFunction)spt_getthreadtitle,
+        METH_NOARGS,
+        spt_getthreadtitle__doc__},
 
     {NULL, (PyCFunction)NULL, 0, NULL}        /* sentinel */
 };

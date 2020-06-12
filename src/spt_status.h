@@ -22,5 +22,9 @@ HIDDEN extern void set_ps_display(const char *activity, bool force);
 
 HIDDEN extern const char *get_ps_display(size_t *displen);
 
+HIDDEN extern void set_thread_title(const char *title);
+
+HIDDEN extern void get_thread_title(char *title);
+
 #endif   /* SPT_STATUS_H */
 

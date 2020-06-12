@@ -48,6 +48,14 @@ all the details.
 Usage
 -----
 
+.. note::
+   You should import and use the module (even just calling ``getproctitle()``)
+   pretty early in your program lifetime: code writing env vars `may
+   interfere`__ with the module initialisation.
+
+    .. __: https://github.com/dvarrazzo/py-setproctitle/issues/42
+
+
 The ``setproctitle`` module exports the following functions:
 
 ``setproctitle(title)``
@@ -56,12 +64,20 @@ The ``setproctitle`` module exports the following functions:
 ``getproctitle()``
     Return the current process title.
 
-.. important::
-   You should import and use the module (even just calling ``getproctitle()``)
-   pretty early in your program lifetime: code writing env vars `may
-   interfere`__ with the module initialisation.
+The process title is usually visible in files such as ``/proc/PID/cmdline``,
+``/proc/PID/status``, ``/proc/PID/comm``, depending on the operating system
+and kernel version. These information are used by user-space tools such as
+``ps`` and ``top``.
 
-    .. __: https://github.com/dvarrazzo/py-setproctitle/issues/42
+
+``setthreadtitle(title)``
+    Set *title* as the title for the current thread.
+
+``getthreadtitle()``
+    Get the current thread title.
+
+The thread title is exposed by some operating systems as the file
+``/proc/PID/task/TID/comm``, which is used by certain tools such as ``htop``.
 
 
 Environment variables
