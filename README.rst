@@ -109,15 +109,3 @@ The module can probably work on HP-UX, but I haven't found any to test with.
 It is unlikely that it can work on Solaris instead.
 
 .. _Process Explorer: http://technet.microsoft.com/en-us/sysinternals/bb896653.aspx
-
-
-Other known implementations and discussions
--------------------------------------------
-
-- `procname`_: a module exposing the same functionality, but less portable
-  and not well packaged.
-- `Issue 5672`_: where the introduction of such functionality into the stdlib
-  is being discussed.
-
-.. _procname: http://code.google.com/p/procname/
-.. _Issue 5672: http://bugs.python.org/issue5672
