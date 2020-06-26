@@ -11,6 +11,7 @@ Copyright (c) 2009-2020 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 import os
 import re
 import sys
+import string
 import subprocess as sp
 
 import pytest
@@ -413,7 +414,42 @@ print('SPT_TESTENV=testenv' in open('/proc/self/environ').read())
     assert lines[4] == "True", "env has been clobbered"
     assert (
         title_len <= cmdline_len
-    ), "title (len %s) not limited to argv (len %s)" % (title_len, cmdline_len)
+    ), "title (len {title_len}) not limited to argv (len {cmdline_len})"
+
+
+def test_largeenv(monkeypatch):
+    """Check that large environment doesn't get clobbered.
+    """
+    monkeypatch.setenv("SPT_NOENV", "1")
+    for c in string.ascii_uppercase:
+        monkeypatch.setenv(
+            f"{c}_TEST_ENV", "X" * (ord(c) - ord("A") + 1) * 1024
+        )
+
+    rv = run_script(
+        r"""\
+import sys
+with open("/proc/self/environ", "rb") as f:
+    env1 = f.read()
+    sys.stdout.buffer.write(env1)
+
+sys.stdout.buffer.write(b"\n-----8<-----\n")
+
+import setproctitle
+setproctitle.setproctitle("hello")
+
+with open("/proc/self/environ", "rb") as f:
+    env2 = f.read()
+    sys.stdout.buffer.write(env2)
+"""
+    )
+    parts = rv.split("\n-----8<-----\n")
+    for i, part in enumerate(parts):
+        parts[i] = dict(
+            var.split("=", 1) for var in part.split("\0") if "=" in var
+        )
+
+    assert parts[0] == parts[1]
 
 
 # Support functions
