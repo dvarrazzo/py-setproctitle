@@ -25,6 +25,12 @@ extern char **environ;
 
 #ifndef WIN32
 
+/* I don't expect it to be defined: should include limits.h. But then it's
+ * another of those ./configure can of worms to find where it is... */
+#ifndef ARG_MAX
+#define ARG_MAX (96 * 1024)
+#endif
+
 /* Return a concatenated version of a strings vector.
  *
  * Return newly allocated heap space: clean it up with free().
@@ -171,7 +177,7 @@ find_argv_from_env(int argc, char *arg0)
      * Don't look for argv[0] as it's probably not preceded by 0. */
     ptr = environ[0];
     spt_debug("found environ at %p", ptr);
-    limit = ptr - 8192;  /* TODO: empiric limit: should use MAX_ARG */
+    limit = ptr - ARG_MAX;
     --ptr;
     for (i = argc - 1; i >= 1; --i) {
         if (*ptr) {

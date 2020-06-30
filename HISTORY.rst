@@ -6,6 +6,7 @@ Version 1.2
 
 - Initialisation of the module moved to the first usage: importing the module
   doesn't cause side effects.
+- Manage much longer command lines (#52)
 - Improved build on BSD, dropped ancient versions (issue #67).
 - Fixed build for Python 3.8 (#66, #72)
 - Added support for Python 3.9

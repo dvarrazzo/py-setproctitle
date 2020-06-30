@@ -173,15 +173,10 @@ print(newenv['PATH'])
     assert path.endswith("fakepath"), path
 
 
-def test_issue_8(monkeypatch, tmp_path):
+def test_issue_8(tmp_pypath):
     """Test that the module works with 'python -m'."""
     module = "spt_issue_8"
-    monkeypatch.setenv(
-        "PYTHONPATH",
-        str(tmp_path) + os.pathsep + os.environ.get("PYTHONPATH", ""),
-    )
-
-    with open(tmp_path / f"{module}.py", "w") as f:
+    with open(tmp_pypath / f"{module}.py", "w") as f:
         f.write(
             r"""
 import setproctitle
@@ -200,6 +195,30 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 
     title = _clean_up_title(pids[pid])
     assert title == "Hello, module!"
+
+
+def test_large_cmdline(tmp_pypath):
+    """Test with a 64KB command line."""
+    module = "longargs"
+    with open(tmp_pypath / f"{module}.py", "w") as f:
+        f.write(
+            r"""
+import setproctitle
+setproctitle.setproctitle("Hello, long!")
+
+import os
+print(os.getpid())
+print(os.popen("ps -x -o pid,command 2> /dev/null").read())
+            """
+        )
+
+    rv = run_script(args=f"-m {module} {' '.join(['X' * 1024] * 64)}")
+    lines = [line for line in rv.splitlines() if line]
+    pid = lines.pop(0)
+    pids = dict([r.strip().split(None, 1) for r in lines])
+
+    title = _clean_up_title(pids[pid])
+    assert title == "Hello, long!"
 
 
 def test_unicode():
@@ -417,7 +436,7 @@ print('SPT_TESTENV=testenv' in open('/proc/self/environ').read())
     ), "title (len {title_len}) not limited to argv (len {cmdline_len})"
 
 
-def test_largeenv(monkeypatch):
+def test_large_env(monkeypatch):
     """Check that large environment doesn't get clobbered.
     """
     monkeypatch.setenv("SPT_NOENV", "1")

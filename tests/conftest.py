@@ -82,6 +82,18 @@ print(os.path.dirname(setproctitle.__file__))
     return rv.rstrip()
 
 
+@pytest.fixture(scope="function")
+def tmp_pypath(monkeypatch, tmp_path):
+    """
+    return a tmp directory which has been added to the python path
+    """
+    monkeypatch.setenv(
+        "PYTHONPATH",
+        str(tmp_path) + os.pathsep + os.environ.get("PYTHONPATH", ""),
+    )
+    return tmp_path
+
+
 def run_script(script=None, args=None, executable=None, env=None):
     """run a script in a separate process.
 
