@@ -23,7 +23,6 @@ matrix:
 install:
   - pip install tox
 
-
 script:
   - test "${LD_LIBRARY_PATH}" || export LD_LIBRARY_PATH=$(python-config --prefix)/lib
   - tox

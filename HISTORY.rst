@@ -8,6 +8,7 @@ Version 1.2
   doesn't cause side effects.
 - Improved build on BSD, dropped ancient versions (issue #67).
 - Fixed build for Python 3.8 (#66, #72)
+- Added support for Python 3.9
 - Dropped support for Python < 3.6
 
 
