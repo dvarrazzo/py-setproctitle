@@ -11,9 +11,7 @@
 #ifndef SPT_PYTHON_H
 #define SPT_PYTHON_H
 
-#if PY_MAJOR_VERSION >= 3
 #define PY_SSIZE_T_CLEAN
-#endif
 
 #include <Python.h>
 
