@@ -340,7 +340,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 
 
 @pytest.mark.embedded
-def test_embedded(pyrun):
+def test_embedded(pyrun, spt_directory):
     """Check the module works with embedded Python.
     """
     if IS_PYPY:
@@ -350,7 +350,9 @@ def test_embedded(pyrun):
         pytest.skip("known failure: '/proc/PID/cmdline' not available")
 
     rv = run_script(
-        r"""
+        f"""
+import sys
+sys.path.insert(0, {spt_directory!r})
 import setproctitle
 setproctitle.setproctitle("Hello, embedded!")
 
@@ -369,7 +371,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 
 
 @pytest.mark.embedded
-def test_embedded_many_args(pyrun):
+def test_embedded_many_args(pyrun, spt_directory):
     """Check more complex cmdlines are handled in embedded env too."""
     if IS_PYPY:
         pytest.skip("skip test, pypy")
@@ -378,7 +380,9 @@ def test_embedded_many_args(pyrun):
         pytest.skip("known failure: '/proc/PID/cmdline' not available")
 
     rv = run_script(
-        r"""
+        f"""
+import sys
+sys.path.insert(0, {spt_directory!r})
 import setproctitle
 setproctitle.setproctitle("Hello, embedded!")
 

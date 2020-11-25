@@ -1,0 +1,24 @@
+name: Test the module
+on: [push]
+jobs:
+  run-tests:
+    name: Python ${{matrix.python-version}} tests
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version: ["3.6", "3.7", "3.8", "3.9"]
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{matrix.python-version}}
+          architecture: x64
+
+      - name: Build the package
+        run: sudo pip install -e .[test]
+
+      - name: Run tests
+        run: pytest -vrsx

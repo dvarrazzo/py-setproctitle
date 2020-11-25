@@ -1,0 +1,30 @@
+name: Build packages
+on: [workflow_dispatch]
+jobs:
+  build-manylinux:
+    name: Build packages
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v2
+
+      - name: Build sdist
+        run: python setup.py sdist
+
+      - name: Build x86_64 packages
+        uses: RalfG/python-wheels-manylinux-build@v0.3.2-manylinux2014_x86_64
+        with:
+          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
+
+      - name: Build i686 packages
+        uses: RalfG/python-wheels-manylinux-build@v0.3.2-manylinux2014_i686
+        with:
+          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: packages
+          path: |
+            dist/*.tar.gz
+            dist/*-manylinux1_*.whl
