@@ -18,8 +18,8 @@ jobs:
           python-version: ${{matrix.python-version}}
           architecture: x64
 
-      - name: Build the package
-        run: pip install .[test]
+      - name: Install Tox
+        run: pip install tox
 
       - name: Run tests
-        run: pytest -vrsx
+        run: tox -e ${{matrix.python-version}}
