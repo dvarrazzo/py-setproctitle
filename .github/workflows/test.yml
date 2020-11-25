@@ -22,4 +22,4 @@ jobs:
         run: pip install tox
 
       - name: Run tests
-        run: tox -e ${{matrix.python-version}}
+        run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
