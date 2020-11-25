@@ -4,6 +4,7 @@ Releases history
 Version 1.2
 ~~~~~~~~~~~
 
+- added ``getthreadtitle()`` and ``setthreadtitle()``.
 - Initialisation of the module moved to the first usage: importing the module
   doesn't cause side effects.
 - Manage much longer command lines (#52)

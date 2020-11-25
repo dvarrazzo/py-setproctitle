@@ -13,7 +13,7 @@ except ImportError:
     from distutils.core import setup, Extension
 
 
-VERSION = "1.2.dev0"
+VERSION = "1.2"
 
 
 define_macros = {}
