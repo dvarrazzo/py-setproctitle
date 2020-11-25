@@ -340,12 +340,10 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 
 
 @pytest.mark.embedded
+@pytest.mark.skipif(IS_PYPY, reason="skip test, pypy")
 def test_embedded(pyrun, spt_directory):
     """Check the module works with embedded Python.
     """
-    if IS_PYPY:
-        pytest.skip("skip test, pypy")
-
     if not os.path.exists("/proc/%s/cmdline" % os.getpid()):
         pytest.skip("known failure: '/proc/PID/cmdline' not available")
 
@@ -371,11 +369,9 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 
 
 @pytest.mark.embedded
+@pytest.mark.skipif(IS_PYPY, reason="skip test, pypy")
 def test_embedded_many_args(pyrun, spt_directory):
     """Check more complex cmdlines are handled in embedded env too."""
-    if IS_PYPY:
-        pytest.skip("skip test, pypy")
-
     if not os.path.exists("/proc/%s/cmdline" % os.getpid()):
         pytest.skip("known failure: '/proc/PID/cmdline' not available")
 
