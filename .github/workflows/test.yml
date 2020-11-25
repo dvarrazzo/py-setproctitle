@@ -7,6 +7,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.6", "3.7", "3.8", "3.9", "pypy3"]
+
     steps:
       - name: Checkout repos
         uses: actions/checkout@v2
@@ -18,7 +19,7 @@ jobs:
           architecture: x64
 
       - name: Build the package
-        run: sudo pip install -e .[test]
+        run: pip install .[test]
 
       - name: Run tests
         run: pytest -vrsx
