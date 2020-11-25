@@ -63,6 +63,7 @@ try:
     kwargs["long_description"] = (
         open("README.rst").read() + "\n" + open("HISTORY.rst").read()
     )
+    kwargs["long_description_content_type"] = "text/x-rst"
 except Exception:
     pass
 
