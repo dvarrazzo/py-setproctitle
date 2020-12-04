@@ -2,7 +2,7 @@ name: Build packages
 on: [workflow_dispatch]
 jobs:
   build-manylinux:
-    name: Build packages
+    name: Build Linux packages
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repos
@@ -24,7 +24,39 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages
+          name: linux_packages
           path: |
             dist/*.tar.gz
             dist/*-manylinux1_*.whl
+
+  build-windows:
+    name: Build Windows packages
+    runs-on: windows-latest
+    strategy:
+      max-parallel: 100
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+        architecutre: ['x64', 'x86']
+
+    steps:
+    - name: Checkout repos
+      uses: actions/checkout@v1
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Python dependencies
+      shell: cmd
+      run: pip install wheel
+
+    - name: Build x86_64 packages
+      shell: cmd
+      run: python setup.py bdist_wheel
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v1
+      with:
+          name: windows_packages
+          path: dist
