@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.2.1
+-------------
+
+- Fixed segfault after ``os.environ.clear()`` (issue #88).
+
+
 Version 1.2
 ~~~~~~~~~~~
 

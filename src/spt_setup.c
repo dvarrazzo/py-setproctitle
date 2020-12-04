@@ -176,6 +176,11 @@ find_argv_from_env(int argc, char *arg0)
     /* Walk back from environ until you find argc-1 null-terminated strings.
      * Don't look for argv[0] as it's probably not preceded by 0. */
     ptr = environ[0];
+    if (!ptr) {
+        /* It happens on os.environ.clear() */
+        spt_debug("environ pointer is NULL");
+        goto exit;
+    }
     spt_debug("found environ at %p", ptr);
     limit = ptr - ARG_MAX;
     --ptr;
