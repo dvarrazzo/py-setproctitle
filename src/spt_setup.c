@@ -456,7 +456,7 @@ int
 spt_setup(void)
 {
     const int not_happened = 3;
-    static int rv = not_happened;
+    static int rv = 3;
 
     /* Make sure setup happens just once, either successful or failed */
     if (rv != not_happened) {
