@@ -471,6 +471,16 @@ with open("/proc/self/environ", "rb") as f:
     assert parts[0] == parts[1]
 
 
+def test_clear_segfault():
+    rv = run_script(
+        r"""\
+import os
+from setproctitle import setproctitle
+os.environ.clear()
+setproctitle("Test")
+""")
+
+
 # Support functions
 
 
