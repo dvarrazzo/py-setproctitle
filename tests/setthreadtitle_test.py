@@ -1,7 +1,12 @@
 import os
 import pytest
+import sys
 
 from .conftest import run_script
+
+if sys.platform == 'win32':
+    pytest.skip("skipping Posix tests on Windows",
+                allow_module_level=True)
 
 
 def test_thread_title_unchanged():
