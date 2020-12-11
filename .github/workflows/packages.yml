@@ -28,7 +28,8 @@ jobs:
           name: linux_packages
           path: |
             dist/*.tar.gz
-            dist/*-manylinux1_*.whl
+            dist/*-manylinux1_i686.whl
+            dist/*-manylinux1_x86_64.whl
 
   build-windows:
     name: Build Windows packages
