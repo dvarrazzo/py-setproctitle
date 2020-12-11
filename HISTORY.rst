@@ -1,6 +1,13 @@
 Releases history
 ----------------
 
+Version 1.2.2
+-------------
+
+- Fixed Windows build (issues #89, #90).
+- Added wheel packages for Windows (issues #47, #90).
+
+
 Version 1.2.1
 -------------
 
