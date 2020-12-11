@@ -12,12 +12,9 @@ try:
 except ImportError:
     from distutils.core import setup, Extension
 
-
-VERSION = "1.2.1"
-
+VERSION = "1.2.1.dev0"
 
 define_macros = {}
-
 define_macros["SPT_VERSION"] = VERSION
 
 if sys.platform.startswith("linux"):
