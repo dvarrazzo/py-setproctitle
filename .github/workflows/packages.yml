@@ -1,3 +1,4 @@
+---
 name: Packages
 on: [workflow_dispatch]
 jobs:
@@ -38,25 +39,25 @@ jobs:
         architecture: ['x64', 'x86']
 
     steps:
-    - name: Checkout repos
-      uses: actions/checkout@v2
+      - name: Checkout repos
+        uses: actions/checkout@v2
 
-    - name: Set up Python ${{matrix.python-version}}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{matrix.python-version}}
-        architecture: ${{matrix.architecture}}
+      - name: Set up Python ${{matrix.python-version}}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{matrix.python-version}}
+          architecture: ${{matrix.architecture}}
 
-    - name: Install Python dependencies
-      shell: cmd
-      run: pip install wheel
+      - name: Install Python dependencies
+        shell: cmd
+        run: pip install wheel
 
-    - name: Build x86_64 packages
-      shell: cmd
-      run: python setup.py bdist_wheel
+      - name: Build x86_64 packages
+        shell: cmd
+        run: python setup.py bdist_wheel
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
           name: windows_packages
           path: dist
