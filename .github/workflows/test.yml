@@ -1,8 +1,8 @@
-name: Test the module
+name: Tests
 on: [push]
 jobs:
-  run-tests:
-    name: Python ${{matrix.python-version}} tests
+  linux-tests:
+    name: Python ${{matrix.python-version}} tests on Linux
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -24,23 +24,22 @@ jobs:
       - name: Run tests
         run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
 
-  build-windows:
-    name: Test Windows build
+  windows-tests:
+    name: Python ${{matrix.python-version}} tests on Windows ${{matrix.architecture}}
     runs-on: windows-latest
     strategy:
-      max-parallel: 100
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
         architecture: ['x64', 'x86']
 
     steps:
     - name: Checkout repos
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+    - name: Set up Python ${{matrix.python-version}}
+      uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{matrix.python-version}}
         architecture: ${{matrix.architecture}}
 
     - name: Install Tox
