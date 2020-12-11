@@ -1,6 +1,10 @@
 A Python module to customize the process title
 ==============================================
 
+.. image:: https://github.com/dvarrazzo/py-setproctitle/workflows/Tests/badge.svg
+    :target: https://github.com/dvarrazzo/py-setproctitle/actions?query=workflow%3ATests
+    :alt: Tests
+
 :author: Daniele Varrazzo
 
 The ``setproctitle`` module allows a process to change its title (as displayed

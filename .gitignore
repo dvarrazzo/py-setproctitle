@@ -3,6 +3,7 @@
 *.orig
 *.pyc
 *.rej
+*.html
 tools/pttest
 tools/sptdemo
 tools/prctl_demo
