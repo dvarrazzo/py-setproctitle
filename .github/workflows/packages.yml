@@ -2,8 +2,8 @@
 name: Packages
 on: [workflow_dispatch]
 jobs:
-  build-manylinux:
-    name: Build Linux packages
+  build-sdist:
+    name: Build sdist package
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repos
@@ -12,22 +12,20 @@ jobs:
       - name: Build sdist
         run: python setup.py sdist
 
-      - name: Set up QEMU
-        id: qemu
-        uses: docker/setup-qemu-action@v1
-
-      - name: Available platforms
-        run: echo ${{ steps.qemu.outputs.platforms }}
-
-      - name: Build aarch64 packages
-        uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_aarch64
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
         with:
-          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
+          name: packages_sdist
+          path: |
+            dist/*.tar.gz
 
-      - name: Build x86_64 packages
-        uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_x86_64
-        with:
-          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
+
+  build-linux-i686:
+    name: Build Linux i686 packages
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v2
 
       - name: Build i686 packages
         uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_i686
@@ -37,12 +35,54 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: linux_packages
+          name: packages_linux_i686
           path: |
-            dist/*.tar.gz
             dist/*-manylinux1_i686.whl
+
+
+  build-x86_64:
+    name: Build Linux x86_64 packages
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v2
+
+      - name: Build x86_64 packages
+        uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_x86_64
+        with:
+          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: packages_linux_x86_64
+          path: |
             dist/*-manylinux1_x86_64.whl
+
+
+  build-aarch64:
+    name: Build Linux aarch64 packages
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        id: qemu
+        uses: docker/setup-qemu-action@v1
+
+      - name: Build aarch64 packages
+        uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_aarch64
+        with:
+          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: packages_linux_aarch64
+          path: |
             dist/*-manylinux2014_aarch64.whl
+
 
   build-windows:
     name: Build Windows packages
@@ -73,5 +113,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: windows_packages
+          name: packages_windows
           path: dist
