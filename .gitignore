@@ -16,3 +16,4 @@ env
 /setproctitle.egg-info
 /setproctitle.*.so
 /.tox
+/packages
