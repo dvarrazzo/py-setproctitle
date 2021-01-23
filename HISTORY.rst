@@ -6,6 +6,7 @@ Version 1.2.2
 
 - Fixed Windows build (issues #89, #90).
 - Added wheel packages for Windows (issues #47, #90).
+- Added wheel packages for aarch64 (issues #95).
 
 
 Version 1.2.1
