@@ -137,8 +137,6 @@ static char setproctitle_module_documentation[] =
 "Allow customization of the process title."
 ;
 
-#ifdef IS_PY3K
-
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
     "setproctitle",
@@ -151,22 +149,15 @@ static struct PyModuleDef moduledef = {
     NULL
 };
 
-#endif
-
 PyMODINIT_FUNC
-INIT_MODULE(setproctitle)(void)
+PyInit_setproctitle(void)
 {
     PyObject *m, *d;
 
     spt_debug("module init");
 
     /* Create the module and add the functions */
-#ifdef IS_PY3K
     m = PyModule_Create(&moduledef);
-#else
-    m = Py_InitModule3("setproctitle", spt_methods,
-        setproctitle_module_documentation);
-#endif
     if (m == NULL) { goto exit; }
 
     /* Add version string to the module*/
@@ -175,12 +166,6 @@ INIT_MODULE(setproctitle)(void)
     PyDict_SetItemString(d, "__version__", spt_version);
 
 exit:
-
-#ifdef IS_PY3K
     return m;
-#else
-    return;
-#endif
-
 }
 

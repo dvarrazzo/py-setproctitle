@@ -70,8 +70,6 @@ join_argv(int argc, char **argv)
 }
 
 
-#ifdef IS_PY3K
-
 /* Return a copy of argv[0] encoded in the default encoding.
  *
  * Return a newly allocated buffer to be released with free().
@@ -108,40 +106,6 @@ exit:
 
     return rv;
 }
-
-#else  /* !IS_PY3K */
-
-/* Return a copy of argv referring to the original arg area.
- *
- * python -m messes up with arg (issue #8): ensure to have a vector to the
- * original args or save_ps_display_args() will stop processing too soon.
- *
- * Return a buffer allocated with malloc: should be cleaned up with free().
- *
- * Return NULL in case of error. If the error shouldn't be ignored, also set
- * a Python exception.
- */
-static char **
-fix_argv(int argc, char **argv)
-{
-    char **buf = NULL;
-    int i;
-    char *ptr = argv[0];
-
-    if (!(buf = (char **)malloc(argc * sizeof(char *)))) {
-        PyErr_NoMemory();
-        return NULL;
-    }
-
-    for (i = 0; i < argc; ++i) {
-        buf[i] = ptr;
-        ptr += strlen(ptr) + 1;
-    }
-
-    return buf;
-}
-
-#endif  /* IS_PY3K */
 
 
 /* Find the original arg buffer starting from the env position.
@@ -230,8 +194,6 @@ exit:
 }
 
 
-#ifdef IS_PY3K
-
 /* Come on, why is this missing?! this is just cruel!
  * I guess you club seal pups for hobby. */
 PyObject *
@@ -251,8 +213,6 @@ exit:
     Py_XDECREF(io);
     return rv;
 }
-
-#endif  /* IS_PY3K */
 
 /* Read the number of arguments and the first argument from /proc/pid/cmdline
  *
@@ -290,7 +250,7 @@ get_args_from_proc(int *argc_o, char **arg0_o)
         PyErr_Clear();
         goto exit;
     }
-    if (-1 == (pid = PyInt_AsLong(pid_py))) {
+    if (-1 == (pid = PyLong_AsLong(pid_py))) {
         spt_debug("os.getpid() returned crap?");
         /* Don't bother to check PyErr_Occurred as pid can't just be -1. */
         goto exit;
@@ -327,7 +287,7 @@ get_args_from_proc(int *argc_o, char **arg0_o)
         char *ccl;
         Py_ssize_t i;
 
-        if (!(ccl = Bytes_AsString(cl))) {
+        if (!(ccl = PyBytes_AsString(cl))) {
             spt_debug("failed to get cmdline string");
             goto exit;
         }
@@ -339,7 +299,7 @@ get_args_from_proc(int *argc_o, char **arg0_o)
         spt_debug("got argv[0] = '%s' from /proc", *arg0_o);
 
         *argc_o = 0;
-        for (i = Bytes_Size(cl) - 1; i >= 0; --i) {
+        for (i = PyBytes_Size(cl) - 1; i >= 0; --i) {
             if (ccl[i] == '\0') { (*argc_o)++; }
         }
         spt_debug("got argc = %d from /proc", *argc_o);
@@ -376,7 +336,7 @@ static int
 get_argc_argv(int *argc_o, char ***argv_o)
 {
     int argc = 0;
-    argv_t **argv_py = NULL;
+    wchar_t **argv_py = NULL;
     char **argv = NULL;
     char *arg0 = NULL;
     int rv = -1;
@@ -389,19 +349,12 @@ get_argc_argv(int *argc_o, char ***argv_o)
     if (argc > 0) {
         spt_debug("found %d arguments", argc);
 
-#ifdef IS_PY3K
         if (!(arg0 = get_encoded_arg0(argv_py[0]))) {
             spt_debug("couldn't get a copy of argv[0]");
             goto exit;
         }
-#else
-        if (!(argv = fix_argv(argc, (char **)argv_py))) {
-            spt_debug("failed to fix argv");
-            goto exit;
-        }
-#endif
-        /* we got argv: on py2 it points to the right place in memory; on py3
-         * we only got a copy of argv[0]: we will use it to look from environ
+        /* we got argv: on py2 it used to pointsto the right place in memory; on
+         * py3 we only got a copy of argv[0]: we will use it to look from env
          */
     }
     else {
