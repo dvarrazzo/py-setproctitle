@@ -175,11 +175,11 @@ find_argv_from_env(int argc, char *arg0)
     spt_debug("argv[0] should be at %p", ptr);
 
     if (ptr <= limit) {
-        spt_debug("failed to found argv[0] start");
+        spt_debug("failed to find argv[0] start");
         goto exit;
     }
     if (strcmp(ptr, arg0)) {
-        spt_debug("argv[0] doesn't match '%s'", arg0);
+        spt_debug("argv[0] '%s' doesn't match '%s'", ptr, arg0);
         goto exit;
     }
 
@@ -447,6 +447,7 @@ spt_setup(void)
 
     /* Make sure setup happens just once, either successful or failed */
     if (rv != not_happened) {
+        spt_debug("setup was called more than once!");
         return rv;
     }
 

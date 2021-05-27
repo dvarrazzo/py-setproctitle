@@ -38,6 +38,7 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
+#include "spt.h"
 #include "spt_config.h"
 
 /* note: VC doesn't have this, but it was working on mingw instead
@@ -200,7 +201,7 @@ save_ps_display_args(int argc, char **argv)
             /*
              * Clobbering environ works fine from within the process, but some
              * external utils use /proc/PID/environ and they would find noting,
-             * or mess, if we clobber it. An user can define SPT_NOENV to limit
+             * or mess, if we clobber it. A user can define SPT_NOENV to limit
              * clobbering to argv (see ticket #16).
              */
             char *noenv;
@@ -220,6 +221,7 @@ save_ps_display_args(int argc, char **argv)
                 /*
                  * move the environment out of the way
                  */
+                spt_debug("environ has been copied");
                 new_environ = (char **) malloc((i + 1) * sizeof(char *));
                 for (i = 0; environ[i] != NULL; i++)
                     new_environ[i] = strdup(environ[i]);

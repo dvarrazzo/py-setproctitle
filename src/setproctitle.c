@@ -38,8 +38,10 @@ spt_setproctitle(PyObject *self, PyObject *args, PyObject *kwargs)
     const char *title = NULL;
     static char *kwlist[] = {"title", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s", kwlist, &title))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s", kwlist, &title)) {
+        spt_debug("failed to parse tuple and keywords");
         return NULL;
+    }
 
     /* Initialize the process title */
     if (0 <= spt_setup()) {
@@ -80,8 +82,10 @@ spt_setthreadtitle(PyObject *self, PyObject *args, PyObject *kwargs)
     const char *title = NULL;
     static char *kwlist[] = {"title", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s", kwlist, &title))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s", kwlist, &title)) {
+        spt_debug("failed to parse tuple and keywords");
         return NULL;
+    }
 
     set_thread_title(title);
 
