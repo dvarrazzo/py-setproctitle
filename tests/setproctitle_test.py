@@ -442,6 +442,9 @@ print('SPT_TESTENV=testenv' in open('/proc/self/environ').read())
 def test_large_env(monkeypatch):
     """Check that large environment doesn't get clobbered.
     """
+    if not os.path.exists("/proc/self/environ"):
+        pytest.skip("'/proc/self/environ' not available")
+
     monkeypatch.setenv("SPT_NOENV", "1")
     for c in string.ascii_uppercase:
         monkeypatch.setenv(
