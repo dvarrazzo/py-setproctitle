@@ -1,6 +1,6 @@
 ---
 name: Tests
-on: [push]
+on: [push, pull_request]
 jobs:
   linux-tests:
     name: Python ${{matrix.python-version}} tests on Linux
