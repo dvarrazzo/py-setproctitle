@@ -8,9 +8,9 @@ Copyright (c) 2009-2021 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 import sys
 
 try:
-    from setuptools import Extension, setup
+    from setuptools import setup, Extension
 except ImportError:
-    from distutils.core import Extension, setup
+    from distutils.core import setup, Extension
 
 VERSION = "1.2.3.dev0"
 
