@@ -95,6 +95,6 @@ setup(
     python_requires=">=3.6",
     classifiers=classifiers,
     ext_modules=[mod_spt],
-    extras_require={"test": ["pytest>=6.2,<6.3"]},
+    extras_require={"test": ["pytest>=6.2.5,<6.3"]},
     **kwargs
 )
