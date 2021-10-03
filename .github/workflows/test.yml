@@ -44,7 +44,7 @@ jobs:
           architecture: ${{matrix.architecture}}
 
       - name: Install Tox
-        run: pip install tox
+        run: pip install tox tox-gh-actions
 
       - name: Run tests
         run: tox -- -vrsx --color=yes

@@ -8,9 +8,9 @@ Copyright (c) 2009-2021 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 import sys
 
 try:
-    from setuptools import setup, Extension
+    from setuptools import Extension, setup
 except ImportError:
-    from distutils.core import setup, Extension
+    from distutils.core import Extension, setup
 
 VERSION = "1.2.3.dev0"
 
@@ -95,6 +95,6 @@ setup(
     python_requires=">=3.6",
     classifiers=classifiers,
     ext_modules=[mod_spt],
-    extras_require={"test": ["pytest>=6.1,<6.2"]},
+    extras_require={"test": ["pytest>=6.2,<6.3"]},
     **kwargs
 )
