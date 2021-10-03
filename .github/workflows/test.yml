@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "pypy3"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10.0-beta - 3.10", "pypy3"]
 
     steps:
       - name: Checkout repos
@@ -18,27 +18,19 @@ jobs:
         with:
           python-version: ${{matrix.python-version}}
           architecture: x64
-        if: ${{ matrix.python-version != '3.10'}}
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.10.0-alpha - 3.10.0"
-          architecture: x64
-        if: ${{ matrix.python-version == '3.10'}}
 
       - name: Install Tox
         run: pip install tox
 
       - name: Run tests
-        run: tox -e ${{ matrix.python-version }} -- -vrsx --color=yes
+        run: tox -- -vrsx --color=yes
 
   windows-tests:
     name: Python ${{matrix.python-version}} tests on Windows ${{matrix.architecture}}
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, 3.10]
+        python-version: [3.6, 3.7, 3.8, 3.9, "3.10.0-beta - 3.10"]
         architecture: ["x64", "x86"]
 
     steps:
@@ -50,17 +42,9 @@ jobs:
         with:
           python-version: ${{matrix.python-version}}
           architecture: ${{matrix.architecture}}
-        if: ${{ matrix.python-version != '3.10'}}
-
-      - name: Set up Python ${{matrix.python-version}}
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.10.0-alpha - 3.10.0"
-          architecture: ${{matrix.architecture}}
-        if: ${{ matrix.python-version == '3.10'}}
 
       - name: Install Tox
         run: pip install tox
 
       - name: Run tests
-        run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
+        run: tox -- -vrsx --color=yes
