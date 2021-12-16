@@ -15,10 +15,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages_sdist
-          path: |
-            dist/*.tar.gz
-
+          path: ./dist/*
 
   build-linux-i686:
     name: Build Linux i686 packages
@@ -35,9 +32,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages_linux_i686
-          path: |
-            dist/*-manylinux1_i686.whl
+          path: ./dist/*
 
 
   build-x86_64:
@@ -55,9 +50,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages_linux_x86_64
-          path: |
-            dist/*-manylinux1_x86_64.whl
+          path: ./dist/*
 
 
   build-aarch64:
@@ -79,9 +72,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages_linux_aarch64
-          path: |
-            dist/*-manylinux2014_aarch64.whl
+          path: ./dist/*
 
 
   build-windows:
@@ -113,5 +104,4 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages_windows
-          path: dist
+          path: ./dist/*
