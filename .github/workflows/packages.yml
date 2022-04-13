@@ -35,8 +35,11 @@ jobs:
           CIBW_ARCHS_MACOS: "auto universal2"
           CIBW_ARCHS_WINDOWS: "auto"
           CIBW_TEST_EXTRAS: test
-          CIBW_TEST_COMMAND: "pytest --color=auto {project}/tests"
-          CIBW_TEST_SKIP: "*-macosx_universal2:arm64"
+          CIBW_TEST_COMMAND: pytest --color=yes -m 'not embedded' {project}/tests
+          # Passing a space in a param is a b*tch on windows.
+          # However embedded tests are skipped anyway there.
+          CIBW_TEST_COMMAND_WINDOWS: pytest --color=yes {project}/tests
+          CIBW_TEST_SKIP: "*-macosx_universal2:arm64 pp*-macosx_*"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
