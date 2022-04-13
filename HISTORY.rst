@@ -1,6 +1,13 @@
 Releases history
 ----------------
 
+Version 1.2.3
+-------------
+
+- Added Python 3.10 packages (issue #102).
+- Added Wheel packages for macOS (issue #96).
+
+
 Version 1.2.2
 -------------
 
