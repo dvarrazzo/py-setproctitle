@@ -15,10 +15,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages_sdist
-          path: |
-            dist/*.tar.gz
-
+          path: ./dist/*
 
   build-linux-i686:
     name: Build Linux i686 packages
@@ -30,14 +27,12 @@ jobs:
       - name: Build i686 packages
         uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_i686
         with:
-          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
+          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages_linux_i686
-          path: |
-            dist/*-manylinux1_i686.whl
+          path: ./dist/*
 
 
   build-x86_64:
@@ -50,14 +45,12 @@ jobs:
       - name: Build x86_64 packages
         uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_x86_64
         with:
-          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
+          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages_linux_x86_64
-          path: |
-            dist/*-manylinux1_x86_64.whl
+          path: ./dist/*
 
 
   build-aarch64:
@@ -74,14 +67,12 @@ jobs:
       - name: Build aarch64 packages
         uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_aarch64
         with:
-          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
+          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages_linux_aarch64
-          path: |
-            dist/*-manylinux2014_aarch64.whl
+          path: ./dist/*
 
 
   build-windows:
@@ -89,7 +80,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
         architecture: ['x64', 'x86']
 
     steps:
@@ -113,5 +104,4 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: packages_windows
-          path: dist
+          path: ./dist/*
