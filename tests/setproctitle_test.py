@@ -18,11 +18,28 @@ import pytest
 
 from .conftest import run_script
 
-IS_PYPY = "__pypy__" in sys.builtin_module_names
+skip_if_win32 = pytest.mark.skipif(
+    "sys.platform == 'win32'",
+    reason="skipping Posix tests on Windows")
 
-if sys.platform == 'win32':
-    pytest.skip("skipping Posix tests on Windows",
-                allow_module_level=True)
+skip_if_macos = pytest.mark.skipif(
+    "sys.platform == 'darwin'",
+    reason="skipping test on macOS")
+
+skip_if_pypy = pytest.mark.skipif(
+    "'__pypy__' in sys.builtin_module_names",
+    reason="skipping test on pypy")
+
+skip_if_no_proc_env = pytest.mark.skipif(
+    "not os.path.exists('/proc/self/environ')",
+    reason="'/proc/self/environ' not available"
+)
+
+skip_if_no_proc_cmdline = pytest.mark.skipif(
+    "not os.path.exists('/proc/%s/cmdline' % os.getpid())",
+    reason="'/proc/PID/cmdline' not available")
+
+pytestmark = [skip_if_win32]
 
 
 def test_runner():
@@ -343,13 +360,12 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 
 
 @pytest.mark.embedded
-@pytest.mark.skipif(IS_PYPY, reason="skip test, pypy")
+@skip_if_pypy
+@skip_if_macos
+@skip_if_no_proc_cmdline
 def test_embedded(pyrun, spt_directory):
     """Check the module works with embedded Python.
     """
-    if not os.path.exists("/proc/%s/cmdline" % os.getpid()):
-        pytest.skip("known failure: '/proc/PID/cmdline' not available")
-
     rv = run_script(
         f"""
 import sys
@@ -372,12 +388,11 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 
 
 @pytest.mark.embedded
-@pytest.mark.skipif(IS_PYPY, reason="skip test, pypy")
+@skip_if_pypy
+@skip_if_macos
+@skip_if_no_proc_cmdline
 def test_embedded_many_args(pyrun, spt_directory):
     """Check more complex cmdlines are handled in embedded env too."""
-    if not os.path.exists("/proc/%s/cmdline" % os.getpid()):
-        pytest.skip("known failure: '/proc/PID/cmdline' not available")
-
     rv = run_script(
         f"""
 import sys
@@ -400,11 +415,9 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
     assert title == "Hello, embedded!"
 
 
+@skip_if_no_proc_env
 def test_noenv():
     """Check that SPT_NOENV avoids clobbering environ."""
-    if not os.path.exists("/proc/self/environ"):
-        pytest.skip("'/proc/self/environ' not available")
-
     env = os.environ.copy()
     env["SPT_TESTENV"] = "testenv"
     rv = run_script(
@@ -439,6 +452,7 @@ print('SPT_TESTENV=testenv' in open('/proc/self/environ').read())
     ), "title (len {title_len}) not limited to argv (len {cmdline_len})"
 
 
+@skip_if_no_proc_env
 def test_large_env(monkeypatch):
     """Check that large environment doesn't get clobbered.
     """
@@ -475,7 +489,7 @@ with open("/proc/self/environ", "rb") as f:
 
 
 def test_clear_segfault():
-    rv = run_script(
+    run_script(
         r"""\
 import os
 from setproctitle import setproctitle

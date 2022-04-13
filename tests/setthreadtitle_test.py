@@ -1,18 +1,22 @@
-import os
+import os  # noqa
+import sys  # noqa
+
 import pytest
-import sys
 
 from .conftest import run_script
 
-if sys.platform == 'win32':
-    pytest.skip("skipping Posix tests on Windows",
-                allow_module_level=True)
+skip_if_win32 = pytest.mark.skipif(
+    "sys.platform == 'win32'",
+    reason="skipping Posix tests on Windows")
+
+skip_if_no_proc_tasks = pytest.mark.skipif(
+    "not os.path.exists('/proc/self/task')",
+    reason="'/proc/self/task' not available")
+
+pytestmark = [skip_if_win32, skip_if_no_proc_tasks]
 
 
 def test_thread_title_unchanged():
-    if not os.path.isdir("/proc/self/task/"):
-        pytest.skip("no task dir")
-
     rv = run_script(
         """
 from glob import glob
@@ -36,10 +40,7 @@ print(setproctitle.getthreadtitle())
 
 
 def test_set_thread_title():
-    if not os.path.isdir("/proc/self/task/"):
-        pytest.skip("no task dir")
-
-    rv = run_script(
+    run_script(
         """
 from glob import glob
 import setproctitle
@@ -53,10 +54,7 @@ with open(fn) as f:
 
 
 def test_set_threads_title():
-    if not os.path.isdir("/proc/self/task/"):
-        pytest.skip("no task dir")
-
-    rv = run_script(
+    run_script(
         """
 import time
 import threading

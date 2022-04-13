@@ -1,16 +1,19 @@
 import pytest
 import setproctitle
-import sys
+import sys  # noqa
 
-if sys.platform != 'win32':
-    pytest.skip("skipping Windows tests",
-                allow_module_level=True)
+skip_if_not_win32 = pytest.mark.skipif(
+    "sys.platform != 'win32'",
+    reason="Windows only test")
+
+pytestmark = [skip_if_not_win32]
 
 
 def test_setproctitle():
     title = "setproctitle_test"
     setproctitle.setproctitle(title)
     assert title == setproctitle.getproctitle()
+
 
 def test_setthreadtitle():
     title = "setproctitle_test"
