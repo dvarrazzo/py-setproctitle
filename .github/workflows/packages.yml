@@ -17,6 +17,7 @@ jobs:
         with:
           path: ./dist/*
 
+
   build-wheel:
     runs-on: ${{matrix.os}}
     strategy:
@@ -28,13 +29,10 @@ jobs:
       - name: Checkout repos
         uses: actions/checkout@v2
 
-      - name: Set up QEMU for multi-arch build
-        uses: docker/setup-qemu-action@v1
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.4.0
         env:
-          CIBW_ARCHS_LINUX: "auto aarch64 ppc64le"
+          CIBW_ARCHS_LINUX: "auto"
           CIBW_ARCHS_MACOS: "auto universal2"
           CIBW_ARCHS_WINDOWS: "auto"
           CIBW_TEST_EXTRAS: test
@@ -43,6 +41,31 @@ jobs:
           # However embedded tests are skipped anyway there.
           CIBW_TEST_COMMAND_WINDOWS: pytest --color=yes {project}/tests
           CIBW_TEST_SKIP: "*-macosx_universal2:arm64 pp*-macosx_*"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse/*.whl
+
+
+  build-cross-wheel:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU for multi-arch build
+        uses: docker/setup-qemu-action@v1
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.4.0
+        env:
+          CIBW_ARCHS_LINUX: "aarch64 ppc64le"
+
+      # Tests mostly fail because of some confusion with the python interpreter
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
