@@ -6,6 +6,7 @@ Version 1.2.3
 
 - Added Python 3.10 packages (issue #102).
 - Added Wheel packages for macOS (issue #96).
+- Package build moved to cibuildwheel, other wheels provided (issue #47).
 
 
 Version 1.2.2
