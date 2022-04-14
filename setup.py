@@ -12,7 +12,7 @@ try:
 except ImportError:
     from distutils.core import setup, Extension
 
-VERSION = "1.2.3"
+VERSION = "1.2.4.dev0"
 
 define_macros = {}
 define_macros["SPT_VERSION"] = VERSION
