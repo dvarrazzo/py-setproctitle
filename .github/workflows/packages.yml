@@ -17,121 +17,126 @@ jobs:
         with:
           path: ./dist/*
 
-  build-linux-i686:
-    name: Build Linux i686 packages
-    runs-on: ubuntu-20.04
+
+  build-wheel:
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, windows-latest, macos-latest]
+        pyver: [cp36, cp37, cp38, cp39, cp310]
+
     steps:
       - name: Checkout repos
         uses: actions/checkout@v2
 
-      - name: Build i686 packages
-        uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_i686
-        with:
-          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310"
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.4.0
+        env:
+          CIBW_BUILD: ${{matrix.pyver}}-*
+          CIBW_ARCHS_LINUX: auto
+          CIBW_ARCHS_MACOS: auto universal2
+          CIBW_ARCHS_WINDOWS: auto
+          CIBW_TEST_EXTRAS: test
+          CIBW_TEST_COMMAND: pytest --color=yes -m 'not embedded' {project}/tests
+          # Passing a space in a param is a b*tch on windows.
+          # However embedded tests are skipped anyway there.
+          CIBW_TEST_COMMAND_WINDOWS: pytest --color=yes {project}/tests
+          # musllinux tests fail with some pid mixup
+          # cross-build macos images can't be tested on this runner.
+          CIBW_TEST_SKIP: >-
+            *-musllinux_*
+            *-macosx_universal2:arm64
+            pp*-macosx_*
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          path: ./dist/*
+          path: ./wheelhouse/*.whl
 
 
-  build-x86_64:
-    name: Build Linux x86_64 packages
+  build-cross-wheel:
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        pyver: [cp36, cp37, cp38, cp39, cp310]
+        arch: [aarch64, ppc64le]
+
     steps:
       - name: Checkout repos
         uses: actions/checkout@v2
 
-      - name: Build x86_64 packages
-        uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_x86_64
-        with:
-          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310"
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          path: ./dist/*
-
-
-  build-aarch64:
-    name: Build Linux aarch64 packages
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout repos
-        uses: actions/checkout@v2
-
-      - name: Set up QEMU
-        id: qemu
+      - name: Set up QEMU for multi-arch build
         uses: docker/setup-qemu-action@v1
 
-      - name: Build aarch64 packages
-        uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2014_aarch64
-        with:
-          python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310"
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.4.0
+        env:
+          CIBW_BUILD: ${{matrix.pyver}}-*
+          CIBW_ARCHS: ${{matrix.arch}}
+
+      # Tests mostly fail because of some confusion with the python interpreter
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          path: ./dist/*
+          path: ./wheelhouse/*.whl
 
 
-  build-windows:
-    name: Build Windows packages
-    runs-on: windows-latest
+  build-wheel-pypy:
+    runs-on: ${{matrix.os}}
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
-        architecture: ['x64', 'x86']
+        os: [ubuntu-20.04, windows-latest, macos-latest]
 
     steps:
       - name: Checkout repos
         uses: actions/checkout@v2
 
-      - name: Set up Python ${{matrix.python-version}}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{matrix.python-version}}
-          architecture: ${{matrix.architecture}}
-
-      - name: Install Python dependencies
-        shell: cmd
-        run: pip install wheel
-
-      - name: Build x86_64 packages
-        shell: cmd
-        run: python setup.py bdist_wheel
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.4.0
+        env:
+          CIBW_BUILD: pp*
+          CIBW_TEST_EXTRAS: test
+          CIBW_TEST_COMMAND: pytest --color=yes -m 'not embedded' {project}/tests
+          # Passing a space in a param is a b*tch on windows.
+          # However embedded tests are skipped anyway there.
+          CIBW_TEST_COMMAND_WINDOWS: pytest --color=yes {project}/tests
+          # musllinux tests fail with some pid mixup
+          # cross-build macos images can't be tested on this runner.
+          CIBW_TEST_SKIP: >-
+            *-musllinux_*
+            *-macosx_universal2:arm64
+            pp*-macosx_*
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          path: ./dist/*
+          path: ./wheelhouse/*.whl
 
 
-  build-macos-x64:
-    name: Build MacOS packages
-    runs-on: macos-latest
+  build-cross-wheel-pypy:
+    runs-on: ubuntu-20.04
     strategy:
-      matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
+      fail-fast: false
 
     steps:
       - name: Checkout repos
         uses: actions/checkout@v2
 
-      - name: Set up Python ${{matrix.python-version}}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{matrix.python-version}}
+      - name: Set up QEMU for multi-arch build
+        uses: docker/setup-qemu-action@v1
 
-      - name: Install Python dependencies
-        shell: bash
-        run: pip install wheel
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.4.0
+        env:
+          CIBW_BUILD: pp*
 
-      - name: Build macos-x64 packages
-        shell: bash
-        run: python setup.py bdist_wheel
+      # Tests mostly fail because of some confusion with the python interpreter
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          path: ./dist/*
+          path: ./wheelhouse/*.whl

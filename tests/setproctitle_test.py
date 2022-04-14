@@ -76,6 +76,9 @@ print_stuff()
     assert before == after
 
 
+@pytest.mark.skipif(
+    'sys.platform == "darwin" and os.environ.get("CIBW_TEST_COMMAND")',
+    reason="f*cked up binary name")
 def test_init_getproctitle():
     """getproctitle() returns a sensible value at initial call."""
     rv = run_script(
