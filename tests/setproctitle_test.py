@@ -112,6 +112,24 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
     assert title == "Hello, world!"
 
 
+@pytest.mark.skipif(
+    'sys.platform != "darwin"',
+    reason="Mac only test")
+def test_setproctitle_darwin():
+    """Mac Activity monitor shows correct info"""
+    rv = run_script(
+        r"""
+import setproctitle
+setproctitle.setproctitle('QwErTyZxCvB')
+
+import os
+print(os.popen("lsappinfo find name=QwErTyZxCvB 2> /dev/null").read())
+"""
+    )
+    m = re.search(r'''ASN:.*"QwErTyZxCvB"''', rv)
+    assert m
+
+
 def test_prctl():
     """Check that prctl is called on supported platforms."""
     linux_version = []
