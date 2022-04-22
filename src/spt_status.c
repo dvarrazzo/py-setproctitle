@@ -58,6 +58,7 @@
 #endif
 #if defined(__darwin__)
 #include <crt_externs.h>
+#include "darwin_set_process_name.h"
 #endif
 
 #include "spt_status.h"
@@ -110,8 +111,11 @@ bool        update_process_title = true;
 #define PS_USE_PS_STRINGS
 #elif (defined(BSD) || defined(__bsdi__) || defined(__hurd__)) && !defined(__darwin__)
 #define PS_USE_CHANGE_ARGV
-#elif defined(__linux__) || defined(_AIX) || defined(__sgi) || (defined(sun) && !defined(BSD)) || defined(ultrix) || defined(__ksr__) || defined(__osf__) || defined(__svr4__) || defined(__svr5__) || defined(__darwin__)
+#elif defined(__linux__) || defined(_AIX) || defined(__sgi) || (defined(sun) && !defined(BSD)) || defined(ultrix) || defined(__ksr__) || defined(__osf__) || defined(__svr4__) || defined(__svr5__) 
 #define PS_USE_CLOBBER_ARGV
+#elif defined(__darwin__)
+#define PS_USE_CLOBBER_ARGV
+#define PS_USE_DARWIN
 #elif defined(WIN32)
 #define PS_USE_WIN32
 #else
@@ -344,6 +348,10 @@ set_ps_display(const char *activity, bool force)
             ps_buffer_size - ps_buffer_fixed_size);
 
     /* Transmit new setting to kernel, if necessary */
+
+#ifdef PS_USE_DARWIN
+    darwin_set_process_title(ps_buffer);
+#endif
 
 #ifdef PS_USE_SETPROCTITLE
     setproctitle("%s", ps_buffer);

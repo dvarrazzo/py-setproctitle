@@ -17,12 +17,15 @@ VERSION = "1.2.4.dev0"
 define_macros = {}
 define_macros["SPT_VERSION"] = VERSION
 
+platform_sources = []
+
 if sys.platform.startswith("linux"):
     define_macros["HAVE_SYS_PRCTL_H"] = 1
 
 elif sys.platform == "darwin":
     # __darwin__ symbol is not defined; __APPLE__ is instead.
     define_macros["__darwin__"] = 1
+    platform_sources.append("src/darwin_set_process_name.c")
 
 elif "bsd" in sys.platform:  # OMG, how many of them are?
     define_macros["BSD"] = 1
@@ -43,7 +46,7 @@ mod_spt = Extension(
         "src/spt_setup.c",
         "src/spt_status.c",
         "src/spt_strlcpy.c",
-    ],
+    ] + platform_sources,
 )
 
 # patch distutils if it can't cope with the "classifiers" or
