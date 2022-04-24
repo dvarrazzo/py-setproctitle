@@ -25,12 +25,6 @@ extern char **environ;
 
 #ifndef WIN32
 
-/* I don't expect it to be defined: should include limits.h. But then it's
- * another of those ./configure can of worms to find where it is... */
-#ifndef ARG_MAX
-#define ARG_MAX (96 * 1024)
-#endif
-
 /* Return a concatenated version of a strings vector.
  *
  * Return newly allocated heap space: clean it up with free().
@@ -68,6 +62,14 @@ join_argv(int argc, char **argv)
 
     return buf;
 }
+
+#ifndef __darwin__
+
+/* I don't expect it to be defined: should include limits.h. But then it's
+ * another of those ./configure can of worms to find where it is... */
+#ifndef ARG_MAX
+#define ARG_MAX (96 * 1024)
+#endif
 
 
 /* Return a copy of argv[0] encoded in the default encoding.
@@ -389,6 +391,38 @@ exit:
 
     return rv;
 }
+
+#else /* __darwin__ */
+
+static int
+get_argc_argv(int *argc_o, char ***argv_o)
+{
+    int * pargc = _NSGetArgc();
+    if (!pargc) {
+        spt_debug("_NSGetArgc returned NULL");
+        return -1;
+    }
+    int argc = *pargc;
+    char *** pargv = _NSGetArgv();
+    if (!pargv) {
+        spt_debug("_NSGetArgv returned NULL");
+        return -1;
+    }
+    char ** buf = malloc((argc + 1) * sizeof(char *));
+    if (!buf) {
+        spt_debug("can't malloc %d args!", argc);
+        PyErr_NoMemory();
+        return -1;
+    }
+    memcpy(buf, *pargv, argc * sizeof(char *));
+    buf[argc] = NULL;
+    *argc_o = argc;
+    *argv_o = buf;
+
+    return 0;
+}
+
+#endif /* __darwin__ */
 
 #endif  /* !WIN32 */
 

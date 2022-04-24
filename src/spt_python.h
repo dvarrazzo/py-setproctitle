@@ -19,7 +19,9 @@
 #define IS_PYPY
 #endif
 
+#ifndef __darwin__
 /* defined in Modules/main.c but not publically declared */
 void Py_GetArgcArgv(int *argc, wchar_t ***argv);
+#endif
 
 #endif   /* SPT_PYTHON_H */
