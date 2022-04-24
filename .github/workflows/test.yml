@@ -70,3 +70,19 @@ jobs:
 
       - name: Run tests
         run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
+
+  macos-native-python-test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v2
+
+      - name: Run tests
+        run: |
+          xcrun python3 -c "import sys; print(sys.version); print(sys.executable)"
+          xcrun python3 -m venv xcode-venv
+          . xcode-venv/bin/activate
+          pip install pytest
+          pip install .
+          pytest -vrsx --color=yes
