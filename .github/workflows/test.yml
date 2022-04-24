@@ -86,3 +86,6 @@ jobs:
           pip install pytest
           pip install .
           pytest -vrsx --color=yes
+        env: 
+          CIBW_TEST_COMMAND: something
+          #hack!: prevent test_init_getproctitle relying on exact sys.executable from running
