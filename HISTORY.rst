@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.3.0
+-------------
+
+- Added support for displaying title as the process name in MacOS Activity Monitor (issue #10).
+
+
 Version 1.2.3
 -------------
 
