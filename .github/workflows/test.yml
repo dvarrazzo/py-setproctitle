@@ -78,14 +78,11 @@ jobs:
       - name: Checkout repos
         uses: actions/checkout@v2
 
+      - name: Install Tox
+        run: xcrun python3 -m pip install tox
+
       - name: Run tests
         run: |
-          xcrun python3 -c "import sys; print(sys.version); print(sys.executable)"
-          xcrun python3 -m venv xcode-venv
-          . xcode-venv/bin/activate
-          pip install pytest
-          pip install .
-          pytest -vrsx --color=yes
-        env: 
-          CIBW_TEST_COMMAND: something
-          #hack!: prevent test_init_getproctitle relying on exact sys.executable from running
+          export XCODE_PYTHON=`xcrun python3 -c "import sys;print(sys.executable)"`
+          $XCODE_PYTHON -c "import sys; print(sys.version)"
+          $XCODE_PYTHON -m tox -e xcode -- -vrsx --color=yes
