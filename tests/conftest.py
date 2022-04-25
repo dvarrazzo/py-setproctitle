@@ -119,8 +119,10 @@ def run_script(script=None, args=None, executable=None, env=None):
 
     out, err = proc.communicate(script and script.encode())
     if 0 != proc.returncode:
-        print(out)
-        print(err)
+        if out:
+            print(out.decode("utf8", "replace"), file=sys.stdout)
+        if err:
+            print(err.decode("utf8", "replace"), file=sys.stderr)
         pytest.fail("test script failed")
 
     # Py3 subprocess generates bytes strings.
