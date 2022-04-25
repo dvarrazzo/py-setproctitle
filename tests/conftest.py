@@ -76,7 +76,7 @@ def spt_directory():
         """
 import os
 import setproctitle
-print(os.path.dirname(setproctitle.__file__))
+print(os.path.dirname(os.path.dirname(setproctitle.__file__)))
 """
     )
     return rv.rstrip()

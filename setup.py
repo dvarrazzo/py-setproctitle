@@ -11,7 +11,7 @@ import sys
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 
-with open("setproctitle/__init__.py") as f:
+with open("pkg/setproctitle/__init__.py") as f:
     data = f.read()
     m = re.search(r"""(?m)^__version__\s*=\s*['"]([^'"]+)['"]""", data)
     if not m:
@@ -80,7 +80,6 @@ Operating System :: Microsoft :: Windows
 Topic :: Software Development
 """.splitlines()
 
-
 class BuildError(Exception):
     pass
 
@@ -115,7 +114,8 @@ def do_build(with_extension):
         platforms=["GNU/Linux", "BSD", "MacOS X", "Windows"],
         python_requires=">=3.7",
         classifiers=classifiers,
-        packages=find_packages(exclude=["tests"]),
+        packages=["setproctitle"],
+        package_dir={'setproctitle': 'pkg/setproctitle'},
         ext_modules=ext_modules,
         package_data={"setproctitle": ["py.typed"]},
         extras_require={"test": ["pytest"]},
