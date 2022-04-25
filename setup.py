@@ -49,14 +49,6 @@ mod_spt = Extension(
     ] + platform_sources,
 )
 
-# patch distutils if it can't cope with the "classifiers" or
-# "download_url" keywords
-if sys.version < "2.2.3":
-    from distutils.dist import DistributionMetadata
-
-    DistributionMetadata.classifiers = None
-    DistributionMetadata.download_url = None
-
 # Try to include the long description in the setup
 kwargs = {}
 try:
@@ -73,7 +65,6 @@ Intended Audience :: Developers
 License :: OSI Approved :: BSD License
 Programming Language :: C
 Programming Language :: Python :: 3
-Programming Language :: Python :: 3.6
 Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
 Programming Language :: Python :: 3.9
@@ -94,7 +85,7 @@ setup(
     download_url="http://pypi.python.org/pypi/setproctitle/",
     license="BSD",
     platforms=["GNU/Linux", "BSD", "MacOS X", "Windows"],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     classifiers=classifiers,
     ext_modules=[mod_spt],
     extras_require={"test": ["pytest"]},
