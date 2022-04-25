@@ -5,14 +5,17 @@ setproctitle setup script.
 Copyright (c) 2009-2021 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
+import re
 import sys
 
-try:
-    from setuptools import setup, Extension
-except ImportError:
-    from distutils.core import setup, Extension
+from setuptools import setup, Extension, find_packages
 
-VERSION = "1.3.0.dev0"
+with open("setproctitle/__init__.py") as f:
+    data = f.read()
+    m = re.search(r"""(?m)^__version__\s*=\s*['"]([^'"]+)['"]""", data)
+    if not m:
+        raise Exception(f"cannot find version in {f.name}")
+    VERSION = m.group(1)
 
 define_macros = {}
 define_macros["SPT_VERSION"] = VERSION
@@ -38,7 +41,7 @@ elif "bsd" in sys.platform:  # OMG, how many of them are?
 # But I have none handy to test with.
 
 mod_spt = Extension(
-    "setproctitle",
+    "setproctitle._setproctitle",
     define_macros=list(define_macros.items()),
     sources=[
         "src/setproctitle.c",
@@ -88,7 +91,9 @@ setup(
     platforms=["GNU/Linux", "BSD", "MacOS X", "Windows"],
     python_requires=">=3.7",
     classifiers=classifiers,
+    packages=find_packages(exclude=["tests"]),
     ext_modules=[mod_spt],
+    package_data={"setproctitle": ["py.typed"]},
     extras_require={"test": ["pytest"]},
     **kwargs
 )
