@@ -120,6 +120,7 @@ def do_build(with_extension):
         package_data={"setproctitle": ["py.typed"]},
         extras_require={"test": ["pytest"]},
         cmdclass={"build_ext": setproctitle_build_ext},
+        zip_safe=False,
         **kwargs
     )
 
