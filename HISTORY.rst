@@ -8,6 +8,7 @@ Version 1.3.0
   Monitor (issue #10).
 - Fixed "Symbol not found: _Py_GetArgcArgv" error when using Xcode provided
   Python (issues #82, #103).
+- Fixed FreeBSD support, broken in 1.2 (issue #94).
 
 
 Version 1.2.3
