@@ -9,6 +9,7 @@ import re
 import sys
 
 from setuptools import setup, Extension, find_packages
+from setuptools.command.build_ext import build_ext
 
 with open("setproctitle/__init__.py") as f:
     data = f.read()
@@ -79,21 +80,51 @@ Operating System :: Microsoft :: Windows
 Topic :: Software Development
 """.splitlines()
 
-setup(
-    name="setproctitle",
-    description="A Python module to customize the process title",
-    version=VERSION,
-    author="Daniele Varrazzo",
-    author_email="daniele.varrazzo@gmail.com",
-    url="https://github.com/dvarrazzo/py-setproctitle",
-    download_url="http://pypi.python.org/pypi/setproctitle/",
-    license="BSD",
-    platforms=["GNU/Linux", "BSD", "MacOS X", "Windows"],
-    python_requires=">=3.7",
-    classifiers=classifiers,
-    packages=find_packages(exclude=["tests"]),
-    ext_modules=[mod_spt],
-    package_data={"setproctitle": ["py.typed"]},
-    extras_require={"test": ["pytest"]},
-    **kwargs
-)
+
+class BuildError(Exception):
+    pass
+
+
+class setproctitle_build_ext(build_ext):
+    def run(self) -> None:
+        try:
+            super().run()
+        except Exception as e:
+            print(f"Failed to build C module: {e}", file=sys.stderr)
+            raise BuildError(str(e))
+
+    def build_extension(self, ext):
+        try:
+            super().build_extension(ext)
+        except Exception as e:
+            print(f"Failed to build extension {ext.name}: {e}", file=sys.stderr)
+            raise BuildError(str(e))
+
+
+def do_build(with_extension):
+    ext_modules = [mod_spt] if with_extension else []
+    setup(
+        name="setproctitle",
+        description="A Python module to customize the process title",
+        version=VERSION,
+        author="Daniele Varrazzo",
+        author_email="daniele.varrazzo@gmail.com",
+        url="https://github.com/dvarrazzo/py-setproctitle",
+        download_url="http://pypi.python.org/pypi/setproctitle/",
+        license="BSD",
+        platforms=["GNU/Linux", "BSD", "MacOS X", "Windows"],
+        python_requires=">=3.7",
+        classifiers=classifiers,
+        packages=find_packages(exclude=["tests"]),
+        ext_modules=ext_modules,
+        package_data={"setproctitle": ["py.typed"]},
+        extras_require={"test": ["pytest"]},
+        cmdclass={"build_ext": setproctitle_build_ext},
+        **kwargs
+    )
+
+
+try:
+    do_build(with_extension=True)
+except BuildError:
+    do_build(with_extension=False)

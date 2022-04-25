@@ -1,5 +1,6 @@
 """Allow customization of the process title."""
 
+import os
 import sys
 import logging
 
@@ -31,6 +32,10 @@ def getthreadtitle() -> str:
 try:
     from . import _setproctitle  # type: ignore
 except ImportError as e:
+    # Emulate SPT_DEBUG showing process info in the C module.
+    if os.environ.get("SPT_DEBUG", ""):
+        logging.basicConfig()
+        logger.setLevel(logging.DEBUG)
     logger.debug("failed to import setproctitle: %s", e)
 else:
     setproctitle = _setproctitle.setproctitle  # noqa: F811

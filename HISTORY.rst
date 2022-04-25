@@ -4,6 +4,7 @@ Releases history
 Version 1.3.0
 -------------
 
+- Added fallback no-op implementation if building the extension fails.
 - Added support for displaying title as the process name in MacOS Activity
   Monitor (issue #10).
 - Fixed "Symbol not found: _Py_GetArgcArgv" error when using Xcode provided
