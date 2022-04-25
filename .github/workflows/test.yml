@@ -70,3 +70,19 @@ jobs:
 
       - name: Run tests
         run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
+
+  macos-native-python-test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v2
+
+      - name: Install Tox
+        run: xcrun python3 -m pip install tox
+
+      - name: Run tests
+        run: |
+          export XCODE_PYTHON=`xcrun python3 -c "import sys;print(sys.executable)"`
+          $XCODE_PYTHON -c "import sys; print(sys.version)"
+          $XCODE_PYTHON -m tox -e xcode -- -vrsx --color=yes

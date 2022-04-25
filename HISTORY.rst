@@ -4,7 +4,10 @@ Releases history
 Version 1.3.0
 -------------
 
-- Added support for displaying title as the process name in MacOS Activity Monitor (issue #10).
+- Added support for displaying title as the process name in MacOS Activity
+  Monitor (issue #10).
+- Fixed "Symbol not found: _Py_GetArgcArgv" error when using Xcode provided
+  Python (issues #82, #103).
 
 
 Version 1.2.3
