@@ -354,7 +354,7 @@ def test_weird_path(tmp_path, spt_directory):
     except UnicodeEncodeError:
         pytest.skip("file system doesn't support unicode")
 
-    exc = dir / "python"
+    exc = dir / os.path.basename(sys.executable)
     os.symlink(sys.executable, exc)
 
     rv = run_script(
