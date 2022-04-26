@@ -1,6 +1,7 @@
-from .conftest import run_script
+from .conftest import run_script, skip_if_win32
 
 
+@skip_if_win32
 def test_no_import_side_effect():
     """
     Check that importing the module doesn't cause side effects.

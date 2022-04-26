@@ -1,17 +1,7 @@
 import os  # noqa
 import sys  # noqa
 
-import pytest
-
-from .conftest import run_script
-
-skip_if_win32 = pytest.mark.skipif(
-    "sys.platform == 'win32'",
-    reason="skipping Posix tests on Windows")
-
-skip_if_no_proc_tasks = pytest.mark.skipif(
-    "not os.path.exists('/proc/self/task')",
-    reason="'/proc/self/task' not available")
+from .conftest import run_script, skip_if_win32, skip_if_no_proc_tasks
 
 pytestmark = [skip_if_win32, skip_if_no_proc_tasks]
 
