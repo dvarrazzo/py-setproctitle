@@ -5,14 +5,18 @@ setproctitle setup script.
 Copyright (c) 2009-2021 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
+import re
 import sys
 
-try:
-    from setuptools import setup, Extension
-except ImportError:
-    from distutils.core import setup, Extension
+from setuptools import setup, Extension, find_packages
+from setuptools.command.build_ext import build_ext
 
-VERSION = "1.3.0.dev0"
+with open("pkg/setproctitle/__init__.py") as f:
+    data = f.read()
+    m = re.search(r"""(?m)^__version__\s*=\s*['"]([^'"]+)['"]""", data)
+    if not m:
+        raise Exception(f"cannot find version in {f.name}")
+    VERSION = m.group(1)
 
 define_macros = {}
 define_macros["SPT_VERSION"] = VERSION
@@ -38,7 +42,7 @@ elif "bsd" in sys.platform:  # OMG, how many of them are?
 # But I have none handy to test with.
 
 mod_spt = Extension(
-    "setproctitle",
+    "setproctitle._setproctitle",
     define_macros=list(define_macros.items()),
     sources=[
         "src/setproctitle.c",
@@ -48,14 +52,6 @@ mod_spt = Extension(
         "src/spt_strlcpy.c",
     ] + platform_sources,
 )
-
-# patch distutils if it can't cope with the "classifiers" or
-# "download_url" keywords
-if sys.version < "2.2.3":
-    from distutils.dist import DistributionMetadata
-
-    DistributionMetadata.classifiers = None
-    DistributionMetadata.download_url = None
 
 # Try to include the long description in the setup
 kwargs = {}
@@ -73,10 +69,10 @@ Intended Audience :: Developers
 License :: OSI Approved :: BSD License
 Programming Language :: C
 Programming Language :: Python :: 3
-Programming Language :: Python :: 3.6
 Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
 Programming Language :: Python :: 3.9
+Programming Language :: Python :: 3.10
 Operating System :: POSIX :: Linux
 Operating System :: POSIX :: BSD
 Operating System :: MacOS :: MacOS X
@@ -84,19 +80,52 @@ Operating System :: Microsoft :: Windows
 Topic :: Software Development
 """.splitlines()
 
-setup(
-    name="setproctitle",
-    description="A Python module to customize the process title",
-    version=VERSION,
-    author="Daniele Varrazzo",
-    author_email="daniele.varrazzo@gmail.com",
-    url="https://github.com/dvarrazzo/py-setproctitle",
-    download_url="http://pypi.python.org/pypi/setproctitle/",
-    license="BSD",
-    platforms=["GNU/Linux", "BSD", "MacOS X", "Windows"],
-    python_requires=">=3.6",
-    classifiers=classifiers,
-    ext_modules=[mod_spt],
-    extras_require={"test": ["pytest"]},
-    **kwargs
-)
+class BuildError(Exception):
+    pass
+
+
+class setproctitle_build_ext(build_ext):
+    def run(self) -> None:
+        try:
+            super().run()
+        except Exception as e:
+            print(f"Failed to build C module: {e}", file=sys.stderr)
+            raise BuildError(str(e))
+
+    def build_extension(self, ext):
+        try:
+            super().build_extension(ext)
+        except Exception as e:
+            print(f"Failed to build extension {ext.name}: {e}", file=sys.stderr)
+            raise BuildError(str(e))
+
+
+def do_build(with_extension):
+    ext_modules = [mod_spt] if with_extension else []
+    setup(
+        name="setproctitle",
+        description="A Python module to customize the process title",
+        version=VERSION,
+        author="Daniele Varrazzo",
+        author_email="daniele.varrazzo@gmail.com",
+        url="https://github.com/dvarrazzo/py-setproctitle",
+        download_url="http://pypi.python.org/pypi/setproctitle/",
+        license="BSD",
+        platforms=["GNU/Linux", "BSD", "MacOS X", "Windows"],
+        python_requires=">=3.7",
+        classifiers=classifiers,
+        packages=["setproctitle"],
+        package_dir={'setproctitle': 'pkg/setproctitle'},
+        ext_modules=ext_modules,
+        package_data={"setproctitle": ["py.typed"]},
+        extras_require={"test": ["pytest"]},
+        cmdclass={"build_ext": setproctitle_build_ext},
+        zip_safe=False,
+        **kwargs
+    )
+
+
+try:
+    do_build(with_extension=True)
+except BuildError:
+    do_build(with_extension=False)

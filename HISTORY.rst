@@ -4,11 +4,14 @@ Releases history
 Version 1.3.0
 -------------
 
+- Added fallback no-op implementation if building the extension fails.
 - Added support for displaying title as the process name in MacOS Activity
   Monitor (issue #10).
 - Fixed "Symbol not found: _Py_GetArgcArgv" error when using Xcode provided
   Python (issues #82, #103).
-- Fix FreeBSD support, broken in 1.2 (issue #94).
+- Fixed FreeBSD support, broken in 1.2 (issue #94).
+- Added package type annotations (issue #101).
+- Dropped support for Python 3.6.
 
 
 Version 1.2.3
@@ -24,7 +27,7 @@ Version 1.2.2
 
 - Fixed Windows build (issues #89, #90).
 - Added wheel packages for Windows (issues #47, #90).
-- Added wheel packages for aarch64 (issues #95).
+- Added wheel packages for aarch64 (issue #95).
 
 
 Version 1.2.1
@@ -39,9 +42,9 @@ Version 1.2
 - added ``getthreadtitle()`` and ``setthreadtitle()``.
 - Initialisation of the module moved to the first usage: importing the module
   doesn't cause side effects.
-- Manage much longer command lines (#52)
+- Manage much longer command lines (issue #52)
 - Improved build on BSD, dropped ancient versions (issue #67).
-- Fixed build for Python 3.8 (#66, #72)
+- Fixed build for Python 3.8 (issues #66, #72)
 - Added support for Python 3.9
 - Dropped support for Python < 3.6
 

@@ -11,6 +11,32 @@ def pytest_configure(config):
     )
 
 
+skip_if_win32 = pytest.mark.skipif(
+    "sys.platform == 'win32'",
+    reason="skipping Posix tests on Windows")
+
+skip_if_macos = pytest.mark.skipif(
+    "sys.platform == 'darwin'",
+    reason="skipping test on macOS")
+
+skip_if_pypy = pytest.mark.skipif(
+    "'__pypy__' in sys.builtin_module_names",
+    reason="skipping test on pypy")
+
+skip_if_no_proc_env = pytest.mark.skipif(
+    "not os.path.exists('/proc/self/environ')",
+    reason="'/proc/self/environ' not available"
+)
+
+skip_if_no_proc_cmdline = pytest.mark.skipif(
+    "not os.path.exists('/proc/%s/cmdline' % os.getpid())",
+    reason="'/proc/PID/cmdline' not available")
+
+skip_if_no_proc_tasks = pytest.mark.skipif(
+    "not os.path.exists('/proc/self/task')",
+    reason="'/proc/self/task' not available")
+
+
 @pytest.fixture(scope="session")
 def pyrun(pyconfig):
     """
@@ -76,7 +102,7 @@ def spt_directory():
         """
 import os
 import setproctitle
-print(os.path.dirname(setproctitle.__file__))
+print(os.path.dirname(os.path.dirname(setproctitle.__file__)))
 """
     )
     return rv.rstrip()
@@ -119,8 +145,10 @@ def run_script(script=None, args=None, executable=None, env=None):
 
     out, err = proc.communicate(script and script.encode())
     if 0 != proc.returncode:
-        print(out)
-        print(err)
+        if out:
+            print(out.decode("utf8", "replace"), file=sys.stdout)
+        if err:
+            print(err.decode("utf8", "replace"), file=sys.stderr)
         pytest.fail("test script failed")
 
     # Py3 subprocess generates bytes strings.

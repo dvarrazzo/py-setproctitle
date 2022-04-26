@@ -16,28 +16,8 @@ import subprocess as sp
 
 import pytest
 
-from .conftest import run_script
-
-skip_if_win32 = pytest.mark.skipif(
-    "sys.platform == 'win32'",
-    reason="skipping Posix tests on Windows")
-
-skip_if_macos = pytest.mark.skipif(
-    "sys.platform == 'darwin'",
-    reason="skipping test on macOS")
-
-skip_if_pypy = pytest.mark.skipif(
-    "'__pypy__' in sys.builtin_module_names",
-    reason="skipping test on pypy")
-
-skip_if_no_proc_env = pytest.mark.skipif(
-    "not os.path.exists('/proc/self/environ')",
-    reason="'/proc/self/environ' not available"
-)
-
-skip_if_no_proc_cmdline = pytest.mark.skipif(
-    "not os.path.exists('/proc/%s/cmdline' % os.getpid())",
-    reason="'/proc/PID/cmdline' not available")
+from .conftest import run_script, skip_if_no_proc_cmdline, skip_if_no_proc_env
+from .conftest import skip_if_macos, skip_if_pypy, skip_if_win32
 
 pytestmark = [skip_if_win32]
 
@@ -50,30 +30,6 @@ print(10 + 20)
 """
     )
     assert rv == "30\n"
-
-
-def test_no_import_side_effect():
-    """
-    Check that importing the module doesn't cause side effects.
-    """
-    rv = run_script(
-        """
-import os
-
-def print_stuff():
-    for fn in "cmdline status comm".split():
-        if os.path.exists(f"/proc/self/{fn}"):
-            with open(f"/proc/self/{fn}") as f:
-                print(f.readline().rstrip())
-
-print_stuff()
-print("---")
-import setproctitle
-print_stuff()
-"""
-    )
-    before, after = rv.split("---\n")
-    assert before == after
 
 
 @pytest.mark.skipif(

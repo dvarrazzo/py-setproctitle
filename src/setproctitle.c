@@ -25,9 +25,6 @@
 
 /* ----------------------------------------------------- */
 
-static PyObject *spt_version;
-
-
 static char spt_setproctitle__doc__[] =
 "setproctitle(title) -- Change the process title."
 ;
@@ -145,7 +142,7 @@ static char setproctitle_module_documentation[] =
 
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
-    "setproctitle",
+    "_setproctitle",
     setproctitle_module_documentation,
     -1,
     spt_methods,
@@ -156,9 +153,9 @@ static struct PyModuleDef moduledef = {
 };
 
 PyMODINIT_FUNC
-PyInit_setproctitle(void)
+PyInit__setproctitle(void)
 {
-    PyObject *m, *d;
+    PyObject *m;
 
     spt_debug("module init");
 
@@ -166,12 +163,6 @@ PyInit_setproctitle(void)
     m = PyModule_Create(&moduledef);
     if (m == NULL) { goto exit; }
 
-    /* Add version string to the module*/
-    d = PyModule_GetDict(m);
-    spt_version = Py_BuildValue("s", xstr(SPT_VERSION));
-    PyDict_SetItemString(d, "__version__", spt_version);
-
 exit:
     return m;
 }
-
