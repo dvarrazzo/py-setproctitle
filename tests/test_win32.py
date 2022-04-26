@@ -3,8 +3,8 @@ import setproctitle
 import sys  # noqa
 
 skip_if_not_win32 = pytest.mark.skipif(
-    "sys.platform != 'win32'",
-    reason="Windows only test")
+    "sys.platform != 'win32'", reason="Windows only test"
+)
 
 pytestmark = [skip_if_not_win32]
 

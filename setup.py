@@ -50,7 +50,8 @@ mod_spt = Extension(
         "src/spt_setup.c",
         "src/spt_status.c",
         "src/spt_strlcpy.c",
-    ] + platform_sources,
+    ]
+    + platform_sources,
 )
 
 # Try to include the long description in the setup
@@ -80,6 +81,7 @@ Operating System :: Microsoft :: Windows
 Topic :: Software Development
 """.splitlines()
 
+
 class BuildError(Exception):
     pass
 
@@ -96,7 +98,9 @@ class setproctitle_build_ext(build_ext):
         try:
             super().build_extension(ext)
         except Exception as e:
-            print(f"Failed to build extension {ext.name}: {e}", file=sys.stderr)
+            print(
+                f"Failed to build extension {ext.name}: {e}", file=sys.stderr
+            )
             raise BuildError(str(e))
 
 
@@ -115,13 +119,13 @@ def do_build(with_extension):
         python_requires=">=3.7",
         classifiers=classifiers,
         packages=["setproctitle"],
-        package_dir={'setproctitle': 'pkg/setproctitle'},
+        package_dir={"setproctitle": "pkg/setproctitle"},
         ext_modules=ext_modules,
         package_data={"setproctitle": ["py.typed"]},
         extras_require={"test": ["pytest"]},
         cmdclass={"build_ext": setproctitle_build_ext},
         zip_safe=False,
-        **kwargs
+        **kwargs,
     )
 
 

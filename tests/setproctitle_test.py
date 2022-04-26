@@ -34,7 +34,8 @@ print(10 + 20)
 
 @pytest.mark.skipif(
     'sys.platform == "darwin" and os.environ.get("CIBW_TEST_COMMAND")',
-    reason="f*cked up binary name")
+    reason="f*cked up binary name",
+)
 def test_init_getproctitle():
     """getproctitle() returns a sensible value at initial call."""
     rv = run_script(
@@ -68,9 +69,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
     assert title == "Hello, world!"
 
 
-@pytest.mark.skipif(
-    'sys.platform != "darwin"',
-    reason="Mac only test")
+@pytest.mark.skipif('sys.platform != "darwin"', reason="Mac only test")
 def test_setproctitle_darwin():
     """Mac Activity monitor shows correct info"""
     rv = run_script(
@@ -341,8 +340,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 @skip_if_macos
 @skip_if_no_proc_cmdline
 def test_embedded(pyrun, spt_directory):
-    """Check the module works with embedded Python.
-    """
+    """Check the module works with embedded Python."""
     rv = run_script(
         f"""
 import sys
@@ -431,8 +429,7 @@ print('SPT_TESTENV=testenv' in open('/proc/self/environ').read())
 
 @skip_if_no_proc_env
 def test_large_env(monkeypatch):
-    """Check that large environment doesn't get clobbered.
-    """
+    """Check that large environment doesn't get clobbered."""
     monkeypatch.setenv("SPT_NOENV", "1")
     for c in string.ascii_uppercase:
         monkeypatch.setenv(
@@ -472,15 +469,15 @@ import os
 from setproctitle import setproctitle
 os.environ.clear()
 setproctitle("Test")
-""")
+"""
+    )
 
 
 # Support functions
 
 
 def _clean_up_title(title):
-    """Clean up a string from the prefix added by the platform.
-    """
+    """Clean up a string from the prefix added by the platform."""
     # BSD's setproctitle decorates the title with the process name.
     if "bsd" in sys.platform:
         procname = os.path.basename(sys.executable)
