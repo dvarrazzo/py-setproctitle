@@ -62,6 +62,10 @@
 #include "darwin_set_process_name.h"
 #endif
 
+#if defined(__linux__)
+#include "linux_set_process_name.h"
+#endif
+
 #include "spt_status.h"
 
 #include <stdio.h>
@@ -112,8 +116,10 @@ bool        update_process_title = true;
 #define PS_USE_PS_STRINGS
 #elif (defined(BSD) || defined(__bsdi__) || defined(__hurd__)) && !defined(__darwin__)
 #define PS_USE_CHANGE_ARGV
-#elif defined(__linux__) || defined(_AIX) || defined(__sgi) || (defined(sun) && !defined(BSD)) || defined(ultrix) || defined(__ksr__) || defined(__osf__) || defined(__svr4__) || defined(__svr5__) 
+#elif defined(_AIX) || defined(__sgi) || (defined(sun) && !defined(BSD)) || defined(ultrix) || defined(__ksr__) || defined(__osf__) || defined(__svr4__) || defined(__svr5__) 
 #define PS_USE_CLOBBER_ARGV
+#elif defined(__linux__)
+#define PS_USE_LINUX
 #elif defined(__darwin__)
 #define PS_USE_CLOBBER_ARGV
 #define PS_USE_DARWIN
@@ -124,7 +130,7 @@ bool        update_process_title = true;
 #endif
 
 /* we use this strategy together with another one (probably PS_USE_CLOBBER_ARGV) */
-#if defined(HAVE_SYS_PRCTL_H) && defined(PR_SET_NAME) && !defined(PS_USE_NONE)
+#if defined(HAVE_SYS_PRCTL_H) && defined(PR_SET_NAME) && !defined(PS_USE_NONE) && !defined(PS_USE_LINUX)
 #define PS_USE_PRCTL
 #endif
 
@@ -135,25 +141,32 @@ bool        update_process_title = true;
 #define PS_PADDING ' '
 #endif
 
+#ifndef PS_USE_LINUX
 
-#ifndef PS_USE_CLOBBER_ARGV
-/* all but one options need a buffer to write their ps line in */
-#define PS_BUFFER_SIZE 256
-static char ps_buffer[PS_BUFFER_SIZE];
-static const size_t ps_buffer_size = PS_BUFFER_SIZE;
-#else                           /* PS_USE_CLOBBER_ARGV */
-static char *ps_buffer;         /* will point to argv area */
-static size_t ps_buffer_size;   /* space determined at run time */
-static size_t last_status_len;  /* use to minimize length of clobber */
-#endif   /* PS_USE_CLOBBER_ARGV */
+    #if defined(PS_USE_CLOBBER_ARGV)
 
-static size_t ps_buffer_fixed_size;     /* size of the constant prefix */
+    static char *ps_buffer;         /* will point to argv area */
+    static size_t ps_buffer_size;   /* space determined at run time */
+    static size_t last_status_len;  /* use to minimize length of clobber */
 
-/* save the original argv[] location here */
-static int  save_argc;
-static char **save_argv;
+    #else 
 
+    /* all but one options need a buffer to write their ps line in */
+    #define PS_BUFFER_SIZE 256
+    static char ps_buffer[PS_BUFFER_SIZE];
+    static const size_t ps_buffer_size = PS_BUFFER_SIZE;
 
+    #endif   /* PS_USE_CLOBBER_ARGV */
+
+    static size_t ps_buffer_fixed_size;     /* size of the constant prefix */
+
+    /* save the original argv[] location here */
+    static int  save_argc;
+    static char **save_argv;
+
+#endif
+
+#ifndef PS_USE_LINUX
 /*
  * Call this early in startup to save the original argc/argv values.
  * If needed, we make a copy of the original argv[] array to preserve it
@@ -283,7 +296,7 @@ void
 init_ps_display(const char *initial_str)
 {
 
-#ifndef PS_USE_NONE
+#if !defined(PS_USE_NONE) && !defined(PS_USE_LINUX)
     /* no ps display if you didn't call save_ps_display_args() */
     if (!save_argv)
         return;
@@ -324,7 +337,7 @@ init_ps_display(const char *initial_str)
 #endif   /* not PS_USE_NONE */
 }
 
-
+#endif //!PS_USE_LINUX
 
 /*
  * Call this to update the ps status display to a fixed prefix plus an
@@ -345,11 +358,15 @@ set_ps_display(const char *activity, bool force)
         return;
 #endif
 
+#ifdef PS_USE_LINUX
+    linux_set_process_title(activity);
+#else
     /* Update ps_buffer to contain both fixed part and activity */
     spt_strlcpy(ps_buffer + ps_buffer_fixed_size, activity,
             ps_buffer_size - ps_buffer_fixed_size);
 
     /* Transmit new setting to kernel, if necessary */
+#endif
 
 #ifdef PS_USE_DARWIN
     darwin_set_process_title(ps_buffer);
@@ -437,18 +454,30 @@ get_ps_display(size_t *displen)
         offset--;
 
     *displen = offset - ps_buffer_fixed_size;
+    return ps_buffer + ps_buffer_fixed_size;
+
+#elif defined (PS_USE_LINUX)
+
+    const char * title = linux_get_process_title();
+    if (title) {
+        *displen = strlen(title);
+    } else {
+        *displen = 0;
+    }
+    return title;
+
 #else
     *displen = strlen(ps_buffer + ps_buffer_fixed_size);
+    return ps_buffer + ps_buffer_fixed_size;
 #endif
 
-    return ps_buffer + ps_buffer_fixed_size;
 }
 
 
 void
 set_thread_title(const char *title)
 {
-#ifdef PS_USE_PRCTL
+#if defined(PS_USE_PRCTL) || defined(PS_USE_LINUX)
     prctl(PR_SET_NAME, title);
 #endif
 }
@@ -457,7 +486,7 @@ set_thread_title(const char *title)
 void
 get_thread_title(char *title)
 {
-#ifdef PS_USE_PRCTL
+#if defined(PS_USE_PRCTL) || defined(PS_USE_LINUX)
     prctl(PR_GET_NAME, title);
 #endif
 }

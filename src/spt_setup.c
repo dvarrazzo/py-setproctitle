@@ -19,11 +19,13 @@
 #if defined(__darwin__)
 #include <crt_externs.h>
 #define environ (*_NSGetEnviron())
+#elif defined(__linux__)
+#include "linux_set_process_name.h"
 #elif !defined(_WIN32)
 extern char **environ;
 #endif
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__linux__)
 
 /* Return a concatenated version of a strings vector.
  *
@@ -424,7 +426,7 @@ get_argc_argv(int *argc_o, char ***argv_o)
 
 #endif /* __darwin__ */
 
-#endif  /* !WIN32 */
+#endif  /* !WIN32 && !__linux__*/
 
 
 /* Initialize the module internal functions.
@@ -453,7 +455,21 @@ spt_setup(void)
 
     rv = -1;
 
-#ifndef WIN32
+#if defined(WIN32)
+
+    /* On Windows save_ps_display_args is a no-op
+     * This is a good news, because Py_GetArgcArgv seems not usable.
+     */
+    LPTSTR init_title = GetCommandLine();
+    init_ps_display(init_title);
+
+#elif defined(__linux__)
+
+    const char * title = linux_get_process_title();
+    if (!title)
+        goto exit;
+
+#else
     int argc = 0;
     char **argv = NULL;
     char *init_title;
@@ -468,14 +484,7 @@ spt_setup(void)
     /* Set up the first title to fully initialize the code */
     if (!(init_title = join_argv(argc, argv))) { goto exit; }
     init_ps_display(init_title);
-    free(init_title);
-
-#else
-    /* On Windows save_ps_display_args is a no-op
-     * This is a good news, because Py_GetArgcArgv seems not usable.
-     */
-    LPTSTR init_title = GetCommandLine();
-    init_ps_display(init_title);
+    free(init_title);    
 #endif
 
     rv = 0;

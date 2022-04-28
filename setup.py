@@ -25,6 +25,7 @@ platform_sources = []
 
 if sys.platform.startswith("linux"):
     define_macros["HAVE_SYS_PRCTL_H"] = 1
+    platform_sources.append("src/linux_set_process_name.c")
 
 elif sys.platform == "darwin":
     # __darwin__ symbol is not defined; __APPLE__ is instead.

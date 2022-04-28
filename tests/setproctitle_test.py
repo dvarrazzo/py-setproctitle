@@ -422,9 +422,10 @@ print('SPT_TESTENV=testenv' in open('/proc/self/environ').read())
     assert "XXX" in _clean_up_title(title), "title not set as expected"
     title_len = int(lines[3])
     assert lines[4] == "True", "env has been clobbered"
-    assert (
-        title_len <= cmdline_len
-    ), "title (len {title_len}) not limited to argv (len {cmdline_len})"
+    if not sys.platform.startswith("linux"): #on linux there is no length limitation
+        assert (
+            title_len <= cmdline_len
+        ), "title (len {title_len}) not limited to argv (len {cmdline_len})"
 
 
 @skip_if_no_proc_env
