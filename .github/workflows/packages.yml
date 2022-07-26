@@ -1,19 +1,22 @@
 ---
 name: Packages
-on: [workflow_dispatch]
+on:
+  - workflow_dispatch
+
 jobs:
+
   build-sdist:
     name: Build sdist package
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build sdist
         run: python setup.py sdist
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ./dist/*
 
@@ -28,10 +31,10 @@ jobs:
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.4.0
+        uses: pypa/cibuildwheel@v2.8.1
         env:
           CIBW_BUILD: ${{matrix.pyver}}-*
           CIBW_ARCHS_LINUX: auto
@@ -50,7 +53,7 @@ jobs:
             pp*-macosx_*
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
 
@@ -65,13 +68,13 @@ jobs:
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up QEMU for multi-arch build
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.4.0
+        uses: pypa/cibuildwheel@v2.8.1
         env:
           CIBW_BUILD: ${{matrix.pyver}}-*
           CIBW_ARCHS: ${{matrix.arch}}
@@ -79,7 +82,7 @@ jobs:
       # Tests mostly fail because of some confusion with the python interpreter
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
 
@@ -93,10 +96,10 @@ jobs:
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.4.0
+        uses: pypa/cibuildwheel@v2.8.1
         env:
           CIBW_BUILD: pp*
           CIBW_TEST_EXTRAS: test
@@ -112,7 +115,7 @@ jobs:
             pp*-macosx_*
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
 
@@ -124,19 +127,19 @@ jobs:
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up QEMU for multi-arch build
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.4.0
+        uses: pypa/cibuildwheel@v2.8.1
         env:
           CIBW_BUILD: pp*
 
       # Tests mostly fail because of some confusion with the python interpreter
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
