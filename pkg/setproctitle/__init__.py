@@ -8,6 +8,13 @@ logger = logging.getLogger("setproctitle")
 
 __version__ = "1.3.0.dev0"
 
+__all__ = [
+    "setproctitle",
+    "getproctitle",
+    "setthreadtitle",
+    "getthreadtitle",
+]
+
 
 def setproctitle(title: str) -> None:
     logger.debug("setproctitle C module not available")
