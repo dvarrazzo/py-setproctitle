@@ -1,6 +1,14 @@
 Releases history
 ----------------
 
+Version 1.3.1
+-------------
+
+- Fixed segfault on macOS 12.5 in forked processes (issue #111).
+  Note that, as a workaround, Activity Monitor will show the title of the
+  parent.
+
+
 Version 1.3.0
 -------------
 
