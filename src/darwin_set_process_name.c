@@ -19,9 +19,12 @@ Implementation rewritten from scratch, fixing various libuv bugs among other thi
 #define DONE_IF(cond) if (cond) goto done;
 
 /* Undocumented Launch Services functions */
+typedef enum {
+    kLSDefaultSessionID = -2,
+} LSSessionID;
 CFTypeRef LSGetCurrentApplicationASN(void);
-OSStatus LSSetApplicationInformationItem(int, CFTypeRef, CFStringRef, CFStringRef, CFDictionaryRef*);
-CFDictionaryRef LSApplicationCheckIn(int, CFDictionaryRef);
+OSStatus LSSetApplicationInformationItem(LSSessionID, CFTypeRef, CFStringRef, CFStringRef, CFDictionaryRef*);
+CFDictionaryRef LSApplicationCheckIn(LSSessionID, CFDictionaryRef);
 void LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t, void *);
 
 typedef struct {
@@ -91,12 +94,17 @@ static bool launch_services_set_process_title(const launch_services_t * it, cons
         has_cf_title
     } state = has_nothing;
     bool ret = false;
+    
+    static bool checked_in = false;
 
     CFTypeRef asn;
     CFStringRef cf_title;
     
-    it->pLSSetApplicationLaunchServicesServerConnectionStatus(0, NULL);
-    it->pLSApplicationCheckIn(-2, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
+    if (!checked_in) {
+        it->pLSSetApplicationLaunchServicesServerConnectionStatus(0, NULL);
+        it->pLSApplicationCheckIn(kLSDefaultSessionID, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
+        checked_in = true;
+    }
 
     asn = it->pLSGetCurrentApplicationASN();
     DONE_IF(!asn);
@@ -104,7 +112,7 @@ static bool launch_services_set_process_title(const launch_services_t * it, cons
     cf_title = CFStringCreateWithCString(NULL, title, kCFStringEncodingUTF8);
     DONE_IF(!cf_title);
     ++state;
-    DONE_IF(it->pLSSetApplicationInformationItem(-2,  /* Magic value: presumably "LS_SET_PROCESS_TITLE" constant */
+    DONE_IF(it->pLSSetApplicationInformationItem(kLSDefaultSessionID,
                                                  asn,
                                                  *it->display_name_key_ptr,
                                                  cf_title,
