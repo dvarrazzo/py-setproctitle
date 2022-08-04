@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger("setproctitle")
 
-__version__ = "1.3.1.dev0"
+__version__ = "1.3.1"
 
 __all__ = [
     "setproctitle",
