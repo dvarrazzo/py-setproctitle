@@ -473,6 +473,25 @@ setproctitle("Test")
     )
 
 
+def test_fork_segfault():
+    run_script(
+        """\
+import multiprocessing as mp
+from setproctitle import setproctitle
+
+def foo():
+    setproctitle('title in child')
+
+setproctitle('title in parent')
+mp.set_start_method("fork")
+p = mp.Process(target=foo)
+p.start()
+p.join()
+assert p.exitcode == 0, f"p.exitcode is {p.exitcode}"
+"""
+    )
+
+
 # Support functions
 
 
