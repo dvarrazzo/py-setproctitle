@@ -49,3 +49,8 @@ else:
     getproctitle = _setproctitle.getproctitle  # noqa: F811
     setthreadtitle = _setproctitle.setthreadtitle  # noqa: F811
     getthreadtitle = _setproctitle.getthreadtitle  # noqa: F811
+
+
+# Call getproctitle to initialize structures and avoid problems caused
+# by fork() on macOS (see #113).
+getproctitle()
