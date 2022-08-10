@@ -16,7 +16,7 @@ identify the task each process is busy with.  The technique is used by
 PostgreSQL_ and the `OpenSSH Server`_ for example.
 
 The procedure is hardly portable across different systems.  PostgreSQL provides
-a good `multi-platform implementation`__:  this module is a Python wrapper
+a good `multi-platform implementation`__:  this package was born as a wrapper
 around PostgreSQL code.
 
 - `Homepage <https://github.com/dvarrazzo/py-setproctitle>`__
