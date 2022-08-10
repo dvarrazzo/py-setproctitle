@@ -1,6 +1,13 @@
 Releases history
 ----------------
 
+Version 1.3.2
+-------------
+
+- Restore import-time initialization of macOS to avoid crash on thread+fork
+  (issue #113).
+
+
 Version 1.3.1
 -------------
 
