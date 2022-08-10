@@ -53,4 +53,5 @@ else:
 
 # Call getproctitle to initialize structures and avoid problems caused
 # by fork() on macOS (see #113).
-getproctitle()
+if sys.platform == "darwin":
+    getproctitle()
