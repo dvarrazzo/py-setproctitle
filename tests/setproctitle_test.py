@@ -492,6 +492,32 @@ assert p.exitcode == 0, f"p.exitcode is {p.exitcode}"
     )
 
 
+def test_thread_fork_segfault():
+    run_script(
+        """\
+import multiprocessing as mp
+from threading import Thread
+from setproctitle import setproctitle
+
+def foo():
+    setproctitle("title in child")
+
+def thread():
+    global p
+    p = mp.Process(target=foo)
+    p.start()
+    p.join()
+
+p = None
+mp.set_start_method("fork")
+t = Thread(target=thread)
+t.start()
+t.join()
+assert p.exitcode == 0, f"p.exitcode is {p.exitcode}"
+"""
+    )
+
+
 # Support functions
 
 
