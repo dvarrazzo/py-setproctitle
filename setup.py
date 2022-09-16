@@ -114,7 +114,7 @@ def do_build(with_extension):
         author_email="daniele.varrazzo@gmail.com",
         url="https://github.com/dvarrazzo/py-setproctitle",
         download_url="http://pypi.python.org/pypi/setproctitle/",
-        license="BSD",
+        license="BSD-3-Clause",
         platforms=["GNU/Linux", "BSD", "MacOS X", "Windows"],
         python_requires=">=3.7",
         classifiers=classifiers,
