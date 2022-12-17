@@ -33,7 +33,7 @@ print(10 + 20)
 
 
 @pytest.mark.skipif(
-    'sys.platform == "darwin" and os.environ.get("CIBW_TEST_COMMAND")',
+    'sys.platform == "darwin" and (os.environ.get("CIBW_TEST_COMMAND") or sys.version_info >= (3, 11))',
     reason="f*cked up binary name",
 )
 def test_init_getproctitle():
