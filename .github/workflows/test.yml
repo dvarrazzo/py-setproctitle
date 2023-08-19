@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "pypy-3.8"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12-dev", "pypy-3.8"]
 
     steps:
       - name: Checkout repos
@@ -31,7 +31,7 @@ jobs:
         run: pip install tox
 
       - name: Run tests
-        run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
+        run: tox -e py -- -vrsx --color=yes
 
 
   windows-tests:
@@ -39,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9, "3.10", "3.11", "3.12"]
+        python-version: [3.7, 3.8, 3.9, "3.10", "3.11", "3.12-dev"]
         architecture: ['x64', 'x86']
 
     steps:
@@ -56,7 +56,7 @@ jobs:
         run: pip install tox
 
       - name: Run tests
-        run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
+        run: tox -e py -- -vrsx --color=yes
 
 
   macos-tests:
@@ -64,7 +64,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9, "3.10", "3.11", "3.12"]
+        python-version: [3.7, 3.8, 3.9, "3.10", "3.11", "3.12-dev"]
 
     steps:
       - name: Checkout repos
@@ -79,7 +79,7 @@ jobs:
         run: pip install tox
 
       - name: Run tests
-        run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
+        run: tox -e py -- -vrsx --color=yes
 
 
   macos-native-python-test:
