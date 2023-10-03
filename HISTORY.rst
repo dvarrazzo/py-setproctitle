@@ -1,6 +1,13 @@
 Releases history
 ----------------
 
+Version 1.3.3
+-------------
+
+- Add support for Python 3.12
+- Fix package metadata to include Python 3.11, 3.12.
+
+
 Version 1.3.2
 -------------
 

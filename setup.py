@@ -74,6 +74,8 @@ Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
 Programming Language :: Python :: 3.9
 Programming Language :: Python :: 3.10
+Programming Language :: Python :: 3.11
+Programming Language :: Python :: 3.12
 Operating System :: POSIX :: Linux
 Operating System :: POSIX :: BSD
 Operating System :: MacOS :: MacOS X
