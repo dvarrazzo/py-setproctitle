@@ -1,6 +1,11 @@
 Releases history
 ----------------
 
+Unreleased
+----------
+
+- Add support for Python 3.13
+
 Version 1.3.3
 -------------
 

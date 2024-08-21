@@ -7,17 +7,18 @@ jobs:
 
   build-sdist:
     name: Build sdist package
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build sdist
         run: python setup.py sdist
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: sdist
           path: ./dist/*
 
 
@@ -26,15 +27,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-latest, macos-latest]
-        pyver: [cp37, cp38, cp39, cp310, cp311, cp312]
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+        pyver:
+          - cp38
+          - cp39
+          - cp310
+          - cp311
+          - cp312
+          - cp313
+        include:
+          - pyver: cp37
+            os: macos-13
+          - pyver: cp37
+            os: ubuntu-24.04
+          - pyver: cp37
+            os: windows-latest
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16.1
+        uses: pypa/cibuildwheel@v2.21.2
         env:
           CIBW_BUILD: ${{matrix.pyver}}-*
           CIBW_ARCHS_LINUX: auto
@@ -53,28 +67,36 @@ jobs:
             pp*-macosx_*
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: wheel-${{ matrix.pyver }}-${{ matrix.os }}
           path: ./wheelhouse/*.whl
 
 
   build-cross-wheel:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        pyver: [cp37, cp38, cp39, cp310, cp311, cp312]
+        pyver:
+          - cp37
+          - cp38
+          - cp39
+          - cp310
+          - cp311
+          - cp312
+          - cp313
         arch: [aarch64, ppc64le]
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up QEMU for multi-arch build
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16.1
+        uses: pypa/cibuildwheel@v2.21.2
         env:
           CIBW_BUILD: ${{matrix.pyver}}-*
           CIBW_ARCHS: ${{matrix.arch}}
@@ -82,8 +104,9 @@ jobs:
       # Tests mostly fail because of some confusion with the python interpreter
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: wheel-${{ matrix.pyver }}-${{ matrix.arch }}
           path: ./wheelhouse/*.whl
 
 
@@ -92,14 +115,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-latest, macos-latest]
+        os: [ubuntu-24.04, windows-latest, macos-latest]
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16.1
+        uses: pypa/cibuildwheel@v2.21.2
         env:
           CIBW_BUILD: pp*
           CIBW_TEST_EXTRAS: test
@@ -115,31 +138,33 @@ jobs:
             pp*-macosx_*
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: wheels-pp-${{ matrix.os }}
           path: ./wheelhouse/*.whl
 
 
   build-cross-wheel-pypy:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up QEMU for multi-arch build
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16.1
+        uses: pypa/cibuildwheel@v2.21.2
         env:
           CIBW_BUILD: pp*
 
       # Tests mostly fail because of some confusion with the python interpreter
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: wheels-pp-cross
           path: ./wheelhouse/*.whl

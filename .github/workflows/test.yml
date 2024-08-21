@@ -11,20 +11,35 @@ on:
 jobs:
 
   linux-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "pypy-3.8"]
+        python-version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "pypy-3.8"
+          - "pypy-3.9"
+          - "pypy-3.10"
+        os:
+          - ubuntu-24.04
+        include:
+          - python-version: 3.7
+            os: ubuntu-22.04
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{matrix.python-version}}
+          allow-prereleases: true
           architecture: x64
 
       - name: Install Tox
@@ -39,17 +54,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9, "3.10", "3.11", "3.12"]
+        python-version:
+          - 3.7
+          - 3.8
+          - 3.9
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
         architecture: ['x64', 'x86']
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python ${{matrix.python-version}}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{matrix.python-version}}
+          allow-prereleases: true
           architecture: ${{matrix.architecture}}
 
       - name: Install Tox
@@ -60,20 +83,35 @@ jobs:
 
 
   macos-tests:
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9, "3.10", "3.11", "3.12"]
+        python-version:
+          - "3.11"
+          - "3.12"
+          - "3.13"
+        os:
+          - macos-latest
+        include:
+          - python-version: 3.7
+            os: macos-13
+          - python-version: 3.8
+            os: macos-13
+          - python-version: 3.9
+            os: macos-13
+          - python-version: "3.10"
+            os: macos-13
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python ${{matrix.python-version}}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{matrix.python-version}}
+          allow-prereleases: true
 
       - name: Install Tox
         run: pip install tox
@@ -87,7 +125,7 @@ jobs:
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Tox
         run: xcrun python3 -m pip install tox
