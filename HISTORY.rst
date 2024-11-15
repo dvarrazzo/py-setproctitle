@@ -5,6 +5,8 @@ Unreleased
 ----------
 
 - Add support for Python 3.13
+- Drop support for Python 3.7
+
 
 Version 1.3.3
 -------------

@@ -27,9 +27,6 @@ jobs:
           - "pypy-3.10"
         os:
           - ubuntu-24.04
-        include:
-          - python-version: 3.7
-            os: ubuntu-22.04
 
     steps:
       - name: Checkout repos
@@ -55,7 +52,6 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - 3.7
           - 3.8
           - 3.9
           - "3.10"
@@ -94,8 +90,6 @@ jobs:
         os:
           - macos-latest
         include:
-          - python-version: 3.7
-            os: macos-13
           - python-version: 3.8
             os: macos-13
           - python-version: 3.9
