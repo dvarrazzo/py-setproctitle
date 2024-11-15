@@ -150,3 +150,19 @@ jobs:
         with:
           name: wheels-pp-cross
           path: ./wheelhouse/*.whl
+
+
+  merge:
+    runs-on: ubuntu-latest
+    needs:
+      - build-sdist
+      - build-wheel
+      - build-cross-wheel
+      - build-wheel-pypy
+      - build-cross-wheel-pypy
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: setproctitle-artifacts
+          delete-merged: true
