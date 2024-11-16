@@ -1,17 +1,17 @@
 Releases history
 ----------------
 
-Unreleased
-----------
+Version 1.3.4
+-------------
 
-- Add support for Python 3.13
-- Drop support for Python 3.7
+- Add support for Python 3.13 (issue #139).
+- Drop support for Python 3.7.
 
 
 Version 1.3.3
 -------------
 
-- Add support for Python 3.12
+- Add support for Python 3.12.
 - Fix package metadata to include Python 3.11, 3.12.
 
 
