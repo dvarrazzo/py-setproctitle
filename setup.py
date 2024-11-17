@@ -70,12 +70,12 @@ Intended Audience :: Developers
 License :: OSI Approved :: BSD License
 Programming Language :: C
 Programming Language :: Python :: 3
-Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
 Programming Language :: Python :: 3.9
 Programming Language :: Python :: 3.10
 Programming Language :: Python :: 3.11
 Programming Language :: Python :: 3.12
+Programming Language :: Python :: 3.13
 Operating System :: POSIX :: Linux
 Operating System :: POSIX :: BSD
 Operating System :: MacOS :: MacOS X
@@ -118,7 +118,7 @@ def do_build(with_extension):
         download_url="http://pypi.python.org/pypi/setproctitle/",
         license="BSD-3-Clause",
         platforms=["GNU/Linux", "BSD", "MacOS X", "Windows"],
-        python_requires=">=3.7",
+        python_requires=">=3.8",
         classifiers=classifiers,
         packages=["setproctitle"],
         package_dir={"setproctitle": "pkg/setproctitle"},
