@@ -5,6 +5,7 @@ Version 1.3.5 (unreleased)
 --------------------------
 
 - Fix bouncing Dock icon on macOS (issue #143).
+- Fix building on C23 compilers (issue #145).
 
 
 Version 1.3.4
