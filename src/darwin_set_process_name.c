@@ -99,10 +99,25 @@ static bool launch_services_set_process_title(const launch_services_t * it, cons
 
     CFTypeRef asn;
     CFStringRef cf_title;
+    CFDictionaryRef info_dict;
+    CFMutableDictionaryRef mutable_info_dict;
+    CFStringRef LSUIElement_key;
     
     if (!checked_in) {
         it->pLSSetApplicationLaunchServicesServerConnectionStatus(0, NULL);
-        it->pLSApplicationCheckIn(kLSDefaultSessionID, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
+
+        // See https://github.com/dvarrazzo/py-setproctitle/issues/143
+        // We need to set LSUIElement (https://developer.apple.com/documentation/bundleresources/information-property-list/lsuielement)
+        // key to true to avoid macOS > 15 displaying the Dock icon.
+        info_dict = CFBundleGetInfoDictionary(CFBundleGetMainBundle());
+        mutable_info_dict = CFDictionaryCreateMutableCopy(NULL, 0, info_dict);
+        LSUIElement_key = CFStringCreateWithCString(NULL, "LSUIElement", kCFStringEncodingUTF8);
+        CFDictionaryAddValue(mutable_info_dict, LSUIElement_key, kCFBooleanTrue);
+        CFRelease(LSUIElement_key);
+        
+        it->pLSApplicationCheckIn(kLSDefaultSessionID, mutable_info_dict);
+        CFRelease(mutable_info_dict);
+        
         checked_in = true;
     }
 
