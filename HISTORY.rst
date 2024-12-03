@@ -1,6 +1,12 @@
 Releases history
 ----------------
 
+Version 1.3.5 (unreleased)
+--------------------------
+
+- Fix bouncing Dock icon on macOS (issue #143).
+
+
 Version 1.3.4
 -------------
 
