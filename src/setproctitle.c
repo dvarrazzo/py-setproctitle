@@ -106,6 +106,27 @@ spt_getthreadtitle(PyObject *self, PyObject *args)
     return Py_BuildValue("s", title);
 }
 
+/* Module initialization function */
+
+static int
+spt_exec(PyObject *m)
+{
+    spt_debug("module init");
+    return 0;
+}
+
+/* List of slots defined in the module */
+
+static PyModuleDef_Slot spt_slots[] = {
+    {Py_mod_exec, spt_exec},
+#if PY_VERSION_HEX >= 0x030c0000
+    {Py_mod_multiple_interpreters, Py_MOD_PER_INTERPRETER_GIL_SUPPORTED},
+#endif
+#if PY_VERSION_HEX >= 0x030d0000
+    {Py_mod_gil, Py_MOD_GIL_NOT_USED},
+#endif
+    {0, NULL}
+};
 
 /* List of methods defined in the module */
 
@@ -144,9 +165,9 @@ static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
     "_setproctitle",
     setproctitle_module_documentation,
-    -1,
+    0,
     spt_methods,
-    NULL,
+    spt_slots,
     NULL,
     NULL,
     NULL
@@ -155,14 +176,5 @@ static struct PyModuleDef moduledef = {
 PyMODINIT_FUNC
 PyInit__setproctitle(void)
 {
-    PyObject *m;
-
-    spt_debug("module init");
-
-    /* Create the module and add the functions */
-    m = PyModule_Create(&moduledef);
-    if (m == NULL) { goto exit; }
-
-exit:
-    return m;
+    return PyModuleDef_Init(&moduledef);
 }
