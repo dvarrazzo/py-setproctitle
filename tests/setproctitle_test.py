@@ -5,7 +5,7 @@ Use pytest to run this test suite.
 The tests are executed in external processes: setproctitle should
 never be imported directly from here.
 
-Copyright (c) 2009-2021 Daniele Varrazzo <daniele.varrazzo@gmail.com>
+Copyright (c) 2009 Daniele Varrazzo <daniele.varrazzo@gmail.com>
 """
 
 import os
