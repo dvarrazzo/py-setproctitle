@@ -1,8 +1,14 @@
 Releases history
 ----------------
 
-Version 1.3.5 (unreleased)
---------------------------
+Version 1.3.6
+-------------
+
+- Add support for free-threading (issue #147)
+
+
+Version 1.3.5
+-------------
 
 - Fix bouncing Dock icon on macOS (issue #143).
 - Fix building on C23 compilers (issue #145).
