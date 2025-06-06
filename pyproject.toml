@@ -1,2 +1,9 @@
 [tool.black]
 line-length = 79
+
+[tool.cibuildwheel]
+enable = [
+    "cpython-freethreading",  # Only needed for 3.13t, where it was still experimental
+    "pypy",
+]
+test-extras = ["test"]
