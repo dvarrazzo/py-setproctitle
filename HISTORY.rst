@@ -1,10 +1,16 @@
 Releases history
 ----------------
 
+Version 1.3.7
+-------------
+
+- Add support for Python 3.14 (issue #152).
+
+
 Version 1.3.6
 -------------
 
-- Add support for free-threading (issue #147)
+- Add support for free-threading (issue #147).
 
 
 Version 1.3.5
