@@ -51,6 +51,7 @@ print(setproctitle.getproctitle())
     assert rv == sys.executable + " -u\n"
 
 
+@pytest.mark.skip_on_qemu
 def test_setproctitle():
     """setproctitle() can set the process title, duh."""
     rv = run_script(
@@ -172,6 +173,7 @@ print(newenv['PATH'])
     assert path.endswith("fakepath"), path
 
 
+@pytest.mark.skip_on_qemu
 def test_issue_8(tmp_pypath):
     """Test that the module works with 'python -m'."""
     module = "spt_issue_8"
@@ -196,6 +198,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
     assert title == "Hello, module!"
 
 
+@pytest.mark.skip_on_qemu
 def test_large_cmdline(tmp_pypath):
     """Test with a 64KB command line."""
     module = "longargs"
@@ -220,6 +223,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
     assert title == "Hello, long!"
 
 
+@pytest.mark.skip_on_qemu
 def test_unicode():
     """Title can contain unicode characters."""
     snowman = "\u2603"
@@ -274,6 +278,7 @@ print(buf.decode(locale.getpreferredencoding(), 'replace'))
         pytest.fail("unexpected ps output: %r" % title)
 
 
+@pytest.mark.skip_on_qemu
 def test_weird_args():
     """No problem with encoded arguments."""
     euro = "\u20ac"
@@ -301,6 +306,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
     assert title == "Hello, weird args!"
 
 
+@pytest.mark.skip_on_qemu
 def test_weird_path(tmp_path, spt_directory):
     """No problem with encoded argv[0] path."""
     _check_4388()
@@ -394,6 +400,7 @@ print(os.popen("ps -x -o pid,command 2> /dev/null").read())
 
 
 @skip_if_no_proc_env
+@pytest.mark.skip_on_qemu
 def test_noenv():
     """Check that SPT_NOENV avoids clobbering environ."""
     env = os.environ.copy()

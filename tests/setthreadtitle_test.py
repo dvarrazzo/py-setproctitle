@@ -1,11 +1,14 @@
 import os  # noqa
 import sys  # noqa
 
+import pytest
+
 from .conftest import run_script, skip_if_win32, skip_if_no_proc_tasks
 
 pytestmark = [skip_if_win32, skip_if_no_proc_tasks]
 
 
+@pytest.mark.skip_on_qemu
 def test_thread_title_unchanged():
     rv = run_script(
         """
@@ -29,6 +32,7 @@ print(setproctitle.getthreadtitle())
     assert before == gtt
 
 
+@pytest.mark.skip_on_qemu
 def test_set_thread_title():
     run_script(
         """
@@ -43,6 +47,7 @@ with open(fn) as f:
     )
 
 
+@pytest.mark.skip_on_qemu
 def test_set_threads_title():
     run_script(
         """

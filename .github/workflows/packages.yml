@@ -78,8 +78,7 @@ jobs:
         env:
           CIBW_BUILD: ${{matrix.pyver}}-*
           CIBW_ARCHS: ${{matrix.arch}}
-
-      # Tests mostly fail because of some confusion with the python interpreter
+          CIBW_TEST_COMMAND: pytest --color=yes -m 'not embedded and not skip_on_qemu' {project}/tests
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
