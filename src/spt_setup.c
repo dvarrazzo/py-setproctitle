@@ -139,6 +139,13 @@ find_argv_from_env(int argc, char *arg0)
     }
     buf[argc] = NULL;
 
+    /* environ can be NULL if clearenv() has been called.
+     * Python 3.15 implements os.environ.clear() as clearenv(). */
+    if (!environ) {
+        spt_debug("environ pointer is NULL");
+        goto exit;
+    }
+
     /* Walk back from environ until you find argc-1 null-terminated strings.
      * Don't look for argv[0] as it's probably not preceded by 0. */
     ptr = environ[0];
