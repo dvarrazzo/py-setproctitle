@@ -9,6 +9,9 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "embedded: the test create an embedded executable"
     )
+    config.addinivalue_line(
+        "markers", "skip_on_qemu: the test fail under qemu virtualisation"
+    )
 
 
 skip_if_win32 = pytest.mark.skipif(
