@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, windows-latest, macos-latest]
-        pyver: [cp38, cp39, cp310, cp311, cp312, cp313, cp313t, cp314, cp314t]
+        pyver: [cp310, cp311, cp312, cp313, cp313t, cp314, cp314t]
 
     steps:
       - name: Checkout repos
@@ -63,7 +63,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pyver: [cp38, cp39, cp310, cp311, cp312, cp313, cp313t, cp314, cp314t]
+        pyver: [cp310, cp311, cp312, cp313, cp313t, cp314, cp314t]
         arch: [aarch64, ppc64le]
 
     steps:
