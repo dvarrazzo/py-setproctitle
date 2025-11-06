@@ -23,6 +23,7 @@ jobs:
           - "3.13t"
           - "3.14"
           - "3.14t"
+          - "3.15.0-alpha.1"
           - "pypy-3.8"
           - "pypy-3.9"
           - "pypy-3.10"
@@ -60,6 +61,7 @@ jobs:
           - "3.13t"
           - "3.14"
           - "3.14t"
+          - "3.15.0-alpha.1"
         architecture: ['x64', 'x86']
 
     steps:
@@ -92,6 +94,7 @@ jobs:
           - "3.13t"
           - "3.14"
           - "3.14t"
+          - "3.15.0-alpha.1"
         os:
           - macos-latest
         include:
