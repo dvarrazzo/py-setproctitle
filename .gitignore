@@ -15,5 +15,4 @@ tests/pyrun?.?
 env
 /setproctitle.egg-info
 _setproctitle.*.so
-/.tox
 /packages

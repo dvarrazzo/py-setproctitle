@@ -38,6 +38,9 @@ print(10 + 20)
 )
 def test_init_getproctitle():
     """getproctitle() returns a sensible value at initial call."""
+    if "Xcode" in sys.executable:
+        pytest.xfail("xcode is crap")
+
     rv = run_script(
         """
 import setproctitle

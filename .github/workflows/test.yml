@@ -40,11 +40,11 @@ jobs:
           allow-prereleases: true
           architecture: x64
 
-      - name: Install Tox
-        run: pip install tox
+      - name: Install the library and the test dependencies
+        run: pip install .[test]
 
       - name: Run tests
-        run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
+        run: pytest -vrsx --color=yes
 
 
   windows-tests:
@@ -73,11 +73,11 @@ jobs:
           allow-prereleases: true
           architecture: ${{matrix.architecture}}
 
-      - name: Install Tox
-        run: pip install tox
+      - name: Install the library and the test dependencies
+        run: pip install .[test]
 
       - name: Run tests
-        run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
+        run: pytest -vrsx --color=yes
 
 
   macos-tests:
@@ -108,11 +108,11 @@ jobs:
           python-version: ${{matrix.python-version}}
           allow-prereleases: true
 
-      - name: Install Tox
-        run: pip install tox
+      - name: Install the library and the test dependencies
+        run: pip install .[test]
 
       - name: Run tests
-        run: tox -e ${{matrix.python-version}} -- -vrsx --color=yes
+        run: pytest -vrsx --color=yes
 
 
   macos-native-python-test:
@@ -122,11 +122,11 @@ jobs:
       - name: Checkout repos
         uses: actions/checkout@v4
 
-      - name: Install Tox
-        run: xcrun python3 -m pip install tox
+      - name: Install the library and the test dependencies
+        run: xcrun python3 -m pip install .[test]
 
       - name: Run tests
         run: |
           export XCODE_PYTHON=`xcrun python3 -c "import sys;print(sys.executable)"`
           $XCODE_PYTHON -c "import sys; print(sys.version)"
-          $XCODE_PYTHON -m tox -e xcode -- -vrsx --color=yes
+          $XCODE_PYTHON -m pytest -vrsx --color=yes
