@@ -7,6 +7,7 @@ Version 1.3.8 (unreleased)
 - Add support for Python 3.15.
 - Fix segfault calling setproctitle() after clearenv() on Python 3.15
   (issue #157).
+- Add support for riscv64 (issue #156).
 
 
 Version 1.3.7
