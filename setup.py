@@ -36,10 +36,9 @@ elif "bsd" in sys.platform:  # OMG, how many of them are?
     define_macros["HAVE_SETPROCTITLE"] = 1
     define_macros["HAVE_PS_STRING"] = 1
 
-# NOTE: the module may work on HP-UX using pstat
-# thus setting define_macros['HAVE_SYS_PSTAT_H']
-# see http://www.noc.utoronto.ca/~mikep/unix/HPTRICKS
-# But I have none handy to test with.
+elif sys.platform.startswith("hp-ux"):
+    define_macros["HAVE_SYS_PSTAT_H"] = 1
+    define_macros["HAVE_PSTAT"] = 1
 
 mod_spt = Extension(
     "setproctitle._setproctitle",

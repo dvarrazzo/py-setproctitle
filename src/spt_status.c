@@ -85,7 +85,7 @@ bool        update_process_title = true;
  *     (newer BSD systems)
  * PS_USE_PSTAT
  *     use the pstat(PSTAT_SETCMD, )
- *     (HPUX)
+ *     (HP-UX)
  * PS_USE_PS_STRINGS
  *     assign PS_STRINGS->ps_argvstr = "string"
  *     (some BSD systems)

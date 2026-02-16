@@ -8,7 +8,7 @@ Version 1.3.8 (unreleased)
 - Fix segfault calling setproctitle() after clearenv() on Python 3.15
   (issue #157).
 - Add support for riscv64 (issue #156).
-
+- Add support for HP-UX (PR #162).
 
 Version 1.3.7
 -------------
