@@ -560,3 +560,36 @@ def _check_4388():
     p.communicate()
     if p.returncode:
         pytest.skip("bug #4388 detected")
+
+
+@pytest.mark.skipif(
+    sys.platform not in ("linux", "darwin"),
+    reason="requires the argv-clobbering implementation",
+)
+@pytest.mark.parametrize("tail", ["last", "\u00e9", "\u4e2d" * 80, "\U0001f600"])
+def test_noenv_preserves_initial_title(tail):
+    env = os.environ.copy()
+    env["SPT_NOENV"] = "1"
+    env["SPT_TESTENV"] = "unchanged"
+    rv = run_script(
+        """
+import os
+import sys
+import setproctitle
+
+title = setproctitle.getproctitle()
+assert title.endswith(' - ' + sys.argv[-1]), repr(title)
+setproctitle.setproctitle('short')
+assert setproctitle.getproctitle() == 'short'
+setproctitle.setproctitle(title)
+assert setproctitle.getproctitle() == title
+capacity = len(title.encode())
+setproctitle.setproctitle('X' * (capacity + 20))
+assert setproctitle.getproctitle() == 'X' * capacity
+assert os.environ['SPT_TESTENV'] == 'unchanged'
+print('ok')
+""",
+        args="- " + tail,
+        env=env,
+    )
+    assert rv.strip() == "ok"

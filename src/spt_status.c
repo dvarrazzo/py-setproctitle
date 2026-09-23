@@ -231,7 +231,9 @@ save_ps_display_args(int argc, char **argv)
         }
 
         ps_buffer = argv[0];
-        last_status_len = ps_buffer_size = end_of_area - argv[0];
+        last_status_len = end_of_area - argv[0];
+        /* Include the final NUL in the capacity passed to spt_strlcpy. */
+        ps_buffer_size = last_status_len + 1;
 
     }
 #endif   /* PS_USE_CLOBBER_ARGV */
@@ -308,7 +310,7 @@ init_ps_display(const char *initial_str)
 
         /* make extra argv slots point at end_of_area (a NUL) */
         for (i = 1; i < save_argc; i++)
-            save_argv[i] = ps_buffer + ps_buffer_size;
+            save_argv[i] = ps_buffer + ps_buffer_size - 1;
     }
 #endif   /* PS_USE_CLOBBER_ARGV */
 
@@ -432,7 +434,7 @@ get_ps_display(size_t *displen)
     }
 
     /* Remove any trailing spaces to offset the effect of PS_PADDING */
-    offset = ps_buffer_size;
+    offset = ps_buffer_size - 1;
     while (offset > ps_buffer_fixed_size && ps_buffer[offset - 1] == PS_PADDING)
         offset--;
 
