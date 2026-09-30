@@ -8,6 +8,9 @@ Version 1.3.8 (unreleased)
 - Fix segfault calling setproctitle() after clearenv() on Python 3.15
   (issue #157).
 - Add support for riscv64 (issue #156).
+- Skip the fork regression tests on macOS: calling setproctitle() in a
+  forked child before exec() is inherently unsafe on macOS and now
+  reliably crashes on macOS 26 "Tahoe" runners (issue #165).
 
 
 Version 1.3.7

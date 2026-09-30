@@ -483,6 +483,7 @@ setproctitle("Test")
     )
 
 
+@skip_if_macos
 def test_fork_segfault():
     run_script(
         """\
@@ -502,6 +503,7 @@ assert p.exitcode == 0, f"p.exitcode is {p.exitcode}"
     )
 
 
+@skip_if_macos
 def test_thread_fork_segfault():
     run_script(
         """\

@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build sdist
         run: python setup.py sdist
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sdist
           path: ./dist/*
@@ -28,14 +28,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, windows-latest, macos-latest]
-        pyver: [cp310, cp311, cp312, cp313, cp313t, cp314, cp314t]
+        pyver: [cp310, cp311, cp312, cp313, cp314, cp314t, cp315, cp315t]
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.2.1
+        uses: pypa/cibuildwheel@v4.2.1
         env:
           CIBW_BUILD: ${{matrix.pyver}}-*
           CIBW_ARCHS_LINUX: auto
@@ -52,7 +52,7 @@ jobs:
             *-macosx_universal2:arm64
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheel-${{ matrix.pyver }}-${{ matrix.os }}
           path: ./wheelhouse/*.whl
@@ -63,25 +63,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pyver: [cp310, cp311, cp312, cp313, cp313t, cp314, cp314t]
+        pyver: [cp310, cp311, cp312, cp313, cp314, cp314t, cp315, cp315t]
         arch: [aarch64, ppc64le, riscv64]
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up QEMU for multi-arch build
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.2.1
+        uses: pypa/cibuildwheel@v4.2.1
         env:
           CIBW_BUILD: ${{matrix.pyver}}-*
           CIBW_ARCHS: ${{matrix.arch}}
           CIBW_TEST_COMMAND: pytest --color=yes -m 'not embedded and not skip_on_qemu' {project}/tests
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheel-${{ matrix.pyver }}-${{ matrix.arch }}
           path: ./wheelhouse/*.whl
@@ -96,10 +96,10 @@ jobs:
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.2.1
+        uses: pypa/cibuildwheel@v4.2.1
         env:
           CIBW_BUILD: pp*
           CIBW_TEST_COMMAND: pytest --color=yes -m 'not embedded' {project}/tests
@@ -113,7 +113,7 @@ jobs:
             pp*-macosx_*
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-pp-${{ matrix.os }}
           path: ./wheelhouse/*.whl
@@ -124,20 +124,20 @@ jobs:
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up QEMU for multi-arch build
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.2.1
+        uses: pypa/cibuildwheel@v4.2.1
         env:
           CIBW_BUILD: pp*
 
       # Tests mostly fail because of some confusion with the python interpreter
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-pp-cross
           path: ./wheelhouse/*.whl
@@ -153,7 +153,7 @@ jobs:
       - build-cross-wheel-pypy
     steps:
       - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
+        uses: actions/upload-artifact/merge@v7
         with:
           name: setproctitle-artifacts
           delete-merged: true
