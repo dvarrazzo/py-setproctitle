@@ -1,8 +1,8 @@
 Releases history
 ----------------
 
-Version 1.3.8 (unreleased)
---------------------------
+Version 1.3.8
+-------------
 
 - Add support for Python 3.15.
 - Fix segfault calling setproctitle() after clearenv() on Python 3.15
