@@ -8,5 +8,5 @@ enable = [
 test-extras = ["test"]
 
 [[tool.cibuildwheel.overrides]]
-select = "*riscv64*"
+select = "*-manylinux_riscv64"
 before-all = ["dnf install -y --setopt=install_weak_deps=False procps-ng"]
