@@ -119,13 +119,13 @@ platforms:
 - BSD
 - MacOS X
 - Windows
+- HP-UX (best-effort basis)
 
 Note that on Windows there is no way to change the process string:
 what the module does is to create a *Named Object* whose value can be read
 using a tool such as `Process Explorer`_ (contribution of a more useful tool
 to be used together with ``setproctitle`` would be well accepted).
 
-The module can probably work on HP-UX, but I haven't found any to test with.
 It is unlikely that it can work on Solaris instead.
 
 .. _Process Explorer: http://technet.microsoft.com/en-us/sysinternals/bb896653.aspx
